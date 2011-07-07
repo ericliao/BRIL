@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="bril-makejars" default="usage">
+<property file="build.properties" />
+
+<!-- Compiler options -->
+	    <property name="compiler.debug" value="on" />
+	    <property name="compiler.generate.no.warnings" value="off" />
+	    <property name="compiler.args" value="" />
+		<property name="compiler.max.memory" value="512m" />
+	    <property name="compiler.args.core" value="${compiler.args}" />
+		<property name="output.classes" value="${output.basedir}/classes/" />
+	    <property name="output.javadoc" value="war/javadoc/" />
+	   
+	    <patternset id="ignored.files">
+			<exclude name="**/CVS/**" />
+			<exclude name="**/SCCS/**" />
+			<exclude name="**/RCS/**" />
+			<exclude name="**/rcs/**" />
+			<exclude name="**/.DS_Store/**" />
+			<exclude name="**/.svn/**" />
+		</patternset>
+		<patternset id="compiler.resources">
+			<include name="**/*.properties" />
+			<include name="**/*.xml" />
+			<include name="**/?*.gif" />
+			<include name="**/?*.png" />
+			<include name="**/?*.jpeg" />
+			<include name="**/?*.jpg" />
+			<include name="**/?*.html" />
+			<include name="**/?*.dtd" />
+			<include name="**/?*.tld" />
+			<include name="**/?*.zip" />
+			<!--<include name="**/?*.wsdd" />-->
+		</patternset>
+
+	<path id="library.jars.classpath">      
+	
+		<pathelement location="${lib.home}/log4j-1.2.16.jar" />
+		<pathelement location="${lib.home}/jetty-util-7.0.0.pre5.jar" />	
+		<pathelement location="${lib.home}/soapi-characteriser.jar" />
+		<pathelement location="${lib.home}/junit-4.8.1.jar" />
+        <pathelement location="${lib.home}/jpathwatch-0-94.jar" />
+		
+		<pathelement location="${activemq.jars.dir}/activemq-core-5.3.0.jar" />
+	    <pathelement location="${activemq.jars.dir}/geronimo-j2ee-management_1.0_spec-1.0.jar" />
+		<pathelement location="${activemq.jars.dir}/geronimo-jms_1.1_spec-1.1.1.jar" />
+		<pathelement location="${activemq.jars.dir}/geronimo-j2ee-connector_1.5_spec-2.0.0.jar" />		
+		
+		<pathelement location="${commons.jars.dir}/commons-collections-3.2.1.jar" />
+		<pathelement location="${commons.jars.dir}/commons-configuration-1.6.jar" />		
+		<pathelement location="${commons.jars.dir}/commons-logging-4.0.6.jar" />		
+		<pathelement location="${commons.jars.dir}/commons-lang-2.6.jar" />	
+		
+		<!--
+		<pathelement location="${jre7.jars.dir}/resources.jar" />
+		<pathelement location="${jre7.jars.dir}/rt.jar" />
+		<pathelement location="${jre7.jars.dir}/jsse.jar" />
+		<pathelement location="${jre7.jars.dir}/jce.jar" />
+		<pathelement location="${jre7.jars.dir}/charsets.jar" />	
+		<pathelement location="${jre7.jars.dir}/ext/dnsns.jar" />
+		<pathelement location="${jre7.jars.dir}/ext/localedata.jar" />
+		-->
+		
+		<pathelement location="${jre6.jars.dir}/resources.jar" />
+		<pathelement location="${jre6.jars.dir}/rt.jar" />
+		<pathelement location="${jre6.jars.dir}/jsse.jar" />
+		<pathelement location="${jre6.jars.dir}/jce.jar" />
+		<pathelement location="${jre6.jars.dir}/charsets.jar" />	
+		<pathelement location="${jre6.jars.dir}/ext/dnsns.jar" />
+		<pathelement location="${jre6.jars.dir}/ext/localedata.jar" />
+		
+	</path>
+	<path id="bootclasspath">
+		<!--<pathelement location="src" />-->
+	</path>
+	
+	<path id="brilclasspath">
+		<path refid="library.jars.classpath" />
+		<!-- <fileset dir="${tomcat.webserver.home}/common/lib">
+				<include name="servlet*.jar" />
+		<include name="jsp-api.jar" /> 
+		</fileset> -->
+	</path>
+
+    <target name="usage" description="Display usage information.">
+        <echo message="" />
+        <echo message="${ant.project.name} build file" />
+        <echo message="-----------------------------------" />
+        <echo message="" />
+        <echo message="  Execute 'ant -projecthelp' for help on this build file (ie: see the available targets)." />
+        <echo message="  Execute 'ant -help' for Ant help." />
+        <echo message="" />
+    </target>
+	
+	<target name="clean" description="Cleanup.">
+	        <!--<delete dir="${output.basedir}" />-->
+	        <delete includeemptydirs="true">
+	            <fileset dir="${build.home}" includes="**/*" excludes="**/CVS/**"/>
+	        	<fileset dir="${dist.home}" includes="**/*" excludes="**/CVS/**"/>
+	        </delete>
+	</target>
+	
+	<target name="compile" depends="" description="Compile all code.">
+			<!-- Compile -->
+			<echo>Building</echo>
+			<mkdir dir="${output.basedir}" />
+			<mkdir dir="${output.classes}" />
+			<javac destdir="${output.classes}" 
+				debug="${compiler.debug}" 
+				nowarn="${compiler.generate.no.warnings}" 
+				memoryMaximumSize="${compiler.max.memory}" 
+				fork="true" 
+				executable="/usr/lib/jvm/java-6-sun/bin/javac"
+				compiler="javac1.6" >
+				
+		<!--	<compilerarg line="${compiler.args}" /> -->
+					<classpath refid="brilclasspath" />
+				<src path="src" />
+			</javac>
+	        <!-- Copy some necessary file (eg .properties files) -->
+	        <copy todir="${output.classes}">
+				<fileset dir="src">
+					<patternset refid="compiler.resources" />
+					<type type="file" />
+				</fileset>
+	        	<fileset dir="config">
+	        		<patternset refid="compiler.resources" />
+	        		<type type="file" />
+	        	</fileset>
+			</copy>
+		   <copy todir="${output.classes}/config">
+			       <fileset dir="config" includes="**/*.xml"/>
+		   </copy>
+		
+		</target>
+	
+	 <fileset id="config" dir="${build.home}/classes">
+	        <include name="**/*.properties"/>
+	        <include name="**/*.xml"/>
+	    </fileset>
+	 <fileset id="prop" dir="${build.home}/classes">
+		        <include name="**/*.properties"/>
+		    </fileset>
+	
+	<target name="jar" depends="compile" description="Create jar of Directory watcher">
+		 <echo message="Create executable ${jar.name}:- Directory watcher" />  	
+		  
+	        <property name="version.num" value="1.0"/>
+	        <buildnumber file="build.num"/>
+	        <tstamp>
+	    	 <format property="TODAY" pattern ="yyyy-MM-dd HH:mm:ss" />
+	    	</tstamp>
+		<!-- create a property containing all .jar files, prefix lib/, and seperated with
+	         a space -->  
+	    	<pathconvert property="libs.project" pathsep=" ">     
+	    		<mapper>       
+	    			<chainedmapper>           
+	    				<!-- remove absolute path -->       
+	    				<flattenmapper />           
+	    				<!-- add lib/ prefix -->        
+	    				<globmapper from="*" to="lib/*" />    
+	    			</chainedmapper>     
+	    		</mapper>       
+	    		<path>         
+	    	
+	    	<!-- lib.home contains all jar files, in several subdirectories -->      
+	    			
+	    		<fileset dir="${lib.home}">         
+	    			<include name="**/log4j-1.2.16.jar" />   
+	    			<include name="**/jetty-util-7.0.0.pre5.jar" />   
+	    			<include name="**/soapi-characteriser.jar" />   
+	    			<include name="**/junit-4.8.1.jar" />   
+	    			<include name="**/jpathwatch-0-94.jar" />
+	    			<include name="**/activemq-core-5.3.0.jar" />   
+	    			<include name="**/geronimo-j2ee-management_1.0_spec-1.0.jar" />   
+	    			<include name="**/geronimo-jms_1.1_spec-1.1.1.jar" />   
+	    			<include name="**/geronimo-j2ee-connector_1.5_spec-2.0.0.jar" />   
+	    			<include name="**/commons-collections-3.2.1.jar" />   
+	    			<include name="**/commons-configuration-1.6.jar" />   	    	
+	    			<include name="**/commons-logging-4.0.6.jar" />   
+	    			<include name="**/commons-lang-2.6.jar" />
+	    		</fileset>  
+	    	<!--<fileset dir="${build.home}/config">  
+	    			<include name="**/*.xml" />  
+	    			<include name="**/*.properties" />
+	    		</fileset>  -->
+	    		
+	    		</path>   
+	    	</pathconvert> 
+		<jar jarfile="${output.basedir}/${jar.name}" basedir="${output.classes}">
+		    	<include name="uk/ac/kcl/cerch/bril/service/**" />
+			    <include name="uk/ac/kcl/cerch/bril/common/**" />
+			
+			    <fileset refid="prop"/>
+		    		 <!-- define MANIFEST.MF -->    
+		    		<manifest>   
+		    			  <attribute name ="Main-Class" value ="uk.ac.kcl.cerch.bril.service.monitordir.DirectoryMonitor"/>   		        	
+		    			  <attribute name ="Built-By" value ="${user.name}"/>
+		    			   <section name="common"> 				    
+		    					 <attribute name ="Implementation-Version" value ="${version.num}-b${build.number}"/>
+		    					 <attribute name="Build-Date" value="${TODAY}"/>   		
+		    			  </section>        
+		    			<!-- finally, use the magically generated libs path -->      
+		    			<attribute name="Class-Path" value="${libs.project}" />    
+		    		</manifest> 
+		    	</jar>
+	</target >
+	
+	<target name="dist" depends="jar" description="Create binary distribution"> 
+		 <echo message="Create distribution directory and copy Directory monitor jar in ${dist.home} and supported lib in ${dist.home}/lib" />  	
+				
+		<!-- <delete dir="${dist.home}" /> -->     <!-- contains all library dependencies -->  
+		<mkdir dir="${dist.home}/lib" />  
+		<mkdir dir="${dist.home}/config" />   
+		<copy todir="${dist.home}"  > 
+		<fileset dir="${build.home}" includes="${jar.name}" />  
+		</copy> 
+		<copy todir="${dist.home}/lib" filtering="off">       
+			<!-- remove the directory hierarchy: lib contains no subdirectories -->    
+			<flattenmapper />     
+			<!-- <fileset dir="${lib.home}" includes="**/*.jar" />   -->
+		
+		   <fileset dir="${lib.home}">
+		   	<include name="**/log4j-1.2.16.jar" />   
+			<include name="**/jetty-util-7.0.0.pre5.jar" />   
+			<include name="**/soapi-characteriser.jar" />   
+			<include name="**/junit-4.8.1.jar" />
+		   	<include name="**/jpathwatch-0-94.jar" />
+			<include name="**/activemq-core-5.3.0.jar" />   
+			<include name="**/geronimo-j2ee-management_1.0_spec-1.0.jar" />   
+			<include name="**/geronimo-jms_1.1_spec-1.1.1.jar" />   
+			<include name="**/geronimo-j2ee-connector_1.5_spec-2.0.0.jar" />   
+			<include name="**/commons-collections-3.2.1.jar" />   
+			<include name="**/commons-configuration-1.6.jar" />   	    	
+			<include name="**/commons-logging-4.0.6.jar" />   
+			<include name="**/commons-lang-2.6.jar" />			    		
+			   </fileset>  
+	    </copy> 
+	    <copy todir="${dist.home}/config" filtering="off">       
+					<!-- remove the directory hierarchy: lib contains no subdirectories -->    
+					<flattenmapper />     
+					<fileset dir="${build.home}/classes" includes="**/*.xml" /> 
+			        <fileset dir="${build.home}/classes" includes="**/*.properties" />
+		</copy> 
+
+	</target> 
+
+</project>

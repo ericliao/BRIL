@@ -1,0 +1,14 @@
+#Fat Jar Configuration File
+#Mon Apr 11 16:15:15 BST 2011
+onejar.license.required=false
+manifest.classpath=
+manifest.removesigners=true
+onejar.checkbox=true
+jarname=DirectoryWatcher_fat.jar
+manifest.mergeall=true
+manifest.mainclass=uk.ac.kcl.cerch.bril.service.monitordir.bin.DirectoryWatcher
+manifest.file=<createnew>
+jarname.isextern=false
+onejar.expand=
+excludes=
+includes=<inc|DirectoryWatcher/config>~experiments.xml;<inc|DirectoryWatcher/config>~messagexml.properties;<inc|DirectoryWatcher/config>~bril.properties
