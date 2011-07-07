@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<gui-definition>
+  <fedora>
+    <host>localhost</host>
+    <port>8080</port>
+    <!-- <port>9055</port> -->
+    <user>fedoraAdmin</user>
+    <passphrase>fedoraAdmin</passphrase>
+  </fedora>
+</gui-definition>

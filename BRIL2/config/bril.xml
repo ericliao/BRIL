@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC 
+	"-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+	<!-- Beans -->
+	<bean id="fedoraPIDService" class="uk.ac.kcl.cerch.soapi.fedora.FedoraPIDServiceImpl">
+	</bean>
+	<bean id="sipProcessor" class="uk.ac.kcl.cerch.bril.sip.processor.FileSIPProcessor">
+		<property name="objectStore" ref="objectStore" />
+		<property name="archivalObjectDao" ref="archivalObjectDao" />	
+		<property name="sipDao" ref="sipDao" />
+	</bean>
+	<bean id="objectStore" class="uk.ac.kcl.cerch.soapi.objectstore.FileSystemObjectStore">
+		<property name="objectArtifactIdGenerator">
+			<bean
+				class="uk.ac.kcl.cerch.soapi.objectstore.FileObjectArtifactIdGenerator" />
+		</property>
+	</bean>
+
+	<!-- DAOs -->
+	<bean id="archivalObjectDao"
+		class="uk.ac.kcl.cerch.soapi.objectstore.database.JdbcArchivalObjectDao">
+		<property name="jdbcTemplate" ref="jdbcTemplate" />
+	</bean>
+	<bean id="sipDao" class="uk.ac.kcl.cerch.soapi.objectstore.database.JdbcSIPDao">
+		<property name="jdbcTemplate" ref="jdbcTemplate" />
+		<property name="archivalObjectDao" ref="archivalObjectDao" />
+	</bean>
+
+	<!-- JDBC Template -->
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- Data Source -->	
+	<bean id="dataSource" class="com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource">                 
+       <property name="url" value="jdbc:mysql://localhost:3306/bril_test" /> 
+       <property name="user" value="bril_test" />
+       <property name="password" value="He6ahj2v" />       
+    </bean>
+
+	<!-- Hibernate Template -->
+	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<!-- Session Factory -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="mappingResources">
+			<list>
+				<!--
+					value>archivalobject.hbm.xml</value>
+					<value>objectartifact.hbm.xml</value
+				-->
+			</list>
+		</property>
+		<property name="dataSource" ref="dataSource" />
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+			</props>
+		</property>
+	</bean>
+
+</beans>

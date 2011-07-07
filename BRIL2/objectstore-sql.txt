@@ -1,0 +1,14 @@
+USE soapi;
+CREATE TABLE sips
+(Id varchar(200));
+
+CREATE TABLE archivalobjects
+(Id varchar(200),
+Filename text,
+Path text,
+SIPId varchar(200));
+
+CREATE TABLE objectartifacts
+(Id varchar(200),
+ArchivalObjectId varchar(200),
+Type varchar(200));

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<crystallography-softwares>
+    <software>
+        <name>Mosflm</name>
+        <classification>Diffraction data  processing</classification>
+        <type>package</type>
+        <url></url>
+    </software>
+    <software>
+        <name>HLK</name>
+        <classification>Diffraction data  processing</classification>
+        <type>package</type>
+        <url></url>
+    </software>
+    <software>
+        <name>CCP4</name>
+        <classification>Reflection data processing</classification>
+        <type>package</type>
+        <url></url>
+    </software>
+    <software>
+        <name>Phaser</name>
+        <classification>Model building/Molecular replacement</classification>
+        <type>program</type>
+        <url>http://www-structmed.cimr.cam.ac.uk/phaser/</url>
+    </software>
+    <software>
+        <name>MOLREP</name>
+        <classification>Model building/Molecular replacement</classification>
+        <type>program</type>
+        <url></url>
+    </software>
+    <software>
+        <name>AMORE</name>
+        <classification>Model building/Molecular replacement</classification>
+        <type>program</type>
+        <url></url>
+    </software>
+    <software>
+        <name>REFMAC5</name>
+        <classification>Refinement</classification>
+        <type>package</type>
+        <url></url>
+    </software>
+    <software>
+        <name>Phenix</name>
+        <classification>Refinement</classification>
+        <type>package</type>
+        <url></url>
+    </software>
+    <software>
+        <name>CNS</name>
+        <classification>Refinement</classification>
+        <type>package</type>
+        <url></url>
+    </software>
+</crystallography-softwares>    

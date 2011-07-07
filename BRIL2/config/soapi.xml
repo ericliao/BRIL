@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC 
+	"-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+    <!-- Beans --><!--
+    <bean id="fedoraPIDService" class="uk.ac.kcl.cerch.soapi.fedora.FedoraPIDServiceImpl">
+    </bean>
+    --><!--
+    <bean id="sipProcessor" class="uk.ac.kcl.cerch.soapi.sip.processor.MultiLayerDirectorySIPProcessor">
+        -->
+    <!--
+     <bean id="sipProcessor" class="uk.ac.kcl.cerch.bril.sip.processor.BrilSIPProcessor">
+        <property name="archivalObjectDao" ref="archivalObjectDao" />
+        <property name="objectStore" ref="objectStore" />
+        <property name="sipRDFBuilder" ref="sipRDFBuilder" />
+        <property name="sipDao" ref="sipDao" />
+        <property name="fedoraPIDService" ref="fedoraPIDService" />
+    </bean>
+    -->
+    <bean id="sipRDFBuilder" class="uk.ac.kcl.cerch.soapi.sip.processor.MultiLayerDirectorySIPRDFBuilder">
+        <property name="objectStore" ref="objectStore" />
+        <property name="archivalObjectDao" ref="archivalObjectDao" />
+    </bean>
+    <bean id="objectStore" class="uk.ac.kcl.cerch.soapi.objectstore.FileSystemObjectStore">
+        <property name="objectArtifactIdGenerator">
+            <bean class="uk.ac.kcl.cerch.soapi.objectstore.FileObjectArtifactIdGenerator" />
+        </property>
+    </bean>
+    <!--
+    <bean id="disseminationManifestationCreator" class="uk.ac.kcl.cerch.soapi.fileformat.dissemination.MIMETypeDisseminationManifestationCreatorImpl">
+        <property name="fileFormatConverter" ref="fileFormatConverter" />
+    </bean>
+    -->
+    <!-- <bean id="fileFormatNormaliser" class="uk.ac.kcl.cerch.soapi.fileformat.normaliser.MIMETypeFileFormatNormaliserImpl">
+        <property name="fileFormatConverter" ref="fileFormatConverter" />
+    </bean>        
+    <bean id="fileFormatConverter" class="uk.ac.kcl.cerch.soapi.fileformat.converter.MIMETypeFileFormatConverterLocalImpl">
+    </bean>
+    --><!--
+    <bean id="disseminationManifestationDeployerImpl" class="uk.ac.kcl.cerch.soapi.deployment.DisseminationManifestationDeployerImpl">
+        <property name="objectStore" ref="objectStore" />
+        <property name="archivalObjectDao" ref="archivalObjectDao" />
+    </bean>
+    --><!--<bean id="packagingPreprocessor" class="uk.ac.kcl.cerch.soapi.packaging.PackagingPreprocessorImpl">
+        <property name="archivalObjectDao" ref="archivalObjectDao" />
+    </bean>
+    --><!--
+    <bean id="packagingGenerator" class="uk.ac.kcl.cerch.soapi.packaging.FedoraMETSPackagingGeneratorEider">
+        <property name="objectArtifactDao" ref="objectArtifactDao" />
+        <property name="objectStore" ref="objectStore" />
+        <property name="MIMETypeFileFormatIdentifier" ref="MIMETypeFileFormatIdentifier" />
+        <property name="objectStoreUtilities" ref="objectStoreUtilities"/>
+    </bean>
+    -->
+    <bean id="objectArtifactIdGenerator" class="uk.ac.kcl.cerch.soapi.objectstore.FileObjectArtifactIdGenerator">
+    </bean>  
+      
+    <!-- DAOs -->
+    <bean id="archivalObjectDao" class="uk.ac.kcl.cerch.soapi.objectstore.database.JdbcArchivalObjectDao">
+        <property name="jdbcTemplate" ref="jdbcTemplate" />
+    </bean>
+    <bean id="sipDao" class="uk.ac.kcl.cerch.soapi.objectstore.database.JdbcSIPDao">
+        <property name="jdbcTemplate" ref="jdbcTemplate" />
+        <property name="archivalObjectDao" ref="archivalObjectDao" />
+    </bean>
+    <bean id="objectArtifactDao" class="uk.ac.kcl.cerch.soapi.objectstore.database.JdbcObjectArtifactDao">
+        <property name="jdbcTemplate" ref="jdbcTemplate" />
+        <property name="archivalObjectDao" ref="archivalObjectDao" />
+    </bean>
+    
+
+    <!-- Hibernate Template -->
+    <bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+    <!-- Session Factory -->
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="mappingResources">
+            <list>
+                <!-- value>archivalobject.hbm.xml</value>
+                <value>objectartifact.hbm.xml</value-->
+            </list>
+        </property>
+        <property name="dataSource" ref="dataSource" />
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.show_sql">false</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+            </props>
+        </property>
+    </bean>
+    
+    
+    <!-- JDBC Template -->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <!-- Data Source -->
+   <bean id="dataSource" class="com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource">                 
+       <property name="url" value="jdbc:mysql://localhost:3306/bril_test" /> 
+       <property name="user" value="bril_test" />
+       <property name="password" value="He6ahj2v" />       
+    </bean>
+    
+    <!--  Checksum --><!--
+    <bean id="MD5Checksum" class="uk.ac.kcl.cerch.soapi.checksum.MD5ChecksumProcessor">
+    </bean>
+    
+      --><!--  Antivirus --><!--
+    <bean id="virusScanner" class="uk.ac.kcl.cerch.soapi.antivirus.VirusScannerLocalImpl">
+        <property name="virusScannerTool">
+            <bean class="uk.ac.kcl.cerch.soapi.antivirus.ClamAVVirusScannerToolImpl" />
+        </property>
+    </bean>
+    
+      --><!--  New Classes February 2008 - following the XXXLocalImpl/XXXSOAPImpl --><!--                                                                                              
+    <bean id="PRONOMFileFormatIdentifier" class="uk.ac.kcl.cerch.soapi.fileformat.identifier.PRONOMUIdFileFormatIdentifierLocalImpl">
+    </bean>
+
+    --><!--<bean id="PREMISFileCharacteriser" class="uk.ac.kcl.cerch.soapi.characteriser.PREMISFileCharacteriserImpl">
+        <property name="MIMETypeFileFormatIdentifier" ref="MIMETypeFileFormatIdentifier" />
+    </bean>
+        
+    <bean id="MIMETypeFileFormatIdentifier" class="uk.ac.kcl.cerch.soapi.fileformat.identifier.MIMETypeFileFormatIdentifierLocalImpl">
+         property name="FileFormatIdentifierTool">
+        	<bean class="uk.ac.kcl.cerch.soapi.fileformat.identifier.FileCommandMIMETypeFileFormatIdentifier" />
+        </property 
+    </bean>
+    
+    --><!--<bean id="JHOVEFileCharacteriser" class="uk.ac.kcl.cerch.soapi.characteriser.JHOVEFileCharacteriserImpl">
+    </bean>
+    
+    <bean id="ImageConverterMIMEType" class="uk.ac.kcl.cerch.soapi.fileformat.converter.ImageConverterMIMETypeFileFormatConverterToolImpl">
+        <property name="MIMETypeFileFormatIdentifier" ref="MIMETypeFileFormatIdentifier" />
+    </bean>
+    
+    <bean id="JODConverterMIMEType" class="uk.ac.kcl.cerch.soapi.fileformat.converter.JODMIMETypeFileFormatConverterToolImpl" >
+         <property name="MIMETypeFileFormatIdentifier" ref="MIMETypeFileFormatIdentifier" />
+   </bean>
+    
+    <bean id="MIMETypeFileFormatConverter" class="uk.ac.kcl.cerch.soapi.fileformat.converter.MIMETypeFileFormatConverterLocalImpl" >
+         <property name="MIMETypeFileFormatIdentifier" ref="MIMETypeFileFormatIdentifier" />
+    </bean>
+  
+    <bean id="MIMETypeDisseminationManifestationCreator" class="uk.ac.kcl.cerch.soapi.fileformat.dissemination.MIMETypeDisseminationManifestationCreatorImpl" >
+         <property name="MIMETypeFileFormatIdentifier" ref="MIMETypeFileFormatIdentifier" />
+         <property name="MIMETypeFileFormatConverter" ref="MIMETypeFileFormatConverter" />
+    </bean>
+    
+    <bean id="MIMETypeFileFormatNormaliser" class="uk.ac.kcl.cerch.soapi.fileformat.normaliser.MIMETypeFileFormatNormaliserImpl">
+        <property name="MIMETypeFileFormatIdentifier" ref="MIMETypeFileFormatIdentifier" />
+        <property name="MIMETypeFileFormatConverter" ref="MIMETypeFileFormatConverter" />
+    </bean>        
+   
+   --><bean id="objectStoreUtilities" class="uk.ac.kcl.cerch.soapi.utils.ObjectStoreUtilities">
+         <property name="archivalObjectDao" ref="archivalObjectDao" />
+         <property name="jdbcTemplate" ref="jdbcTemplate" />
+         <property name="objectStore" ref="objectStore" />
+   </bean>
+</beans>
