@@ -46,6 +46,7 @@ import uk.ac.kcl.cerch.bril.relationship.generator.COMFileRelationshipGeneratorI
 import uk.ac.kcl.cerch.bril.relationship.generator.COOTScmFileRelationshipGeneratorImpl;
 import uk.ac.kcl.cerch.bril.relationship.generator.CoordinateFileRelationshipGeneratorImpl;
 import uk.ac.kcl.cerch.bril.relationship.generator.DOCFileRelationshipGeneratorImpl;
+import uk.ac.kcl.cerch.bril.relationship.generator.LOGFileRelationshipGeneratorImpl;
 import uk.ac.kcl.cerch.bril.relationship.generator.PhenixDEFFileRelationshipGeneratorImpl;
 import uk.ac.kcl.cerch.bril.relationship.generator.DEFFileCCP4RelationshipGeneratorImpl;
 import uk.ac.kcl.cerch.bril.relationship.generator.DiffractionImageFileRelationshipGeneratorImpl;
@@ -590,7 +591,14 @@ public class BrilSIPProcessor {
 							.generateRelationships(archivalObjectId, md
 									.getExperimentId());
 					System.out.println("DOC/DOCX/RTF file--");			
-				
+			
+			} else if (fileFormat.getFormat().equals(
+					CrystallographyObjectType.LOGFile.getType())) {
+				objectRelationship = (ObjectRelationship) new LOGFileRelationshipGeneratorImpl()
+				.generateRelationships(archivalObjectId, md
+						.getExperimentId());
+				System.out.println("LOGFile file--");			
+					
 			// the following are miscellaneous files: only an "isPart"
 			// relationship is generated.
 			
@@ -611,13 +619,7 @@ public class BrilSIPProcessor {
 				objectRelationship = new ObjectRelationship();
 				objectRelationship.addRelationship(archivalObjectId,
 						"isPartOf", md.getExperimentId());
-				System.out.println("MosflmGenFile file--");
-			} else if (fileFormat.getFormat().equals(
-					CrystallographyObjectType.LOGFile.getType())) {
-				objectRelationship = new ObjectRelationship();
-				objectRelationship.addRelationship(archivalObjectId,
-						"isPartOf", md.getExperimentId());
-				System.out.println("LOGFile file--");
+				System.out.println("MosflmGenFile file--");			
 			} else if (fileFormat.getFormat().equals(
 					CrystallographyObjectType.MiscFile.getType())) {
 				objectRelationship = new ObjectRelationship();
@@ -1013,7 +1015,8 @@ public class BrilSIPProcessor {
 				if (pred.equals("isPartOf") || pred.equals("hasPart")|| pred.equals("isMemberOf")) {
 					prefix_predicate = FedoraNamespace.FEDORA.getPrefix();
 					namespaceURI_predicate = FedoraNamespace.FEDORARELSEXT.getURI();
-				} else if (pred.equals("wasGeneratedBy") || pred.equals("wasDerivedFrom")) {
+				} else if (pred.equals("wasGeneratedBy") || pred.equals("wasDerivedFrom") || 
+								pred.equals("wasControlledBy") || pred.equals("used")) {
 					prefix_predicate = FedoraNamespace.OPMV.getPrefix();
 					namespaceURI_predicate = FedoraNamespace.OPMV.getURI();
 				} else {					

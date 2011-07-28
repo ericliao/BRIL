@@ -449,7 +449,10 @@ public class CoordinateFileRelationshipGeneratorImpl implements
 			if (DEFObjectId.contains("/")) {
 				DEFObjectId = DEFObjectId.substring(DEFObjectId.lastIndexOf("/") + 1);
 			}
-			object = new QName("", DEFObjectId, FedoraNamespace.FEDORA.getURI());				
+			if (DEFObjectId.contains(":")) {
+				DEFObjectId = DEFObjectId.substring(DEFObjectId.lastIndexOf(":") + 1);
+			}
+			object = new QName("", DEFObjectId, FedoraNamespace.FEDORA.getURI() + FedoraNamespace.BRIL.getPrefix());				
 			relsExt.addRelationship(predicate, object);
 			System.out.println("relationship: " + phaserProcessID + " --used--> " + DEFObjectId);
 			
@@ -458,7 +461,10 @@ public class CoordinateFileRelationshipGeneratorImpl implements
 			if (foundDEFObjectId.contains("/")) {
 				foundDEFObjectId = foundDEFObjectId.substring(foundDEFObjectId.lastIndexOf("/") + 1);
 			}
-			object = new QName("", foundDEFObjectId, FedoraNamespace.FEDORA.getURI());				
+			if (foundDEFObjectId.contains(":")) {
+				foundDEFObjectId = foundDEFObjectId.substring(foundDEFObjectId.lastIndexOf(":") + 1);
+			}
+			object = new QName("", foundDEFObjectId, FedoraNamespace.FEDORA.getURI() + FedoraNamespace.BRIL.getPrefix());				
 			relsExt.addRelationship(predicate, object);
 			System.out.println("relationship: " + phaserProcessID + " --used--> " + foundDEFObjectId);
 			
@@ -469,8 +475,11 @@ public class CoordinateFileRelationshipGeneratorImpl implements
 				if (foundInputObjectId.contains("/")) {
 					foundInputObjectId = foundInputObjectId.substring(foundInputObjectId.lastIndexOf("/") + 1);
 				}
+				if (foundInputObjectId.contains(":")) {
+					foundInputObjectId = foundInputObjectId.substring(foundInputObjectId.lastIndexOf(":") + 1);
+				}
 				predicate = new QName(FedoraNamespace.OPMV.getURI(), BrilRelationshipType.used.getRelation(), FedoraNamespace.OPMV.getPrefix());
-				object = new QName("", foundInputObjectId, FedoraNamespace.FEDORA.getURI());				
+				object = new QName("", foundInputObjectId, FedoraNamespace.FEDORA.getURI() + FedoraNamespace.BRIL.getPrefix());				
 				relsExt.addRelationship(predicate, object);				
 				System.out.println("relationship: " + phaserProcessID + " --used--> " + foundInputObjectId);
 			}
@@ -788,7 +797,10 @@ public class CoordinateFileRelationshipGeneratorImpl implements
 			if (DEFObjectId.contains("/")) {
 				DEFObjectId = DEFObjectId.substring(DEFObjectId.lastIndexOf("/") + 1);
 			}
-			object = new QName("", DEFObjectId, FedoraNamespace.FEDORA.getURI());				
+			if (DEFObjectId.contains(":")) {
+				DEFObjectId = DEFObjectId.substring(DEFObjectId.lastIndexOf(":") + 1);
+			}
+			object = new QName("", DEFObjectId, FedoraNamespace.FEDORA.getURI() + FedoraNamespace.BRIL.getPrefix());				
 			relsExt.addRelationship(predicate, object);
 			System.out.println("relationship: " + chainsawProcessID + " --used--> " + DEFObjectId);
 			
@@ -799,8 +811,11 @@ public class CoordinateFileRelationshipGeneratorImpl implements
 				if (inputObjectId.contains("/")) {
 					inputObjectId = inputObjectId.substring(inputObjectId.lastIndexOf("/") + 1);
 				}
+				if (inputObjectId.contains(":")) {
+					inputObjectId = inputObjectId.substring(inputObjectId.lastIndexOf(":") + 1);
+				}
 				predicate = new QName(FedoraNamespace.OPMV.getURI(), BrilRelationshipType.used.getRelation(), FedoraNamespace.OPMV.getPrefix());
-				object = new QName("", inputObjectId, FedoraNamespace.FEDORA.getURI());				
+				object = new QName("", inputObjectId, FedoraNamespace.FEDORA.getURI() + FedoraNamespace.BRIL.getPrefix());				
 				relsExt.addRelationship(predicate, object);				
 				System.out.println("relationship: " + chainsawProcessID + " --used--> " + inputObjectId);
 			}

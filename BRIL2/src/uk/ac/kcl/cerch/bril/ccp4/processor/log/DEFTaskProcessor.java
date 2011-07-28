@@ -16,7 +16,7 @@ import uk.ac.kcl.cerch.bril.ccp4.TaskObject;
  * It has a method that processes the file and returns 
  * {@code TaskObject} that holds metadata about the task    
  * 
- * TODO: add processing for .seq files  
+ * TODO: add processing for .log files  
  *   
  * @author Shrija
  * @author Eric
@@ -163,6 +163,13 @@ public class DEFTaskProcessor{
 			readLine(projectLine, "PROJECT");
 			System.out.println(projectLine);
 		}
+		
+		if (headerLine.contains("LOG_FILE")) {
+			String logLine = lineScanner.next();
+			readLine(logLine, "LOG_FILE");
+			System.out.println(logLine);
+		}
+		
 		lineScanner.close();
 	}
 
@@ -519,6 +526,13 @@ public class DEFTaskProcessor{
 			s.useDelimiter("\\s*" + delimiter + "\\s*");
 			if (taskObject.getProjectName() == null) {
 				taskObject.setProjectName(s.next());
+			}			
+		} else if (delimiter == "LOG_FILE") {
+			s.useDelimiter("\\s*" + delimiter + "\\s*");
+			if (taskObject.getLogFile() == null) {
+				String logFile = s.next();
+				taskObject.setLogFile(logFile.trim());
+				System.out.println("logFile: [" + logFile.trim() + "]");
 			}
 		}
 	}

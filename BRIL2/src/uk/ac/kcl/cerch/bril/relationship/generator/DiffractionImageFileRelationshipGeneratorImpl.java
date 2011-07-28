@@ -191,6 +191,12 @@ public class DiffractionImageFileRelationshipGeneratorImpl implements Diffractio
 		if (experimentId.lastIndexOf(':') != -1){
 			expId = experimentId.substring(experimentId.lastIndexOf(':') + 1);
 		}
+		
+		String diffId = diffractionSetId;
+		if (diffractionSetId.lastIndexOf(':') != -1){
+			diffId = diffractionSetId.substring(diffractionSetId.lastIndexOf(':') + 1);
+		}
+		
 		String integrateProcessID = "bril:process-" + IDGenerator.generateUUID();
 		ByteArrayOutputStream relsExt_baos = new ByteArrayOutputStream();
 		
@@ -212,14 +218,14 @@ public class DiffractionImageFileRelationshipGeneratorImpl implements Diffractio
 			relsExt = new FedoraRelsExt(FedoraNamespace.FEDORA.getURI() + integrateProcessID);
 			
 			// Process ---isPartOf---> Experiment
-			QName predicate = new QName(FedoraNamespace.FEDORARELSEXT.getURI(), "isPartOf", FedoraNamespace.FEDORA.getPrefix());
+			QName predicate = new QName(FedoraNamespace.FEDORARELSEXT.getURI(), "isPartOf", FedoraNamespace.FEDORA.getPrefix() );
 			QName object = new QName("", expId, FedoraNamespace.FEDORA.getURI() + FedoraNamespace.BRIL.getPrefix());				
 			relsExt.addRelationship(predicate, object);	
 			System.out.println("relationship: " + integrateProcessID + " --isPartOf--> " + expId);
 			
 			// Process ---used---> Diffraction Image Set
 			predicate = new QName( FedoraNamespace.OPMV.getURI(), BrilRelationshipType.used.getRelation(), FedoraNamespace.OPMV.getPrefix() );
-			object = new QName( "", diffractionSetId, FedoraNamespace.FEDORA.getURI() + FedoraNamespace.BRIL.getPrefix());				
+			object = new QName("", diffId, FedoraNamespace.FEDORA.getURI() + FedoraNamespace.BRIL.getPrefix());				
 			relsExt.addRelationship(predicate, object);
 			System.out.println("relationship: " + integrateProcessID + " --used--> " + diffractionSetId);
 									

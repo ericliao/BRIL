@@ -209,6 +209,12 @@ public class ALNFileRelationshipGeneratorImpl implements ALNFileRelationshipGene
 		if (experimentId.lastIndexOf(':') != -1){
 			expId = experimentId.substring(experimentId.lastIndexOf(':') + 1);
 		}
+		
+		String sId = searchProcessId;
+		if (searchProcessId.lastIndexOf(':') != -1){
+			sId = searchProcessId.substring(searchProcessId.lastIndexOf(':') + 1);
+		}
+		
 		String clustalProcessID = "bril:process-" + IDGenerator.generateUUID();
 		ByteArrayOutputStream relsExt_baos = new ByteArrayOutputStream();		
 		
@@ -236,14 +242,14 @@ public class ALNFileRelationshipGeneratorImpl implements ALNFileRelationshipGene
 			System.out.println("relationship: " + clustalProcessID + " --isPartOf--> " + expId);		
 												
 			// Process ---wasControllededBy---> ClustalW2 Website
-			predicate = new QName(FedoraNamespace.BRILRELS.getURI(), BrilRelationshipType.wasControlledBy.getRelation(), FedoraNamespace.BRILRELS.getPrefix());
+			predicate = new QName(FedoraNamespace.OPMV.getURI(), BrilRelationshipType.wasControlledBy.getRelation(), FedoraNamespace.OPMV.getPrefix());
 			object = new QName("", "ClustalW2 Website", "");					
 			relsExt.addRelationship(predicate, object);
 			System.out.println("relationship: " + clustalProcessID + " --wasControlledBy--> ClustalW2 Website");
 			
 			// Process ---wasTriggeredBy---> Search Process
-			predicate = new QName(FedoraNamespace.BRILRELS.getURI(), BrilRelationshipType.wasTriggeredBy.getRelation(), FedoraNamespace.BRILRELS.getPrefix());
-			object = new QName("", searchProcessId, FedoraNamespace.FEDORA.getURI());					
+			predicate = new QName(FedoraNamespace.OPMV.getURI(), BrilRelationshipType.wasTriggeredBy.getRelation(), FedoraNamespace.OPMV.getPrefix());
+			object = new QName("", sId, FedoraNamespace.FEDORA.getURI() + FedoraNamespace.BRIL.getPrefix());					
 			relsExt.addRelationship(predicate, object);
 			System.out.println("relationship: " + clustalProcessID + " --wasTriggeredBy--> " + searchProcessId);
 			

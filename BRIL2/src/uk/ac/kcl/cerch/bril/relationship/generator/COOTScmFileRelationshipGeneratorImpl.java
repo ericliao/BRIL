@@ -55,7 +55,6 @@ public class COOTScmFileRelationshipGeneratorImpl implements COOTScmFileRelation
 			 */
 			generatorUtils.searchForArchivalObjects(objectId);
 		} catch (ObjectStoreException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -102,11 +101,14 @@ public class COOTScmFileRelationshipGeneratorImpl implements COOTScmFileRelation
 						addRelationshipToOtherFedoraObject(outputObjectId, BrilRelationshipType.wasGeneratedBy.getRelation(), 
 								cootProcessId, FedoraNamespace.OPMV.getURI());
 						System.out.println("relationship: " + outputObjectId + " --wasGeneratedBy--> " + cootProcessId);
-						for (int j = 0; j < inputObjectIdVector.size(); j++) {
-							String intputObjectId = inputObjectIdVector.get(j);
-							addRelationshipToOtherFedoraObject(outputObjectId, BrilRelationshipType.wasDerivedFrom.getRelation(), 
-									intputObjectId, FedoraNamespace.OPMV.getURI());
-							System.out.println("relationship: " + outputObjectId + " --wasDerivedFrom--> " + intputObjectId);
+						for (int j = 0; j < inputObjectIdVector.size(); j++) {							
+							String inputObjectId = inputObjectIdVector.get(j);
+							if (inputObjectId != outputObjectId) {
+								// This is not the same session, so add 'wasDerivedFrom' relationship
+								addRelationshipToOtherFedoraObject(outputObjectId, BrilRelationshipType.wasDerivedFrom.getRelation(), 
+										inputObjectId, FedoraNamespace.OPMV.getURI());
+								System.out.println("relationship: " + outputObjectId + " --wasDerivedFrom--> " + inputObjectId);
+							}
 						}
 					}			
 				}
@@ -193,10 +195,8 @@ public class COOTScmFileRelationshipGeneratorImpl implements COOTScmFileRelation
 			relsExt.serialize(relsExt_baos, "");
 						
 		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (BrilTransformException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -212,7 +212,6 @@ public class COOTScmFileRelationshipGeneratorImpl implements COOTScmFileRelation
 			FedoraAdminstrationImpl fedoraAdmin = new FedoraAdminstrationImpl();
 			fedoraAdmin.storeObject(dsc1);
 		} catch (BrilObjectRepositoryException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -262,7 +261,6 @@ public class COOTScmFileRelationshipGeneratorImpl implements COOTScmFileRelation
 				System.out.println("Cant find this Id: " + subject);
 			}
 		} catch (BrilObjectRepositoryException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

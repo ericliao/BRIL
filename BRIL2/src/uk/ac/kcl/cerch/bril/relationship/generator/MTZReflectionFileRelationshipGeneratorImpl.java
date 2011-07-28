@@ -192,8 +192,6 @@ public class MTZReflectionFileRelationshipGeneratorImpl implements
 	 * From the metadata of the COM file datastream, search for the output file and 
 	 * if this is same as the current MTZ file, it adds the relationships to the COM file and the inputs and taskname.
 	 * 
-	 * TODO: if a COM object is found, create a new process and add relationships to the COM file, the input MTZ and output MTZ
-	 * 
 	 * @param objectId Identifier of the current MTZ object
 	 * @param experimentId experiment identifier to which this MTZ object belongs to
 	 * @param objectRelationship ObjectRelationship object that would hold the relationship triples
@@ -325,6 +323,12 @@ public class MTZReflectionFileRelationshipGeneratorImpl implements
 		if (experimentId.lastIndexOf(':') != -1){
 			expId = experimentId.substring(experimentId.lastIndexOf(':') + 1);
 		}
+		
+		String comId = selectedCOMObjectId;
+		if (selectedCOMObjectId.lastIndexOf(':') != -1){
+			comId = selectedCOMObjectId.substring(selectedCOMObjectId.lastIndexOf(':') + 1);
+		}
+		
 		String CCP4ProcessID = "bril:process-" + IDGenerator.generateUUID();
 		ByteArrayOutputStream relsExt_baos = new ByteArrayOutputStream();
 		
@@ -355,7 +359,7 @@ public class MTZReflectionFileRelationshipGeneratorImpl implements
 												
 			// Process ---used---> COM file
 			predicate = new QName(FedoraNamespace.OPMV.getURI(), BrilRelationshipType.used.getRelation(), FedoraNamespace.OPMV.getPrefix());
-			object = new QName("", selectedCOMObjectId, FedoraNamespace.FEDORA.getURI());				
+			object = new QName("", comId, FedoraNamespace.FEDORA.getURI() + FedoraNamespace.BRIL.getPrefix());				
 			relsExt.addRelationship(predicate, object);
 			System.out.println("relationship: " + CCP4ProcessID + " --used--> " + selectedCOMObjectId);
 			
@@ -366,8 +370,11 @@ public class MTZReflectionFileRelationshipGeneratorImpl implements
 				if (inputObjectId.contains("/")) {
 					inputObjectId = inputObjectId.substring(inputObjectId.lastIndexOf("/") + 1);
 				}
+				if (inputObjectId.contains(":")) {
+					inputObjectId = inputObjectId.substring(inputObjectId.lastIndexOf(":") + 1);
+				}
 				predicate = new QName(FedoraNamespace.OPMV.getURI(), BrilRelationshipType.used.getRelation(), FedoraNamespace.OPMV.getPrefix());
-				object = new QName("", inputObjectId, FedoraNamespace.FEDORA.getURI());				
+				object = new QName("", inputObjectId, FedoraNamespace.FEDORA.getURI() + FedoraNamespace.BRIL.getPrefix());				
 				relsExt.addRelationship(predicate, object);				
 				System.out.println("relationship: " + CCP4ProcessID + " --used--> " + inputObjectId);
 			}						
@@ -467,7 +474,10 @@ public class MTZReflectionFileRelationshipGeneratorImpl implements
 			if (DEFObjectId.contains("/")) {
 				DEFObjectId = DEFObjectId.substring(DEFObjectId.lastIndexOf("/") + 1);
 			}
-			object = new QName("", DEFObjectId, FedoraNamespace.FEDORA.getURI());				
+			if (DEFObjectId.contains(":")) {
+				DEFObjectId = DEFObjectId.substring(DEFObjectId.lastIndexOf(":") + 1);
+			}
+			object = new QName("", DEFObjectId, FedoraNamespace.FEDORA.getURI() + FedoraNamespace.BRIL.getPrefix());				
 			relsExt.addRelationship(predicate, object);
 			System.out.println("relationship: " + phaserProcessID + " --used--> " + DEFObjectId);
 			
@@ -476,7 +486,10 @@ public class MTZReflectionFileRelationshipGeneratorImpl implements
 			if (foundDEFObjectId.contains("/")) {
 				foundDEFObjectId = foundDEFObjectId.substring(foundDEFObjectId.lastIndexOf("/") + 1);
 			}
-			object = new QName("", foundDEFObjectId, FedoraNamespace.FEDORA.getURI());				
+			if (foundDEFObjectId.contains(":")) {
+				foundDEFObjectId = foundDEFObjectId.substring(foundDEFObjectId.lastIndexOf(":") + 1);
+			}
+			object = new QName("", foundDEFObjectId, FedoraNamespace.FEDORA.getURI()+ FedoraNamespace.BRIL.getPrefix());				
 			relsExt.addRelationship(predicate, object);
 			System.out.println("relationship: " + phaserProcessID + " --used--> " + foundDEFObjectId);
 			
@@ -486,6 +499,9 @@ public class MTZReflectionFileRelationshipGeneratorImpl implements
 				String foundInputObjectId = foundInputObjectIdVector.get(i).toString();
 				if (foundInputObjectId.contains("/")) {
 					foundInputObjectId = foundInputObjectId.substring(foundInputObjectId.lastIndexOf("/") + 1);
+				}
+				if (foundInputObjectId.contains(":")) {
+					foundInputObjectId = foundInputObjectId.substring(foundInputObjectId.lastIndexOf(":") + 1);
 				}
 				predicate = new QName(FedoraNamespace.OPMV.getURI(), BrilRelationshipType.used.getRelation(), FedoraNamespace.OPMV.getPrefix());
 				object = new QName("", foundInputObjectId, FedoraNamespace.FEDORA.getURI());				

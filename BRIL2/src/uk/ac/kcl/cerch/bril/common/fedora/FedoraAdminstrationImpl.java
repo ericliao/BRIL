@@ -1068,7 +1068,7 @@ public class FedoraAdminstrationImpl implements FedoraAdministration {
 	 * select $object $id from <#ri>
 	 * where $object <dc:title> 'IntegrateDiffractionImagesProcess'
 	 * and $object <fedora-rels-ext:isPartOf> <info:fedora/bril:exp-354031ec-1380-42d4-ab1b-37e0c1a0428c>
-	 * and $object <fedora-rels-ext:used> <info:fedora/bril:bril:e6063212-ca74-4b36-b041-24d9db50537f>
+	 * and $object <opmv:used> <info:fedora/bril:bril:e6063212-ca74-4b36-b041-24d9db50537f>
 	 * and $object <dc:identifier> $id
 	 * 
 	 * @param expId experiment id
@@ -1090,18 +1090,19 @@ public class FedoraAdminstrationImpl implements FedoraAdministration {
 		}
 		
 		String risearchURL = this.fedoraHandler.getFedoraURL() + "/risearch";		
-
-		String predicate_ns = null;
 		
+		String predicate_ns = null;		
 		String requestParameters = "query="
 			// select+$object+$id+from+<#ri>where+$object+<dc:title>+'objectTitle'
 			+ "select+%24object+%24id+from+%3C%23ri%3Ewhere+%24object+%3Cdc%3Atitle%3E+%27" + objectTitle + "%27"
 			// and+$object+<fedora-rels-ext:isPartOf>+<info:fedora/bril:expId1>
 			+ "and+%24object+%3Cfedora-rels-ext%3AisPartOf%3E+%3Cinfo%3Afedora%2Fbril%3A" + expId1 + "%3E"
-			// and+$object+<fedora-rels-ext:predicate>+<info:fedora/bril:objectID>
-			+ "and+%24object+%3Cfedora-rels-ext%3A" + predicate + "%3E+%3Cinfo%3Afedora%2Fbril%3A" + objectID + "%3E"
+			// and+$object+<http://purl.org/net/opmv/ns#predicate>+<info:fedora/bril:objectID>
+			+ "and+%24object+%3Chttp%3A//purl.org/net/opmv/ns%23" + predicate + "%3E+%3Cinfo%3Afedora%2Fbril%3A" + objectID + "%3E"
 			// and+$object+<dc:identifier>+$id&format=Sparql&type=tuples&lang=itql
 			+ "and+%24object+%3Cdc%3Aidentifier%3E+%24id&format=Sparql&type=tuples&lang=itql";
+		
+		//System.out.println("requestParameters: (" + requestParameters + ")");
 		
 		try {
 			// Send data

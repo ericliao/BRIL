@@ -62,6 +62,13 @@ public class DOCFileRelationshipGeneratorImpl implements DOCFileRelationshipGene
 		if (experimentId.lastIndexOf(':') != -1){
 			expId = experimentId.substring(experimentId.lastIndexOf(':') + 1);
 		}
+		
+		String oId = objectID;
+		//check if id has the prefix bril, if true true take only the bit after 'bril:'
+		if (objectID.lastIndexOf(':') != -1){
+			oId = objectID.substring(objectID.lastIndexOf(':') + 1);
+		}
+		
 		String splitProcessID = "bril:process-" + IDGenerator.generateUUID();
 		ByteArrayOutputStream relsExt_baos = new ByteArrayOutputStream();
 		
@@ -90,7 +97,7 @@ public class DOCFileRelationshipGeneratorImpl implements DOCFileRelationshipGene
 			
 			// Process ---used---> Sequence Document
 			predicate = new QName(FedoraNamespace.OPMV.getURI(), BrilRelationshipType.used.getRelation(), FedoraNamespace.OPMV.getPrefix());
-			object = new QName("", objectID, FedoraNamespace.FEDORA.getURI());				
+			object = new QName("", oId, FedoraNamespace.FEDORA.getURI() + FedoraNamespace.BRIL.getPrefix());				
 			relsExt.addRelationship(predicate, object);
 			System.out.println("relationship: " + splitProcessID + " --used--> " + objectID);
 									

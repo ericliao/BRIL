@@ -686,6 +686,35 @@ public class GeneratorUtils {
 
 	}
 	
+	/**
+	 * Creates a TaskObject object using the object identifer of a DEF file object and 
+	 * compares if the log file in the TaskObject is same as the current Bril object
+	 * (Log file)
+	 *
+	 * @see CoordinateFileRelationshipGeneratorImpl and MTZReflectionFileRelationshipGeneratorImpl processCCP4IDefFile method
+	 * @param DEFObjectId Object identifier of CCP4 DEF file
+	 * @return boolean result
+	 */
+	
+	public boolean hasLogInTaskObject(String DEFObjectId) {
+		boolean result = false;
+		String originalObjectPath = getObjectTitle();
+		String originalObjectFilename = originalObjectPath.substring(originalObjectPath.lastIndexOf("/") + 1);
+		System.out.println("originalObjectFilename: [" + originalObjectFilename + "]");
+		
+		byte[] taskDEFFileMetadata = getDatastreamType(DEFObjectId,DataStreamType.ObjectMetadata);			
+		String logFile = getValueFromTaskXML(taskDEFFileMetadata, TaskObjectElement.LOG_FILENAME);
+		
+		System.out.println("logFile: [" + logFile + "]");
+		
+		if (logFile.equals(originalObjectFilename)) {
+			result = true;
+		}	
+		
+		return result;
+
+	}
+	
 	 /**
 	  * Puts the object XML metadata in byte[] in the TaskObjectVector object.
 	  * This method is called when CCP4I database DEF file is being processed for object relationship generation 

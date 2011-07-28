@@ -148,7 +148,7 @@ public class DEFLogFileCharacteriserImpl implements DEFLogFileCharacteriser {
 	private String runXMLCreation(TaskObject taskObject) throws Exception {
 		String task = taskObject.getTaskName();
 		//format 17 Jun 2008  09:29:03
-		String date = taskObject.getRunDateTime();
+		String taskLog = taskObject.getLogFile();
 		String jobId= taskObject.getJobID();
 		Vector<String> inputs = taskObject.getInputFileNames();
 		Vector<String> outputs = taskObject.getOutputFileNames();
@@ -193,6 +193,10 @@ public class DEFLogFileCharacteriserImpl implements DEFLogFileCharacteriser {
 		 //close element </output_filenames>
 	     writer.writeEndElement();  
 	 
+	     writer.writeStartElement(task_dataURI,TaskObjectElement.LOG_FILENAME.localName());
+	     writer.writeCharacters(taskLog);
+	     writer.writeEndElement();
+	     
 		
 		// close element </task>
 		writer.writeEndElement();

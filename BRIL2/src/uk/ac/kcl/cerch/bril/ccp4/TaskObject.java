@@ -17,6 +17,7 @@ public class TaskObject {
 	private String projectName;
 	private String softwareVersion;
 	private String softwareName;
+	private String logFile;
 	private Vector<String> inputFileNames = new Vector<String>();
 	private Vector<String> outputFileNames = new Vector<String>();
 
@@ -71,7 +72,7 @@ public class TaskObject {
 	}
 	
 	public void setSoftwareName(String softwareName){
-		this.softwareName =softwareName;
+		this.softwareName = softwareName;
 	}
 
 	/**
@@ -122,6 +123,14 @@ public class TaskObject {
 
 	public Vector<String> getOutputFileNames() {
 		return outputFileNames;
+	}
+
+	public void setLogFile(String logFile) {
+		this.logFile = logFile;		
+	}
+	
+	public String getLogFile() {
+		return logFile;
 	}
 
 }

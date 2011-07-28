@@ -35,7 +35,7 @@ public final class FedoraNamespaceContext implements NamespaceContext
         METS("METS","http://www.loc.gov/METS/"),
         BRILRELS( "bril_rel", "http://bril-dev.cerch.kcl.ac.uk/relationship#" ),
         BRIL( "bril", "http://bril-dev.cerch.kcl.ac.uk/#" ),
-        OPMV( "opmv", "	http://purl.org/net/opmv/ns#" ),
+        OPMV( "opmv", "http://purl.org/net/opmv/ns#" ),
         CRYST("cryst","http://bril-dev.cerch.kcl.ac.uk/crystallography#");
        
         private String prefix;

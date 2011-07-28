@@ -84,6 +84,9 @@ public class COMScriptFileCharacteriserImpl implements COMScriptFileCharacterise
 		 //close element </output_filenames>
 		writer.writeEndElement();
 		
+		writer.writeStartElement(task_dataURI,TaskObjectElement.LOG_FILENAME.localName());
+		writer.writeCharacters(taskObject.getLogFile());
+		writer.writeEndElement();
 		
 		// close element </task>
 		writer.writeEndElement();

@@ -32,6 +32,8 @@ public class FedoraRelsExt {
     private static FedoraNamespace oai_dc = new FedoraNamespaceContext().getNamespace( "oai_dc" );
     private static FedoraNamespace dc = new FedoraNamespaceContext().getNamespace( "dc" );
     private static FedoraNamespace rels = new FedoraNamespaceContext().getNamespace( "rel" );
+
+    private static FedoraNamespace opmv = new FedoraNamespaceContext().getNamespace( "opmv" );
     
     private static FedoraNamespace bril_rels = new FedoraNamespaceContext().getNamespace( "bril_rel" );
     
@@ -82,30 +84,27 @@ public class FedoraRelsExt {
 
             xmlw.writeNamespace( rdfs.getPrefix(), rdfs.getURI() );
             xmlw.writeNamespace( bril_rels.getPrefix(), bril_rels.getURI() );
+            xmlw.writeNamespace( opmv.getPrefix(), opmv.getURI() );
 
             xmlw.writeStartElement( rdf.getURI(), "Description" );
             xmlw.writeAttribute( rdf.getPrefix(), rdf.getURI(), "about", this.id );
             for( Map.Entry<QName, QName> set : triples.entrySet() )
-            {
-                //QName key = set.getKey();
-                //QName val = set.getValue();
-                
-                QName key = set.getValue(); //predicate -
+            {               
+                QName key = set.getValue(); //predicate -                
                 QName val = set.getKey(); //object 
 
                 String attr_value;
          
                if(val.getPrefix()==""){//its a literal value
                     xmlw.writeStartElement( key.getPrefix(), key.getLocalPart(), key.getNamespaceURI() );                 
-                	attr_value =val.getLocalPart();
+                	attr_value = val.getLocalPart();
                 	xmlw.writeCharacters(attr_value);
                 	xmlw.writeEndElement();  
           
                 }else{
-                    xmlw.writeEmptyElement( key.getPrefix(), key.getLocalPart(), key.getNamespaceURI() );  
-                    attr_value = val.getPrefix()+":"+val.getLocalPart();
-                    xmlw.writeAttribute(rdf.getPrefix(), rdf.getURI(), "resource", attr_value);
-                  
+                    xmlw.writeEmptyElement( key.getPrefix(), key.getLocalPart(), key.getNamespaceURI() );
+                    attr_value = val.getPrefix()+":"+val.getLocalPart();	                    
+                    xmlw.writeAttribute(rdf.getPrefix(), rdf.getURI(), "resource", attr_value);                  
                 }
 
                // xmlw.writeAttribute(rdf.getPrefix(), rdf.getURI(), "resource", attr_value);
