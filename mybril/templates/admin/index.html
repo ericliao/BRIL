@@ -13,11 +13,225 @@
 
 {% block content %}
 
+{% if user.is_staff %}
+<script src="{{ STATIC_URL }}jquery/jquery-1.6.2.min.js"></script>
+<script src="{{ STATIC_URL }}jquery/jquery-ui-1.8.15.custom.min.js"></script>
+<script src="{{ STATIC_URL }}springy/springy.js"></script>
+<script src="{{ STATIC_URL }}springy/springyui.js"></script>
+<script src="{{ STATIC_URL }}contextMenu/jquery.ui.position.js" type="text/javascript"></script>
+<script src="{{ STATIC_URL }}contextMenu/jquery.contextMenu.js" type="text/javascript"></script>
+<link href="{{ STATIC_URL }}contextMenu/jquery.contextMenu.css" rel="stylesheet" type="text/css" />
+<link href="{{ STATIC_URL }}css/smoothness/jquery-ui-1.8.15.custom.css" rel="stylesheet" type="text/css" />
+
+<script>
+
+
+var o = 
+	{
+		nodes: [
+			{id: 0, data: {label: 'h2-2_MS_1_001.img', shape: 'circle', format: 'diffractionImage'}},
+			{id: 1, data: {label: 'h2-2_MS_1_002.img', shape: 'circle', format: 'diffractionImage'}},
+			{id: 2, data: {label: 'h2-2_MS_1_003.img', shape: 'circle', format: 'diffractionImage'}},
+			{id: 3, data: {label: 'h2-2_MS_1_004.img', shape: 'circle', format: 'diffractionImage'}},
+			{id: 4, data: {label: 'h2-2_MS_1_005.img', shape: 'circle', format: 'diffractionImage'}},
+			{id: 5, data: {label: 'DiffractionImageSet', shape: 'circle', format: 'diffractionImageSet'}},
+			{id: 6, data: {label: 'IntegrateDiffractionImagesProcess', shape: 'square'}},
+			{id: 7, data: {label: 'high.mtz', shape: 'circle', format: 'mtzReflectionFile'}},
+			{id: 8, data: {label: 'Mosflm', shape: 'hexagon'}}
+		],
+		edges: [
+			{from: 0, to: 5, directed: true, data: {color: '#00A0B0', text: 'isMemberOf'}},
+			{from: 1, to: 5, directed: true, data: {color: '#00A0B0', text: 'isMemberOf'}},
+			{from: 2, to: 5, directed: true, data: {color: '#00A0B0', text: 'isMemberOf'}},
+			{from: 3, to: 5, directed: true, data: {color: '#00A0B0', text: 'isMemberOf'}},
+			{from: 4, to: 5, directed: true, data: {color: '#00A0B0', text: 'isMemberOf'}},
+			{from: 6, to: 5, directed: true, data: {color: '#6A4A3C', text: 'used'}},			
+			{from: 6, to: 8, directed: true, data: {color: '#7DBE3C', text: 'wasControlledBy'}},			
+			{from: 7, to: 6, directed: true, data: {color: '#CC333F', text: 'wasGeneratedBy'}},
+			{from: 7, to: 5, directed: true, data: {color: '#EB6841', text: 'wasDerivedFrom'}}			
+		]
+	};
+
+var graph = new Graph();
+
+
+var n = [];
+
+n[0] = graph.newNode({label: 'h2-2_MS_1_001.img', shape: 'circle', format: 'diffractionImage'});
+n[1] = graph.newNode({label: 'h2-2_MS_1_002.img', shape: 'circle', format: 'diffractionImage'});
+n[2] = graph.newNode({label: 'h2-2_MS_1_003.img', shape: 'circle', format: 'diffractionImage'});
+n[3] = graph.newNode({label: 'h2-2_MS_1_004.img', shape: 'circle', format: 'diffractionImage'});
+n[4] = graph.newNode({label: 'h2-2_MS_1_005.img', shape: 'circle', format: 'diffractionImage'});
+n[5] = graph.newNode({label: 'DiffractionImageSet', shape: 'circle', format: 'diffractionImageSet'});
+n[6] = graph.newNode({label: 'IntegrateDiffractionImagesProcess', shape: 'square'});
+n[7] = graph.newNode({label: 'high.mtz', shape: 'circle', format: 'mtzReflectionFile'});
+
+n[8] = graph.newNode({label: 'sort.com', shape: 'circle', format: 'comFile'});
+n[9] = graph.newNode({label: 'CCP4 Process: SORTMTZ', shape: 'square'});
+n[10] = graph.newNode({label: 'sort.log', shape: 'circle', format: 'logFile'});
+n[11] = graph.newNode({label: 'sorted-high.mtz', shape: 'circle', format: 'mtzReflectionFile'});
+
+n[12] = graph.newNode({label: 'scala1.com', shape: 'circle', format: 'comFile'});
+n[13] = graph.newNode({label: 'CCP4 Process: SCALA', shape: 'square'});
+n[14] = graph.newNode({label: 'scala1.log', shape: 'circle', format: 'logFile'});
+n[15] = graph.newNode({label: 'scala1.mtz', shape: 'circle', format: 'mtzReflectionFile'});
+
+n[16] = graph.newNode({label: 'truncate.com', shape: 'circle', format: 'comFile'});
+n[17] = graph.newNode({label: 'CCP4 Process: TRUNCATE', shape: 'square', format: 'CCP4Process'});
+n[18] = graph.newNode({label: 'truncate.log', shape: 'circle', format: 'logFile'});
+n[19] = graph.newNode({label: 'truncate.mtz', shape: 'circle', format: 'mtzReflectionFile'});
+
+n[20] = graph.newNode({label: 'free.com', shape: 'circle', format: 'comFile'});
+n[21] = graph.newNode({label: 'CCP4 Process: FREERFLAG', shape: 'square', format: 'CCP4Process'});
+n[22] = graph.newNode({label: 'free.log', shape: 'circle', format: 'logFile'});
+n[23] = graph.newNode({label: '5d5.mtz', shape: 'circle', format: 'mtzReflectionFile'});
+
+n[24] = graph.newNode({label: 'Mosflm', shape: 'hexagon'});
+n[25] = graph.newNode({label: 'CCP4', shape: 'hexagon'});
+n[26] = graph.newNode({label: 'CCP4', shape: 'hexagon'});
+n[27] = graph.newNode({label: 'CCP4', shape: 'hexagon'});
+n[28] = graph.newNode({label: 'CCP4', shape: 'hexagon'});
+
+graph.newEdge(n[0], n[5], {color: '#00A0B0', text: 'isMemberOf'});
+graph.newEdge(n[1], n[5], {color: '#00A0B0', text: 'isMemberOf'});
+graph.newEdge(n[2], n[5], {color: '#00A0B0', text: 'isMemberOf'});
+graph.newEdge(n[3], n[5], {color: '#00A0B0', text: 'isMemberOf'});
+graph.newEdge(n[4], n[5], {color: '#00A0B0', text: 'isMemberOf'});
+
+graph.newEdge(n[6], n[5], {color: '#6A4A3C', text: 'used'});
+graph.newEdge(n[6], n[24], {color: '#7DBE3C', text: 'wasControlledBy'});
+
+graph.newEdge(n[7], n[6], {color: '#CC333F', text: 'wasGeneratedBy'});
+graph.newEdge(n[7], n[5], {color: '#EB6841', text: 'wasDerivedFrom'});
+
+graph.newEdge(n[9], n[7], {color: '#6A4A3C', text: 'used'});
+graph.newEdge(n[9], n[8], {color: '#6A4A3C', text: 'used'});
+graph.newEdge(n[10], n[9], {color: '#CC333F', text: 'wasGeneratedBy'});
+graph.newEdge(n[11], n[9], {color: '#CC333F', text: 'wasGeneratedBy'});
+graph.newEdge(n[9], n[25], {color: '#7DBE3C', text: 'wasControlledBy'});
+
+graph.newEdge(n[11], n[7], {color: '#EB6841', text: 'wasDerivedFrom'});
+
+graph.newEdge(n[13], n[11], {color: '#6A4A3C', text: 'used'});
+graph.newEdge(n[13], n[12], {color: '#6A4A3C', text: 'used'});
+graph.newEdge(n[14], n[13], {color: '#CC333F', text: 'wasGeneratedBy'});
+graph.newEdge(n[15], n[13], {color: '#CC333F', text: 'wasGeneratedBy'});
+graph.newEdge(n[13], n[26], {color: '#7DBE3C', text: 'wasControlledBy'});
+
+graph.newEdge(n[15], n[11], {color: '#EB6841', text: 'wasDerivedFrom'});
+
+graph.newEdge(n[17], n[15], {color: '#6A4A3C', text: 'used'});
+graph.newEdge(n[17], n[16], {color: '#6A4A3C', text: 'used'});
+graph.newEdge(n[18], n[17], {color: '#CC333F', text: 'wasGeneratedBy'});
+graph.newEdge(n[19], n[17], {color: '#CC333F', text: 'wasGeneratedBy'});
+graph.newEdge(n[17], n[27], {color: '#7DBE3C', text: 'wasControlledBy'});
+
+graph.newEdge(n[19], n[15], {color: '#EB6841', text: 'wasDerivedFrom'});
+
+graph.newEdge(n[21], n[19], {color: '#6A4A3C', text: 'used'});
+graph.newEdge(n[21], n[20], {color: '#6A4A3C', text: 'used'});
+graph.newEdge(n[22], n[21], {color: '#CC333F', text: 'wasGeneratedBy'});
+graph.newEdge(n[23], n[21], {color: '#CC333F', text: 'wasGeneratedBy'});
+graph.newEdge(n[21], n[28], {color: '#7DBE3C', text: 'wasControlledBy'});
+
+graph.newEdge(n[23], n[19], {color: '#EB6841', text: 'wasDerivedFrom'});
+
+var checkbox_data = {"all_process": false, "all_objects": false, "all_controllers": false, "CCP4": false, "all_relationships": false, "used": false};
+var filtered = {"all_process": {}, "all_objects": {}, "all_controllers": {}, "CCP4": {}};
+var filtered_relationships = {"all_relationships": {}, "isMemberOf": {}, "used": {}, "wasControlledBy": {}, "wasDerivedFrom": {}, "wasGeneratedBy": {}}
+
+function filter(key, opt) {
+	var filter_key;
+	switch (key)
+	{
+		case "all_process":
+			filter_key = "square";
+			break;
+		case "all_objects":
+			filter_key = "circle";
+			break;
+		case "all_controllers":
+			filter_key = "hexagon";
+			break;			
+		default:
+			filter_key = key;
+			break;
+	}
+	if (checkbox_data[key] == false) {		
+		filtered[key] = graph.filterNodes(nodeType, filter_key);		
+		checkbox_data[key] = true;
+	}
+	else {
+		graph.merge(filtered[key]);
+		checkbox_data[key] = false;
+	}		
+}
+
+function filter_relationships(key, opt) {
+	if (checkbox_data[key] == false) {		
+		filtered_relationships[key] = graph.filterEdges(nodeType, key);		
+		checkbox_data[key] = true;
+	}
+	else {
+		graph.mergeEdges(filtered_relationships[key]);
+		checkbox_data[key] = false;
+	}		
+}
+
+jQuery(document).ready(function(){	
+	jQuery('#tabs #tabs-2 #springydemo').springy({ 'graph': graph });
+	//graph.loadData(o);
+	
+	/**************************************************
+	 * Menu for filtering display
+	 **************************************************/	
+	$.contextMenu({
+	    // define which elements trigger this menu
+	    selector: "#tabs-2",
+	    // define the elements of the menu
+	    items: {	    	    	
+	    	all_process: {name: "Filter Processes", type:'checkbox', callback: filter},
+	    	sep1: "---------",
+	        all_objects: {name: "Filter Objects",  type:'checkbox', callback: filter},
+	        sep2: "---------",
+	        controllers_menu: {
+				name: "Filter Controllers",				
+				items: {
+					all_controllers: {name: "All",  type:'checkbox', callback: filter},
+					CCP4: {name: "CCP4",  type:'checkbox', callback: filter}					
+				}
+			},
+			sep3: "---------",
+			relationships_menu: {
+				name: "Filter Relationships",				
+				items: {
+					all_relationships: {name: "All",  type:'checkbox', callback: filter_relationships},
+					used: {name: "used",  type:'checkbox', callback: filter_relationships}					
+				}
+			},	        	       
+	    },
+	    events: {
+			show: function(opt) {					
+				$.each(opt.inputs, function(key, item) {					
+					item.selected = checkbox_data[key] ? true : false;					
+				});				
+			}
+		}
+	});
+});
+
+</script>
+{% endif %}
+
 <script>
 	$(function() {
 		$( "#tabs" ).tabs();					
 	});
 </script>
+
+<div id="dialog">
+</div>
+
 <div id="tabs" >
 	<ul>
 	  {% if user.is_superuser %}

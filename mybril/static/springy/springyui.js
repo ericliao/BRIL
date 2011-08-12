@@ -123,12 +123,12 @@ jQuery.fn.springy = function(params) {
 	        $(this).removeClass('noclick');
 	    }
 	    else {
-			if (selected.node !== null)
-			{
-				// add a new dummy node at the same location?				
-			}
+			  if (selected.node !== null)
+			  {				
+		      $("#dialog").dialog({ title: selected.node.data.label });
+			  }
 	    }
-	});
+	});		
 	
 	Node.prototype.getWidth = function() {
 		ctx.save();
