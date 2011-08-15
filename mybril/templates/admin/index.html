@@ -99,95 +99,102 @@ graph.newEdge(n[3], n[5], {color: '#00A0B0', text: 'isMemberOf'});
 graph.newEdge(n[4], n[5], {color: '#00A0B0', text: 'isMemberOf'});
 
 graph.newEdge(n[6], n[5], {color: '#6A4A3C', text: 'used'});
-graph.newEdge(n[6], n[24], {color: '#7DBE3C', text: 'wasControlledBy'});
+graph.newEdge(n[6], n[24], {color: '#DA70D6', text: 'wasControlledBy'});
 
-graph.newEdge(n[7], n[6], {color: '#CC333F', text: 'wasGeneratedBy'});
+graph.newEdge(n[7], n[6], {color: '#7DBE3C', text: 'wasGeneratedBy'});
 graph.newEdge(n[7], n[5], {color: '#EB6841', text: 'wasDerivedFrom'});
 
 graph.newEdge(n[9], n[7], {color: '#6A4A3C', text: 'used'});
 graph.newEdge(n[9], n[8], {color: '#6A4A3C', text: 'used'});
-graph.newEdge(n[10], n[9], {color: '#CC333F', text: 'wasGeneratedBy'});
-graph.newEdge(n[11], n[9], {color: '#CC333F', text: 'wasGeneratedBy'});
-graph.newEdge(n[9], n[25], {color: '#7DBE3C', text: 'wasControlledBy'});
+graph.newEdge(n[10], n[9], {color: '#7DBE3C', text: 'wasGeneratedBy'});
+graph.newEdge(n[11], n[9], {color: '#7DBE3C', text: 'wasGeneratedBy'});
+graph.newEdge(n[9], n[25], {color: '#DA70D6', text: 'wasControlledBy'});
 
 graph.newEdge(n[11], n[7], {color: '#EB6841', text: 'wasDerivedFrom'});
 
 graph.newEdge(n[13], n[11], {color: '#6A4A3C', text: 'used'});
 graph.newEdge(n[13], n[12], {color: '#6A4A3C', text: 'used'});
-graph.newEdge(n[14], n[13], {color: '#CC333F', text: 'wasGeneratedBy'});
-graph.newEdge(n[15], n[13], {color: '#CC333F', text: 'wasGeneratedBy'});
-graph.newEdge(n[13], n[26], {color: '#7DBE3C', text: 'wasControlledBy'});
+graph.newEdge(n[14], n[13], {color: '#7DBE3C', text: 'wasGeneratedBy'});
+graph.newEdge(n[15], n[13], {color: '#7DBE3C', text: 'wasGeneratedBy'});
+graph.newEdge(n[13], n[26], {color: '#DA70D6', text: 'wasControlledBy'});
 
 graph.newEdge(n[15], n[11], {color: '#EB6841', text: 'wasDerivedFrom'});
 
 graph.newEdge(n[17], n[15], {color: '#6A4A3C', text: 'used'});
 graph.newEdge(n[17], n[16], {color: '#6A4A3C', text: 'used'});
-graph.newEdge(n[18], n[17], {color: '#CC333F', text: 'wasGeneratedBy'});
-graph.newEdge(n[19], n[17], {color: '#CC333F', text: 'wasGeneratedBy'});
-graph.newEdge(n[17], n[27], {color: '#7DBE3C', text: 'wasControlledBy'});
+graph.newEdge(n[18], n[17], {color: '#7DBE3C', text: 'wasGeneratedBy'});
+graph.newEdge(n[19], n[17], {color: '#7DBE3C', text: 'wasGeneratedBy'});
+graph.newEdge(n[17], n[27], {color: '#DA70D6', text: 'wasControlledBy'});
 
 graph.newEdge(n[19], n[15], {color: '#EB6841', text: 'wasDerivedFrom'});
 
 graph.newEdge(n[21], n[19], {color: '#6A4A3C', text: 'used'});
 graph.newEdge(n[21], n[20], {color: '#6A4A3C', text: 'used'});
-graph.newEdge(n[22], n[21], {color: '#CC333F', text: 'wasGeneratedBy'});
-graph.newEdge(n[23], n[21], {color: '#CC333F', text: 'wasGeneratedBy'});
-graph.newEdge(n[21], n[28], {color: '#7DBE3C', text: 'wasControlledBy'});
+graph.newEdge(n[22], n[21], {color: '#7DBE3C', text: 'wasGeneratedBy'});
+graph.newEdge(n[23], n[21], {color: '#7DBE3C', text: 'wasGeneratedBy'});
+graph.newEdge(n[21], n[28], {color: '#DA70D6', text: 'wasControlledBy'});
 
 graph.newEdge(n[23], n[19], {color: '#EB6841', text: 'wasDerivedFrom'});
 
-var checkbox_data = {"all_process": false, "all_objects": false, "all_controllers": false, "CCP4": false, "all_relationships": false, "used": false};
-var filtered = {"all_process": {}, "all_objects": {}, "all_controllers": {}, "CCP4": {}};
-var filtered_relationships = {"all_relationships": {}, "isMemberOf": {}, "used": {}, "wasControlledBy": {}, "wasDerivedFrom": {}, "wasGeneratedBy": {}}
-
+/*
 function filter(key, opt) {
-	var filter_key;
-	switch (key)
-	{
-		case "all_process":
-			filter_key = "square";
-			break;
-		case "all_objects":
-			filter_key = "circle";
-			break;
-		case "all_controllers":
-			filter_key = "hexagon";
-			break;			
-		default:
-			filter_key = key;
-			break;
+  if (opt != null) {
+	  var filter_key;
+	  switch (key)
+	  {
+		  case "all_process":
+			  filter_key = "square";
+			  break;
+		  case "all_objects":
+			  filter_key = "circle";
+			  break;
+		  case "all_controllers":
+			  filter_key = "hexagon";
+			  break;			
+		  default:
+			  filter_key = key;
+			  break;
+	  }
+	  if (jQuery.data(opt, key) == null) {
+	    var filtered_nodes = key + "_nodes";
+	    jQuery.data(opt, filtered_nodes, graph.filterNodes(nodeType, filter_key));
+		  jQuery.data(opt, key, true);		  
+	  }
+	  else {
+		  var filtered_nodes = key + "_nodes";
+		  graph.merge(jQuery.data(opt, filtered_nodes));
+		  jQuery.data(opt, key, null);		
+	  }		
 	}
-	if (checkbox_data[key] == false) {		
-		filtered[key] = graph.filterNodes(nodeType, filter_key);		
-		checkbox_data[key] = true;
-	}
-	else {
-		graph.merge(filtered[key]);
-		checkbox_data[key] = false;
-	}		
 }
 
 function filter_relationships(key, opt) {
-	if (checkbox_data[key] == false) {		
-		filtered_relationships[key] = graph.filterEdges(nodeType, key);		
-		checkbox_data[key] = true;
-	}
-	else {
-		graph.mergeEdges(filtered_relationships[key]);
-		checkbox_data[key] = false;
+  if (opt != null) {
+	  if (jQuery.data(opt, key) == null) {	
+	    var filtered_relations = key + "_edges";	
+		  jQuery.data(opt, filtered_relations, graph.filterEdges(nodeType, key));
+		  jQuery.data(opt, key, true);
+	  }
+	  else {
+		  var filtered_relations = key + "_edges";	
+		  graph.mergeEdges(jQuery.data(opt, filtered_relations));
+		  jQuery.data(opt, key, null);
+	  }
 	}		
 }
+*/
 
-jQuery(document).ready(function(){	
-	jQuery('#tabs #tabs-2 #springydemo').springy({ 'graph': graph });
+//jQuery(document).ready(function(){	
+  //jQuery('#tabs #tabs-3 #springydemo').springy({ 'graph': graph });
 	//graph.loadData(o);
 	
 	/**************************************************
 	 * Menu for filtering display
-	 **************************************************/	
+	 **************************************************/		 
+	/*
 	$.contextMenu({
 	    // define which elements trigger this menu
-	    selector: "#tabs-2",
+	    selector: "#tabs-3",
 	    // define the elements of the menu
 	    items: {	    	    	
 	    	all_process: {name: "Filter Processes", type:'checkbox', callback: filter},
@@ -197,7 +204,7 @@ jQuery(document).ready(function(){
 	        controllers_menu: {
 				name: "Filter Controllers",				
 				items: {
-					all_controllers: {name: "All",  type:'checkbox', callback: filter},
+					all_controllers: {name: "All", type:'checkbox', callback: filter},
 					CCP4: {name: "CCP4",  type:'checkbox', callback: filter}					
 				}
 			},
@@ -213,19 +220,104 @@ jQuery(document).ready(function(){
 	    events: {
 			show: function(opt) {					
 				$.each(opt.inputs, function(key, item) {					
-					item.selected = checkbox_data[key] ? true : false;					
+					item.selected = jQuery.data(opt, key) ? true : null;										
 				});				
 			}
 		}
 	});
-});
+	*/
+//});
 
 </script>
 {% endif %}
 
 <script>
 	$(function() {
-		$( "#tabs" ).tabs();					
+	
+	  var $tab_title_input = $("#tab_title"),
+		$tab_content_input = $("#tab_content");
+    var tab_counter = 3;
+		
+		var $tabs = $( "#tabs" ).tabs({
+		  tabTemplate: "<li><a href='#{href}'>#{label}</a> <span class='ui-icon ui-icon-close'></span></li>",
+		  add: function( event, ui ) {				
+				var new_canvas = "<canvas id='" + "explorer-" + tab_counter + "'/" + "></canvas>";
+				$( ui.panel ).append( new_canvas );
+				var canvas_path = "#tabs #tabs-" + tab_counter + " #explorer-" + tab_counter;
+				var tabs_path = "#tabs-" + tab_counter;
+				//$tabs.tabs('select', '#' + ui.panel.id);	
+			  jQuery(canvas_path).springy({ 'graph': graph });			  
+				
+				/**************************************************
+	      * Menu for filtering display
+	      **************************************************/		 
+	      /*
+        $.contextMenu({
+            // define which elements trigger this menu
+            selector: tabs_path,
+            // define the elements of the menu
+            items: {	    	    	
+            	all_process: {name: "Filter Processes", type:'checkbox', callback: filter},
+            	sep1: "---------",
+                all_objects: {name: "Filter Objects",  type:'checkbox', callback: filter},
+                sep2: "---------",
+                controllers_menu: {
+			        name: "Filter Controllers",				
+			        items: {
+				        all_controllers: {name: "All", type:'checkbox', callback: filter},
+				        CCP4: {name: "CCP4",  type:'checkbox', callback: filter}					
+			        }
+		        },
+		        sep3: "---------",
+		        relationships_menu: {
+			        name: "Filter Relationships",				
+			        items: {
+				        all_relationships: {name: "All",  type:'checkbox', callback: filter_relationships},
+				        used: {name: "used",  type:'checkbox', callback: filter_relationships}					
+			        }
+		        },	        	       
+            },
+            events: {
+		        show: function(opt) {					
+			        $.each(opt.inputs, function(key, item) {					
+				        item.selected = jQuery.data(opt, key) ? true : null;										
+			        });				
+		        }
+	        }
+        });		
+        */
+        
+			}
+		});					
+	
+	  $( "#tabs" ).bind( "tabsselect", function(event, ui) {
+      alert("here");
+    });
+	
+		// actual addTab function: adds new tab using the title input from the form above
+		function addTab() {
+			var tab_title = "Relationship Explorer: " + tab_counter;
+			try {
+			    $tabs.tabs( "add", "#tabs-" + tab_counter, tab_title );
+			  }
+			  catch (err)
+			  {
+			    console.log(err);
+			  }
+			tab_counter++;
+		}
+ 
+		$( "#add_tab" )
+			.button()
+			.click(function() {
+				addTab();
+			});
+		
+		$( "#tabs span.ui-icon-close" ).live( "click", function() {
+			var index = $( "li", $tabs ).index( $( this ).parent() );					
+			$tabs.tabs( "remove", index);
+		});
+		
 	});
 </script>
 
@@ -236,14 +328,15 @@ jQuery(document).ready(function(){
 	<ul>
 	  {% if user.is_superuser %}
 		  <li><a href="#tabs-1">Admin</a></li>
+		  <li><a href="#tabs-2">Experiment Browser</a></li>
+		{% else %}
+		  <li><a href="#tabs-1">Experiment Browser</a></li>  
 		{% endif %} 
-		<li><a href="#tabs-2">Browser</a></li>
 	</ul>
 	{% if user.is_superuser %}
 	<div id="tabs-1" class="ui-helper-clearfix">
               
         <div id="content-main">
-
         {% if app_list %}
             {% for app in app_list %}
                 <div class="module">
@@ -281,36 +374,40 @@ jQuery(document).ready(function(){
             <div class="module" id="recent-actions-module">
                 <h2>{% trans 'Recent Actions' %}</h2>
                 <h3>{% trans 'My Actions' %}</h3>
-                    {% load log %}
-                    {% get_admin_log 10 as admin_log for_user user %}
-                    {% if not admin_log %}
-                    <p>{% trans 'None available' %}</p>
+                {% load log %}
+                {% get_admin_log 10 as admin_log for_user user %}
+                {% if not admin_log %}
+                <p>{% trans 'None available' %}</p>
+                {% else %}
+                <ul class="actionlist">
+                {% for entry in admin_log %}
+                <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
+                    {% if entry.is_deletion or not entry.get_admin_url %}
+                        {{ entry.object_repr }}
                     {% else %}
-                    <ul class="actionlist">
-                    {% for entry in admin_log %}
-                    <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
-                        {% if entry.is_deletion or not entry.get_admin_url %}
-                            {{ entry.object_repr }}
-                        {% else %}
-                            <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
-                        {% endif %}
-                        <br/>
-                        {% if entry.content_type %}
-                            <span class="mini quiet">{% filter capfirst %}{% trans entry.content_type.name %}{% endfilter %}</span>
-                        {% else %}
-                            <span class="mini quiet">{% trans 'Unknown content' %}</span>
-                        {% endif %}
-                    </li>
-                    {% endfor %}
-                    </ul>
+                        <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
                     {% endif %}
+                    <br/>
+                    {% if entry.content_type %}
+                        <span class="mini quiet">{% filter capfirst %}{% trans entry.content_type.name %}{% endfilter %}</span>
+                    {% else %}
+                        <span class="mini quiet">{% trans 'Unknown content' %}</span>
+                    {% endif %}
+                </li>
+                {% endfor %}
+                </ul>
+                {% endif %}
             </div>
         </div>
         {% endblock %}        
 	</div>
-	{% endif %}
 	<div id="tabs-2" class="ui-helper-clearfix">
-	    <canvas id="springydemo"/></canvas>
+      <button id="add_tab">Explore Relationships</button> 
 	</div>
+	{% else %}
+	<div id="tabs-1" class="ui-helper-clearfix">
+      <button id="add_tab">Explore Relationships</button> 
+	</div>
+	{% endif %}
 </div>
 {% endblock %}

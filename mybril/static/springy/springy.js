@@ -287,6 +287,18 @@ Graph.prototype.filterNodes = function(fn, shape)
 	return o;
 };
 
+Graph.prototype.filterNode = function(node)
+{
+	var o = {};
+	var filtered = [];
+	var filtered_edges = [];			
+				
+	filtered.push(node);
+	filtered_edges = filtered_edges.concat(this.removeNode(node));			
+	o = {nodes: filtered, edges: filtered_edges};
+	return o;
+};
+
 Graph.prototype.filterEdges = function(fn, text)
 {	
 	var tmpEdges = this.edges.slice();	

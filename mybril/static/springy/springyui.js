@@ -35,7 +35,7 @@ jQuery.fn.springy = function(params) {
     var repulsion = params.repulsion || 50.0;
     var damping = params.damping || 0.25;    
         
-	var canvas = this[0];	
+	var canvas = this[0];	;
 	canvas.width  = window.innerWidth - 100;
 	canvas.height = window.innerHeight - 200;
 	var ctx = canvas.getContext("2d");
@@ -80,6 +80,7 @@ jQuery.fn.springy = function(params) {
 	var selected = null;
 	var nearest = null;
 	var dragged = null;
+	var lastSelected = null;
 
 	jQuery(canvas).mousedown(function(e){
 		jQuery('.actions').hide();
@@ -110,7 +111,7 @@ jQuery.fn.springy = function(params) {
 		renderer.start();		
 	});
 
-	jQuery(window).bind('mouseup',function(e){
+	jQuery(canvas).bind('mouseup',function(e){
 		dragged = null;
 	});
 
@@ -118,14 +119,35 @@ jQuery.fn.springy = function(params) {
 	jQuery(canvas).click(function(e){
 		var pos = jQuery(this).offset();
 		var p = fromScreen({x: e.pageX - pos.left, y: e.pageY - pos.top});
-		selected = layout.nearest(p);
+		selected = layout.nearest(p);	
+		
 		if ($(this).hasClass('noclick')) {
 	        $(this).removeClass('noclick');
 	    }
-	    else {
-			  if (selected.node !== null)
-			  {				
-		      $("#dialog").dialog({ title: selected.node.data.label });
+	    else {	      
+			  if (selected.node !== null) // if a node is selected
+			  {			
+		        if (selected.node.data.shape.indexOf("highlighted-") == -1) // if the selected node is not highlighted
+		        { 
+		          if (lastSelected != null) {
+		              var last = graph.filterNode(lastSelected);
+		              var shape = last.nodes[0].data.shape;
+		              last.nodes[0].data.shape = shape.replace("highlighted-", "");
+	                graph.merge(last);
+		          }
+		          var highlighted = graph.filterNode(selected.node);
+		          var shape = highlighted.nodes[0].data.shape;
+		          highlighted.nodes[0].data.shape = "highlighted-" + shape;			    
+	            graph.merge(highlighted);
+	            $("#dialog").dialog({ title: selected.node.data.label });		      
+	          } 		        
+	          else { // un-highlight the node
+	            var deselected = graph.filterNode(selected.node);
+		          var shape = deselected.nodes[0].data.shape;
+		          deselected.nodes[0].data.shape = shape.replace("highlighted-", "");
+	            graph.merge(deselected);
+	          }
+		        lastSelected = selected.node;
 			  }
 	    }
 	});		
@@ -240,13 +262,13 @@ jQuery.fn.springy = function(params) {
 				ctx.restore();
 			}
 			
-  	  		// now adjust the label placement
+  	  // now adjust the label placement
 			ctx.save();
 			ctx.fillStyle = '#00f';
-  	  		var x = parseInt((x1 + x2 - (edge.data.text.length * 5)) / 2); 
-  	  		var y = parseInt((y1 + y2 ) /2);  	  		
-  	  		ctx.fillText(edge.data.text, x, y);
-  	  		ctx.restore();
+  		var x = parseInt((x1 + x2 - (edge.data.text.length * 5)) / 2); 
+  		var y = parseInt((y1 + y2 ) /2);  	  		
+  		ctx.fillText(edge.data.text, x, y);
+  		ctx.restore();
 		},
 		
 		function drawNode(node, p)
@@ -267,15 +289,35 @@ jQuery.fn.springy = function(params) {
 			{
 				case "circle":
 					ctx.beginPath();
-				    ctx.arc(s.x, s.y, 15, 0, Math.PI * 2, true);
-				    ctx.closePath();
-				    ctx.fill();
-				    ctx.stroke();
+				  ctx.arc(s.x, s.y, 15, 0, Math.PI * 2, true);
+				  ctx.closePath();
+				  ctx.fill();
+				  ctx.stroke();
 					break;
+				case "highlighted-circle":
+					ctx.beginPath();			
+					ctx.arc(s.x, s.y, 15, 0, Math.PI * 2, true);
+					ctx.closePath();
+					ctx.stroke();
+          ctx.fill();			          
+          ctx.lineWidth = 3;
+					ctx.strokeStyle = "#f00";
+					ctx.beginPath();	    		
+				  ctx.arc(s.x, s.y, 20, 0, Math.PI * 2, true);				  
+				  ctx.stroke();
+				  ctx.closePath();
+					break;	
 				case "square":
 					ctx.strokeRect(s.x - 15, s.y - 15, 2*15, 2*15);	
 					ctx.fillRect(s.x - 15, s.y - 15, 2*15, 2*15);					
-					break;	
+					break;
+        case "highlighted-square":          
+					ctx.strokeRect(s.x - 15, s.y - 15, 2*15, 2*15);	
+					ctx.fillRect(s.x - 15, s.y - 15, 2*15, 2*15);		
+					ctx.lineWidth = 3;
+					ctx.strokeStyle = "#f00";			
+					ctx.strokeRect(s.x - 20, s.y - 20, 2*20, 2*20);	
+					break;							
 				case "hexagon":	
 					ctx.translate(s.x, s.y);
 					ctx.beginPath();
@@ -288,9 +330,37 @@ jQuery.fn.springy = function(params) {
 					        ctx.lineTo(points[idx][0], points[idx][1]);
 					}
 					ctx.closePath();
-				    ctx.fill();
-				    ctx.stroke();
+				  ctx.fill();
+				  ctx.stroke();
 					break;
+				case "highlighted-hexagon":	
+					ctx.translate(s.x, s.y);
+					ctx.beginPath();
+					var points = get_points(15, 6);
+					for (var idx = 0; idx < points.length; idx++)
+					{
+					    if (idx == 0)
+					        ctx.moveTo(points[idx][0], points[idx][1]);
+					    else
+					        ctx.lineTo(points[idx][0], points[idx][1]);
+					}
+					ctx.closePath();
+				  ctx.fill();
+				  ctx.stroke();
+				  ctx.lineWidth = 3;
+					ctx.strokeStyle = "#f00";
+					ctx.beginPath();
+          points = get_points(20, 6);
+					for (idx = 0; idx < points.length; idx++)
+					{
+					    if (idx == 0)
+					        ctx.moveTo(points[idx][0], points[idx][1]);
+					    else
+					        ctx.lineTo(points[idx][0], points[idx][1]);
+					}
+					ctx.closePath();
+				  ctx.stroke();
+					break;	
 				default:
 					break;
 			}
