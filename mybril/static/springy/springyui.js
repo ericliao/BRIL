@@ -23,6 +23,10 @@ Copyright (c) 2010 Dennis Hotson
  OTHER DEALINGS IN THE SOFTWARE.
 */
 
+/*
+ * Modifier: Eric Liao 2011
+ */
+
 (function() {
 
 jQuery.fn.springy = function(params) {
@@ -35,47 +39,43 @@ jQuery.fn.springy = function(params) {
     var repulsion = params.repulsion || 50.0;
     var damping = params.damping || 0.25;    
         
-	var canvas = this[0];	;
-	canvas.width  = window.innerWidth - 100;
-	canvas.height = window.innerHeight - 200;
-	var ctx = canvas.getContext("2d");
-	var layout = new Layout.ForceDirected(graph, stiffness, repulsion, damping);
+	  var canvas = this[0];
+	  canvas.width  = window.innerWidth - 100;
+	  canvas.height = window.innerHeight - 200;
+    var ctx = canvas.getContext("2d");
+	  var layout = new Layouts.ForceDirected(graph, stiffness, repulsion, damping);    
 
-	// calculate bounding box of graph layout.. with ease-in
-	var currentBB = layout.getBoundingBox();
-	var targetBB = {bottomleft: new Vector(-2, -2), topright: new Vector(2, 2)};
+	  // calculate bounding box of graph layout.. with ease-in
+	  var currentBB = layout.getBoundingBox();
+	  var targetBB = {bottomleft: new Vector(-2, -2), topright: new Vector(2, 2)};
 
-	// auto adjusting bounding box
-	setInterval(function(){
-		targetBB = layout.getBoundingBox();
-		// current gets 20% closer to target every iteration
-		currentBB = {
-			bottomleft: currentBB.bottomleft.add( targetBB.bottomleft.subtract(currentBB.bottomleft)
-				.divide(10)),
-			topright: currentBB.topright.add( targetBB.topright.subtract(currentBB.topright)
-				.divide(10))
-		};
-	}, 50);
-
-	// convert to/from screen coordinates
-	toScreen = function(p) {
-		var size = currentBB.topright.subtract(currentBB.bottomleft);
-		var sx = p.subtract(currentBB.bottomleft).divide(size.x).x * canvas.width;
-		var sy = p.subtract(currentBB.bottomleft).divide(size.y).y * canvas.height;
-		return new Vector(sx, sy);
-	};
-
-	fromScreen = function(s) {
-		var size = currentBB.topright.subtract(currentBB.bottomleft);
-		var px = (s.x / canvas.width) * size.x + currentBB.bottomleft.x;
-		var py = (s.y / canvas.height) * size.y + currentBB.bottomleft.y;
-		return new Vector(px, py);
-	};
-
-	nodeType = function(node) {
-		return node.data.shape;
-	};
-	
+	  // auto adjusting bounding box	
+	  setInterval(function(){
+		  targetBB = layout.getBoundingBox();
+		  // current gets 20% closer to target every iteration
+		  currentBB = {
+			  bottomleft: currentBB.bottomleft.add( targetBB.bottomleft.subtract(currentBB.bottomleft)
+				  .divide(10)),
+			  topright: currentBB.topright.add( targetBB.topright.subtract(currentBB.topright)
+				  .divide(10))
+		  };
+	  }, 50);
+        
+	  // convert to/from screen coordinates	  
+	  toScreen = function(p) {
+		  var size = currentBB.topright.subtract(currentBB.bottomleft);
+		  var sx = p.subtract(currentBB.bottomleft).divide(size.x).x * canvas.width;
+		  var sy = p.subtract(currentBB.bottomleft).divide(size.y).y * canvas.height;
+		  return new Vector(sx, sy);
+	  };
+    
+	  fromScreen = function(s) {
+		  var size = currentBB.topright.subtract(currentBB.bottomleft);
+		  var px = (s.x / canvas.width) * size.x + currentBB.bottomleft.x;
+		  var py = (s.y / canvas.height) * size.y + currentBB.bottomleft.y;
+		  return new Vector(px, py);
+	  };
+	  
 	// half-assed drag and drop
 	var selected = null;
 	var nearest = null;
@@ -150,7 +150,7 @@ jQuery.fn.springy = function(params) {
 		        lastSelected = selected.node;
 			  }
 	    }
-	});		
+	});			
 	
 	Node.prototype.getWidth = function() {
 		ctx.save();
@@ -170,10 +170,12 @@ jQuery.fn.springy = function(params) {
 	};
 
 	var renderer = new Renderer(1, layout,
+		
 		function clear()
 		{
 			ctx.clearRect(0,0,canvas.width,canvas.height);
 		},
+				
 		function drawEdge(edge, p1, p2)
 		{
 			var x1 = toScreen(p1).x;
@@ -367,10 +369,11 @@ jQuery.fn.springy = function(params) {
 								   
 			ctx.restore();
 		}
+				
 	);
 
 	renderer.start();
-
+  
 	// calculates polygon points
 	function get_points(radius, number_of_points)
 	{
@@ -386,8 +389,8 @@ jQuery.fn.springy = function(params) {
 	        theta += delta_theta;
 	    }
 	    return result;
-	}
-	
+	}  
+  	
 	// helpers for figuring out where to draw arrows
 	function intersect_line_line(p1, p2, p3, p4)
 	{
@@ -407,7 +410,7 @@ jQuery.fn.springy = function(params) {
 
 		return new Vector(p1.x + ua * (p2.x - p1.x), p1.y + ua * (p2.y - p1.y));
 	}
-
+	
 	function intersect_line_box(p1, p2, p3, w, h)
 	{
 		var tl = {x: p3.x, y: p3.y};
