@@ -7,7 +7,8 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'mybril.views.home', name='home'),
-    # url(r'^mybril/', include('mybril.foo.urls')),
+    
+    url(r'^repo/', include('repo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

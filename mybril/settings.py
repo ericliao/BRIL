@@ -21,7 +21,7 @@ DATABASES = {
 }
 
 # Fedora Repository settings
-FEDORA_ROOT = 'https://bril-dev.cerch.kcl.ac.uk:8080/fedora/'
+FEDORA_ROOT = 'http://bril-dev.cerch.kcl.ac.uk:8080/fedora/'
 FEDORA_USER = 'fedoraAdmin'
 FEDORA_PASSWORD = 'fedoraAdmin'
 FEDORA_PIDSPACE = 'bril'
@@ -128,6 +128,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'eulfedora',
+    'repo',
 )
 
 # A sample logging configuration. The only tangible logging

@@ -140,10 +140,16 @@ jQuery.fn.springy = function(params) {
 	            graph.merge(highlighted);
 	            $("#dialog").dialog({ 
 	                title: selected.node.data.label , 
-	                height: 400, 
+	                height: 600, 
+	                width: 600,
 	                position: [e.pageX + 25, e.pageY + 25],
 	                open: function(event, ui) {
-	                    $('#msg').html("<h2>Object Details</h2>");
+	                    if (selected.node.data.pid != null) {
+	                      var url = "http://localhost:8000/repo/objects/" + selected.node.data.pid;
+	                      $('#msg').load(url);
+	                    } else {
+	                      $('#msg').html("<h3>Controller Object</h3>");
+	                    }
 	                },
 	                close: function(event, ui) {
 	                    var deselected = graph.filterNode(selected.node);

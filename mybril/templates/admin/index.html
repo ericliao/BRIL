@@ -29,15 +29,15 @@
 var o = 
 	{
 		nodes: [
-			{id: 0, data: {label: 'h2-2_MS_1_001.img', shape: 'circle', format: 'diffractionImage'}},
-			{id: 1, data: {label: 'h2-2_MS_1_002.img', shape: 'circle', format: 'diffractionImage'}},
-			{id: 2, data: {label: 'h2-2_MS_1_003.img', shape: 'circle', format: 'diffractionImage'}},
-			{id: 3, data: {label: 'h2-2_MS_1_004.img', shape: 'circle', format: 'diffractionImage'}},
-			{id: 4, data: {label: 'h2-2_MS_1_005.img', shape: 'circle', format: 'diffractionImage'}},
-			{id: 5, data: {label: 'DiffractionImageSet', shape: 'circle', format: 'diffractionImageSet'}},
-			{id: 6, data: {label: 'IntegrateDiffractionImagesProcess', shape: 'square'}},
-			{id: 7, data: {label: 'high.mtz', shape: 'circle', format: 'mtzReflectionFile'}},
-			{id: 8, data: {label: 'Mosflm', shape: 'hexagon'}}
+			{id: 0, data: {label: 'h2-2_MS_1_001.img', shape: 'circle', format: 'diffractionImage', pid: 'bril:431e41af-bf24-449a-afac-03936ae87251'}},
+			{id: 1, data: {label: 'h2-2_MS_1_002.img', shape: 'circle', format: 'diffractionImage', pid: 'bril:a1dde250-3967-49ec-9652-ff89d764df73'}},
+			{id: 2, data: {label: 'h2-2_MS_1_003.img', shape: 'circle', format: 'diffractionImage', pid: 'bril:eb97416a-b760-4d78-bd44-08daf0145803'}},
+			{id: 3, data: {label: 'h2-2_MS_1_004.img', shape: 'circle', format: 'diffractionImage', pid: 'bril:a9078413-4a78-4495-904f-0e3c35b10673'}},
+			{id: 4, data: {label: 'h2-2_MS_1_005.img', shape: 'circle', format: 'diffractionImage', pid: 'bril:8a11628e-c5c5-424c-9407-3883383ba267'}},
+			{id: 5, data: {label: 'DiffractionImageSet', shape: 'circle', format: 'diffractionImageSet', pid: 'bril:e0a0a21c-f206-4733-89fe-1eb8d0b3979f'}},
+			{id: 6, data: {label: 'IntegrateDiffractionImagesProcess', shape: 'square', pid: 'bril:process-2eabefc5-f70d-4aaf-9884-164113e28a12'}},
+			{id: 7, data: {label: 'high.mtz', shape: 'circle', format: 'mtzReflectionFile', pid: 'bril:30836f8b-5e2c-4baa-8409-4fa3abf3044b'}},
+			{id: 8, data: {label: 'Mosflm', shape: 'hexagon', pid: null}}
 		],
 		edges: [
 			{from: 0, to: 5, directed: true, data: {color: '#00A0B0', text: 'isMemberOf'}},
@@ -329,8 +329,8 @@ function filter_relationships(key, opt) {
 	});
 </script>
 
-<div id="dialog">
-<div id="msg"></div>
+<div id="dialog" style="width:600px;overflow:auto">
+  <div id="msg"></div>
 </div>
 
 <div id="tabs" >

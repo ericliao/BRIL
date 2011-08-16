@@ -1,0 +1,25 @@
+<h1>{{ obj.dc.content.description }}</h1>
+<hr/>
+<p>Uploaded at {{ obj.created }}; last modified {{ obj.modified }} ({{  obj.modified|timesince }} ago).</p>
+<br/>
+<table>
+    <tr><th>pid:</th><td> {{ obj.pid }}</td></tr>
+    {% with obj.dc.content as dc %}
+        <tr><th>creator:</th><td>{{ dc.creator|default:'' }}</td></tr>
+        <tr><th>date:</th><td>{{ dc.date|default:'' }}</td></tr>
+        <tr><th>date:</th><td>{{ dc.date }}</td></tr>
+ {% endwith %}
+</table>
+<hr/>
+<br/>
+<h3>Dublin Core</h3>
+<pre>{{ obj.dc.content.serialize }}</pre>
+<hr/>
+<br/>
+<h3>BRIL Metadata</h3>
+<pre>{{ obj.brilmeta.content }}</pre>
+<hr/>
+<br/>
+<h3>Original Data</h3>
+<p>({{ obj.file.info.size|filesizeformat }}, {{ obj.file.mimetype }})</p>
+<h4><a href="{% url download obj.pid %}" id="downloadLink">Download File</a></h4>
