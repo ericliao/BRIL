@@ -41,7 +41,7 @@ jQuery.fn.springy = function(params) {
         
 	  var canvas = this[0];
 	  canvas.width  = window.innerWidth - 100;
-	  canvas.height = window.innerHeight - 200;
+	  canvas.height = window.innerHeight - 250;
     var ctx = canvas.getContext("2d");
 	  var layout = new Layouts.ForceDirected(graph, stiffness, repulsion, damping);    
 
@@ -120,7 +120,6 @@ jQuery.fn.springy = function(params) {
 		var pos = jQuery(this).offset();
 		var p = fromScreen({x: e.pageX - pos.left, y: e.pageY - pos.top});
 		selected = layout.nearest(p);	
-		
 		if ($(this).hasClass('noclick')) {
 	        $(this).removeClass('noclick');
 	    }
@@ -139,7 +138,20 @@ jQuery.fn.springy = function(params) {
 		          var shape = highlighted.nodes[0].data.shape;
 		          highlighted.nodes[0].data.shape = "highlighted-" + shape;			    
 	            graph.merge(highlighted);
-	            $("#dialog").dialog({ title: selected.node.data.label });		      
+	            $("#dialog").dialog({ 
+	                title: selected.node.data.label , 
+	                height: 400, 
+	                position: [e.pageX + 25, e.pageY + 25],
+	                open: function(event, ui) {
+	                    $('#msg').html("<h2>Object Details</h2>");
+	                },
+	                close: function(event, ui) {
+	                    var deselected = graph.filterNode(selected.node);
+		                  var shape = deselected.nodes[0].data.shape;
+		                  deselected.nodes[0].data.shape = shape.replace("highlighted-", "");
+	                    graph.merge(deselected);
+                  }                
+	            });		      
 	          } 		        
 	          else { // un-highlight the node
 	            var deselected = graph.filterNode(selected.node);
@@ -151,7 +163,7 @@ jQuery.fn.springy = function(params) {
 			  }
 	    }
 	});			
-	
+
 	Node.prototype.getWidth = function() {
 		ctx.save();
 		var text = typeof(this.data.label) !== 'undefined' ? this.data.label : this.id;

@@ -192,6 +192,8 @@ function filter_relationships(key, opt) {
 		$tab_content_input = $("#tab_content");
     var tab_counter = 3;
 		
+		$("#unique_tab_id").html("Relationship Explorer");
+		
 		var $tabs = $( "#tabs" ).tabs({
 		  tabTemplate: "<li><a href='#{href}'>#{label}</a> <span class='ui-icon ui-icon-close'></span></li>",
 		  add: function( event, ui ) {				
@@ -245,56 +247,67 @@ function filter_relationships(key, opt) {
 		function loadTab(expId) {
 			var new_canvas = "<canvas id='explorer'/" + "></canvas>";
 			$( "#tabs-3" ).html("");
-			$( "#tabs-3" ).append( "<h2>Experiment: " + expId + "</h2>" );
+			$( "#tabs-3" ).append( "<p><font size='4'><b>Experiment: " + expId + "</b></font>&nbsp;&nbsp;&nbsp;&nbsp;<button id='back_exp'>Back to Experiments</button></p>" );
 			$( "#tabs-3" ).append( new_canvas );
 			var canvas_path = "#tabs #tabs-3 #explorer";
-				$tabs.tabs('select', '#tabs-3');
-				if (expId == 1)	
-				{
-		      jQuery(canvas_path).springy({ 'graph': graph });
-		    } else {
-		      var graph2 = new Graph();
-		      graph2.loadData(o);
-		      jQuery(canvas_path).springy({ 'graph': graph2 });
-		    }
+			$tabs.tabs('select', '#tabs-3');
+			if (expId == 1)	
+			{
+	      jQuery(canvas_path).springy({ 'graph': graph });
+	    } else {
+	      var graph2 = new Graph();
+	      graph2.loadData(o);
+	      jQuery(canvas_path).springy({ 'graph': graph2 });
+	    }
+			
+			$("#unique_tab_id").html("Relationship Explorer: " + expId);
 				
-				/**************************************************
-	      * Menu for filtering display
-	      **************************************************/		 
-        $.contextMenu({
-            // define which elements trigger this menu
-            selector: "#tabs-3",
-            // define the elements of the menu
-            items: {	    	    	
-            	all_process: {name: "Filter Processes", type:'checkbox', callback: filter},
-            	sep1: "---------",
-                all_objects: {name: "Filter Objects",  type:'checkbox', callback: filter},
-                sep2: "---------",
-                controllers_menu: {
-			        name: "Filter Controllers",				
-			        items: {
-				        all_controllers: {name: "All", type:'checkbox', callback: filter},
-				        CCP4: {name: "CCP4",  type:'checkbox', callback: filter}					
-			        }
-		        },
-		        sep3: "---------",
-		        relationships_menu: {
-			        name: "Filter Relationships",				
-			        items: {
-				        all_relationships: {name: "All",  type:'checkbox', callback: filter_relationships},
-				        used: {name: "used",  type:'checkbox', callback: filter_relationships}					
-			        }
-		        },	        	       
-            },
-            events: {
-		        show: function(opt) {					
-			        $.each(opt.inputs, function(key, item) {					
-				        item.selected = jQuery.data(opt, key) ? true : null;										
-			        });				
+			/**************************************************
+      * Menu for filtering display
+      **************************************************/		 
+      $.contextMenu({
+          // define which elements trigger this menu
+          selector: "#tabs-3",
+          // define the elements of the menu
+          items: {	    	    	
+          	all_process: {name: "Filter Processes", type:'checkbox', callback: filter},
+          	sep1: "---------",
+              all_objects: {name: "Filter Objects",  type:'checkbox', callback: filter},
+              sep2: "---------",
+              controllers_menu: {
+		        name: "Filter Controllers",				
+		        items: {
+			        all_controllers: {name: "All", type:'checkbox', callback: filter},
+			        CCP4: {name: "CCP4",  type:'checkbox', callback: filter}					
 		        }
+	        },
+	        sep3: "---------",
+	        relationships_menu: {
+		        name: "Filter Relationships",				
+		        items: {
+			        all_relationships: {name: "All",  type:'checkbox', callback: filter_relationships},
+			        used: {name: "used",  type:'checkbox', callback: filter_relationships}					
+		        }
+	        },	        	       
+          },
+          events: {
+	        show: function(opt) {					
+		        $.each(opt.inputs, function(key, item) {					
+			        item.selected = jQuery.data(opt, key) ? true : null;										
+		        });				
 	        }
-        });
-		}
+        }
+      });
+      
+      $( "#back_exp" )
+			.button()
+			.click(function() {
+          $("#unique_tab_id").html("Relationship Explorer");
+          $( "#tabs-3" ).html("<h2 id='note'>Please select an experiment to view it's relationships.</h2>");
+          $("#dialog").dialog('close');
+          $tabs.tabs('select', '#tabs-2');
+			});      
+		}    
  
 		$( "#add_tab_1" )
 			.button()
@@ -317,6 +330,7 @@ function filter_relationships(key, opt) {
 </script>
 
 <div id="dialog">
+<div id="msg"></div>
 </div>
 
 <div id="tabs" >
@@ -325,7 +339,7 @@ function filter_relationships(key, opt) {
 		  <li><a href="#tabs-1">Admin</a></li>
 		{% endif %} 
 		  <li><a href="#tabs-2">Experiment Browser</a></li>  
-		  <li><a href="#tabs-3">Relationship Explorer</a></li>
+		  <li><a href="#tabs-3"><span id='unique_tab_id'></a></li>
 	</ul>
 	{% if user.is_superuser %}
 	<div id="tabs-1" class="ui-helper-clearfix">
@@ -396,17 +410,25 @@ function filter_relationships(key, opt) {
         {% endblock %}        
 	</div>
 	<div id="tabs-2" class="ui-helper-clearfix">
+		  <h2>Browse Experiments</h2>
       <button id="add_tab_1">Explore Relationships of Experiment 1</button>
+      <br/>
+      <br/>
+      <hr/>
       <br/>
       <button id="add_tab_2">Explore Relationships of Experiment 2</button>  
 	</div>
-	<div id="tabs-3" class="ui-helper-clearfix">
-	<h2 id="note">Please select an experiment to view it's relationships.</h2>
+	<div id="tabs-3" class="ui-helper-clearfix">	
+	    <h2 id="note">Please select an experiment to view it's relationships.</h2>
 	</div>
 	{% else %}
 	<div id="tabs-2" class="ui-helper-clearfix">
+	    <h2>Browse Experiments</h2>
       <button id="add_tab_1">Explore Relationships of Experiment 1</button>
       <br/>
+      <br/>
+      <hr/>
+      <br/>    
       <button id="add_tab_2">Explore Relationships of Experiment 2</button>  
 	</div>
 	<div id="tabs-3" class="ui-helper-clearfix">
