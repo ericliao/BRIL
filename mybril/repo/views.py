@@ -3,6 +3,7 @@ from mybril.repo.models import FileObject
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from eulfedora.views import raw_datastream
+import os
 
 def display(request, pid):
     repo = Repository()
@@ -18,7 +19,8 @@ def file(request, pid):
     dsid = FileObject.file.id
     repo = Repository()
     obj = repo.get_object(pid, type=FileObject)
+    filename = os.path.basename(obj.dc.content.title)
     extra_headers = {
-        'Content-Disposition': "attachment; filename=%s" % obj.file.label,
+        'Content-Disposition': "attachment; filename=%s" % filename,
     }
     return raw_datastream(request, pid, dsid, type=FileObject, headers=extra_headers)
