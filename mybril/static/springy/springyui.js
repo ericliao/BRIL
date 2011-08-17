@@ -134,11 +134,11 @@ jQuery.fn.springy = function(params) {
 		              last.nodes[0].data.shape = shape.replace("highlighted-", "");
 	                graph.merge(last);	                 	               
 		          }
+		          $("#details-dialog").dialog('close');
 		          var highlighted = graph.filterNode(selected.node);
 		          var shape = highlighted.nodes[0].data.shape;
 		          highlighted.nodes[0].data.shape = "highlighted-" + shape;			    
-	            graph.merge(highlighted);
-	            $("#details-dialog").dialog('close');
+	            graph.merge(highlighted);	            
 	            $("#details-dialog").dialog({
 	                title: selected.node.data.label , 
 	                height: 600, 
