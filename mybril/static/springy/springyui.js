@@ -125,30 +125,36 @@ jQuery.fn.springy = function(params) {
 	    }
 	    else {	      
 			  if (selected.node !== null) // if a node is selected
-			  {			
+			  {						      
 		        if (selected.node.data.shape.indexOf("highlighted-") == -1) // if the selected node is not highlighted
 		        { 
 		          if (lastSelected != null) {
 		              var last = graph.filterNode(lastSelected);
 		              var shape = last.nodes[0].data.shape;
 		              last.nodes[0].data.shape = shape.replace("highlighted-", "");
-	                graph.merge(last);
+	                graph.merge(last);	                 	               
 		          }
 		          var highlighted = graph.filterNode(selected.node);
 		          var shape = highlighted.nodes[0].data.shape;
 		          highlighted.nodes[0].data.shape = "highlighted-" + shape;			    
 	            graph.merge(highlighted);
-	            $("#dialog").dialog({ 
+	            $("#details-dialog").dialog('close');
+	            $("#details-dialog").dialog({
 	                title: selected.node.data.label , 
 	                height: 600, 
 	                width: 600,
 	                position: [e.pageX + 25, e.pageY + 25],
 	                open: function(event, ui) {
 	                    if (selected.node.data.pid != null) {
-	                      var url = "http://localhost:8000/repo/objects/" + selected.node.data.pid;
-	                      $('#msg').load(url);
+	                        var url = "http://localhost:8000/repo/objects/" + selected.node.data.pid;
+	                        $('#loader').show();
+	                        $('#msg').hide();
+                          $('#msg').load( url, function() {
+                              $('#loader').hide();
+                              $('#msg').show();
+                          });
 	                    } else {
-	                      $('#msg').html("<h3>Controller Object</h3>");
+	                        $('#msg').html("<h3>Controller Object</h3>");
 	                    }
 	                },
 	                close: function(event, ui) {
@@ -157,7 +163,7 @@ jQuery.fn.springy = function(params) {
 		                  deselected.nodes[0].data.shape = shape.replace("highlighted-", "");
 	                    graph.merge(deselected);
                   }                
-	            });		      
+	            })		      
 	          } 		        
 	          else { // un-highlight the node
 	            var deselected = graph.filterNode(selected.node);

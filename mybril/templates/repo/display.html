@@ -1,9 +1,28 @@
-<h1>{{ obj.dc.content.description }}</h1>
+<script>
+$( "#viewLink" )
+  .button()
+  .click(function() {
+    $("#viewer-dialog").dialog({ 
+        title: "Viewing: " + $("#title").text(), 
+        height: 600, 
+        width: 600,
+        open: function(event, ui) {
+          var url = "http://localhost:8000/repo/objects/" + $( "#viewLink" ).attr("value") + "/view/";
+	        $('#viewer').load(url);
+        }                
+    });
+});
+
+$( "#downloadLink" ).button();
+
+</script>
+<h1 id="title">{{ obj.dc.content.title }}</h1>
+<h2>{{ obj.dc.content.description }}</h2>
 <hr/>
 <p>Uploaded at {{ obj.created }}; last modified {{ obj.modified }} ({{  obj.modified|timesince }} ago).</p>
 <br/>
-<table>
-    <tr><th>pid:</th><td> {{ obj.pid }}</td></tr>
+<table id="description">
+    <tr id="pid_row"><th>pid:</th><td id="pid"> {{ obj.pid }}</td></tr>
     {% with obj.dc.content as dc %}
         <tr><th>creator:</th><td>{{ dc.creator|default:'' }}</td></tr>
         <tr><th>date:</th><td>{{ dc.date|default:'' }}</td></tr>
@@ -22,4 +41,8 @@
 <br/>
 <h3>Original Data</h3>
 <p>({{ obj.file.info.size|filesizeformat }}, {{ obj.file.mimetype }})</p>
-<h4><a href="{% url download obj.pid %}" id="downloadLink">Download File</a></h4>
+{% if obj.file.info.size > 0 and obj.file.mimetype == "text/plain"%}
+  <button id="viewLink" value="{{ obj.pid }}">View File</button>
+{% endif %}
+<a href="{% url download obj.pid %}" id="downloadLink">Download File</a>
+

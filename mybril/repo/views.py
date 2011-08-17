@@ -8,6 +8,11 @@ def display(request, pid):
     repo = Repository()
     obj = repo.get_object(pid, type=FileObject)
     return render_to_response('repo/display.html', {'obj': obj})
+
+def view_object(request, pid):
+    repo = Repository()
+    obj = repo.get_object(pid, type=FileObject)
+    return render_to_response('repo/viewer.html', {'obj': obj})
     
 def file(request, pid):
     dsid = FileObject.file.id
