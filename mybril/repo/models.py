@@ -1,6 +1,5 @@
 from django.db import models
 from eulfedora.models import DigitalObject, FileDatastream, Datastream
-from lxml import etree
 
 class FileObject(DigitalObject):
     FILE_CONTENT_MODEL = 'info:fedora/genrepo:File-1.0'

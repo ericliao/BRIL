@@ -145,7 +145,7 @@ jQuery.fn.springy = function(params) {
 	                width: 600,
 	                position: [e.pageX + 25, e.pageY + 25],
 	                open: function(event, ui) {
-	                    if (selected.node.data.pid != null) {
+	                    if (selected.node.data.pid != "null") {
 	                        var url = "http://localhost:8000/repo/objects/" + selected.node.data.pid;
 	                        $('#loader').show();
 	                        $('#msg').hide();
