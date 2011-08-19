@@ -188,6 +188,7 @@ Graph.prototype.removeEdge = function(edge)
 	this.notify();
 };
 
+/* Load JSON data into the current graph */
 Graph.prototype.loadData = function(data)
 {
 	var nodes = [];
@@ -196,8 +197,8 @@ Graph.prototype.loadData = function(data)
 	}, this);
 
 	data.edges.forEach(function(e) {
-		var from = nodes[e.from];
-		var to = nodes[e.to];
+		var from = nodes[e._from];
+		var to = nodes[e._to];
 
 		var id = (e.directed)
 			? (id = e.type + "-" + from.id + "-" + to.id)

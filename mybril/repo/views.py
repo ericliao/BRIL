@@ -35,6 +35,7 @@ def exp_relationships(request, expId):
     objects = []
     processes = []
     controllers = []
+    relationship = []
     for obj_pid in exp_pids:
         o = repo.get_object(pid = obj_pid);
         objects.append(o)
@@ -45,11 +46,11 @@ def exp_relationships(request, expId):
     
     for process in processes:
         for o in repo.risearch.get_objects("info:fedora/"+ process.pid, "http://purl.org/net/opmv/ns#wasControlledBy"):
-            controllers.append(o)
+            controllers.append([process.pid, o])
     
     # generate controller nodes
     for controller in controllers:
-        controller_node = dict(id=node_id, data=dict(label=controller, shape='hexagon', pid='null'))
+        controller_node = dict(id=node_id, data=dict(label=controller[1], shape='hexagon', pid='null'))
         nodes.append(controller_node)
         node_id += 1
 
@@ -58,15 +59,108 @@ def exp_relationships(request, expId):
         process_node = dict(id=node_id, data=dict(label=process.dc.content.title, shape='square', pid=process.dc.content.identifier))
         nodes.append(process_node)
         node_id += 1
-        
+   
+    # generate process -> controller edges
+    edge_from = []
+    edge_to = []
+    for controller in controllers:
+        # search for matching pid in nodes
+        for node in nodes:
+            if ((node.get('data', {}).get('pid', {})) == controller[0]): # controller pid matches processes pid
+                edge_from.append(node.get('id', {}))
+            if ((node.get('data', {}).get('label', {})) == controller[1]): # controller label matches node label
+                edge_to.append(node.get('id', {}))
+    
+    for e_from, e_to in zip(edge_from, edge_to):           
+        edge = dict(_from=e_from, _to=e_to, directed='true', data=dict(color='#DA70D6', text='wasControlledBy'))
+        edges.append(edge);        
+    
     # generate object nodes
     for obj in objects:
         object_node = dict(id=node_id, data=dict(label=obj.dc.content.title, shape='circle', pid=obj.dc.content.identifier))
         nodes.append(object_node)
         node_id += 1
-        
-    # generate edges    
+             
+    # generate 'used 'edges
+    relationship = []
+    for process in processes:
+        for o in repo.risearch.get_objects("info:fedora/"+ process.pid, "http://purl.org/net/opmv/ns#used"):
+            relationship.append([process.pid, string.replace(o, 'info:fedora/', '')])
     
+    edge_from = []
+    edge_to = []    
+    for r in relationship:
+        # search for matching pid in nodes
+        for node in nodes:
+            if ((node.get('data', {}).get('pid', {})) == r[0]):
+                edge_from.append(node.get('id', {}))
+            if ((node.get('data', {}).get('pid', {})) == r[1]):
+                edge_to.append(node.get('id', {}))
+    
+    for e_from, e_to in zip(edge_from, edge_to):           
+        edge = dict(_from=e_from, _to=e_to, directed='true', data=dict(color='#6A4A3C', text='used'))
+        edges.append(edge);
+
+    # generate 'isMemberOf 'edges
+    relationship = []
+    for obj in objects:
+        for o in repo.risearch.get_objects("info:fedora/"+ obj.pid, "info:fedora/fedora-system:def/relations-external#isMemberOf"):
+            relationship.append([obj.pid, string.replace(o, 'info:fedora/', '')])
+    
+    edge_from = []
+    edge_to = []    
+    for r in relationship:
+        # search for matching pid in nodes
+        for node in nodes:
+            if ((node.get('data', {}).get('pid', {})) == r[0]):
+                edge_from.append(node.get('id', {}))
+            if ((node.get('data', {}).get('pid', {})) == r[1]):
+                edge_to.append(node.get('id', {}))
+    
+    for e_from, e_to in zip(edge_from, edge_to):           
+        edge = dict(_from=e_from, _to=e_to, directed='true', data=dict(color='#00A0B0', text='isMemberOf'))
+        edges.append(edge);    
+    
+    # generate 'wasDerivedFrom' edges
+    relationship = []
+    for obj in objects:
+        for o in repo.risearch.get_objects("info:fedora/"+ obj.pid, "http://purl.org/net/opmv/ns#wasDerivedFrom"):
+            relationship.append([obj.pid, string.replace(o, 'info:fedora/', '')])
+    
+    edge_from = []
+    edge_to = []
+    for r in relationship:
+        # search for matching pid in nodes
+        for node in nodes:
+            if ((node.get('data', {}).get('pid', {})) == r[0]):
+                edge_from.append(node.get('id', {}))
+            if ((node.get('data', {}).get('pid', {})) == r[1]):
+                edge_to.append(node.get('id', {}))
+    
+    for e_from, e_to in zip(edge_from, edge_to):           
+        edge = dict(_from=e_from, _to=e_to, directed='true', data=dict(color='#EB6841', text='wasDerivedFrom'))
+        edges.append(edge);      
+    
+    # generate 'wasGeneratedBy' edges
+    relationship = []
+    for obj in objects:
+        for o in repo.risearch.get_objects("info:fedora/"+ obj.pid, "http://purl.org/net/opmv/ns#wasGeneratedBy"):
+            relationship.append([obj.pid, string.replace(o, 'info:fedora/', '')])
+    
+    edge_from = []
+    edge_to = []
+    for r in relationship:
+        # search for matching pid in nodes
+        for node in nodes:
+            if ((node.get('data', {}).get('pid', {})) == r[0]):
+                edge_from.append(node.get('id', {}))
+            if ((node.get('data', {}).get('pid', {})) == r[1]):
+                edge_to.append(node.get('id', {}))
+    
+    for e_from, e_to in zip(edge_from, edge_to):           
+        edge = dict(_from=e_from, _to=e_to, directed='true', data=dict(color='#7DBE3C', text='wasGeneratedBy'))
+        edges.append(edge);
+
     # JSONify and return
     json_output = json.JSONEncoder().encode(dict(nodes=nodes, edges=edges))
     return HttpResponse(json_output, mimetype="application/json")

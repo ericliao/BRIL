@@ -40,8 +40,8 @@ jQuery.fn.springy = function(params) {
     var damping = params.damping || 0.25;    
         
 	  var canvas = this[0];
-	  canvas.width  = window.innerWidth - 100;
-	  canvas.height = window.innerHeight - 250;
+	  canvas.width  = window.innerWidth - 125;
+	  canvas.height = window.innerHeight - 275;
     var ctx = canvas.getContext("2d");
 	  var layout = new Layouts.ForceDirected(graph, stiffness, repulsion, damping);    
 

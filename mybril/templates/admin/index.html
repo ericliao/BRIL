@@ -24,45 +24,7 @@
 <link href="{{ STATIC_URL }}css/smoothness/jquery-ui-1.8.15.custom.css" rel="stylesheet" type="text/css" />
 
 <script>
-var o = 
-	{
-		nodes: [
-			{id: 0, data: {label: 'h2-2_MS_1_001.img', shape: 'circle', pid: 'bril:431e41af-bf24-449a-afac-03936ae87251'}},
-			{id: 1, data: {label: 'h2-2_MS_1_002.img', shape: 'circle', pid: 'bril:a1dde250-3967-49ec-9652-ff89d764df73'}},
-			{id: 2, data: {label: 'h2-2_MS_1_003.img', shape: 'circle', pid: 'bril:eb97416a-b760-4d78-bd44-08daf0145803'}},
-			{id: 3, data: {label: 'h2-2_MS_1_004.img', shape: 'circle', pid: 'bril:a9078413-4a78-4495-904f-0e3c35b10673'}},
-			{id: 4, data: {label: 'h2-2_MS_1_005.img', shape: 'circle', pid: 'bril:8a11628e-c5c5-424c-9407-3883383ba267'}},
-			{id: 5, data: {label: 'DiffractionImageSet', shape: 'circle', pid: 'bril:e0a0a21c-f206-4733-89fe-1eb8d0b3979f'}},
-			{id: 6, data: {label: 'IntegrateDiffractionImagesProcess', shape: 'square', pid: 'bril:process-2eabefc5-f70d-4aaf-9884-164113e28a12'}},
-			{id: 7, data: {label: 'high.mtz', shape: 'circle', pid: 'bril:30836f8b-5e2c-4baa-8409-4fa3abf3044b'}},
-			{id: 8, data: {label: 'sort.com', shape: 'circle', pid: 'bril:ae8f04b7-1917-4a02-b1bb-a757efba3669'}},
-      {id: 9, data: {label: 'CCP4 Process: SORTMTZ', shape: 'square', pid: 'bril:process-2391c24a-b799-42ae-8dcc-8e9626d91ca7'}},
-      {id: 10, data: {label: 'sort.log', shape: 'circle', pid: 'bril:942131ac-ce80-4d16-8cfa-3fac62894cc5'}},
-      {id: 11, data: {label: 'sorted-high.mtz', shape: 'circle', pid: 'bril:67acfc90-7e7a-43bd-86bb-cd1a8f1dae3c'}},
-			{id: 12, data: {label: 'Mosflm', shape: 'hexagon', pid: null}},
-			{id: 13, data: {label: 'CCP4', shape: 'hexagon', pid: null}}			
-		],
-		edges: [
-			{from: 0, to: 5, directed: true, data: {color: '#00A0B0', text: 'isMemberOf'}},
-			{from: 1, to: 5, directed: true, data: {color: '#00A0B0', text: 'isMemberOf'}},
-			{from: 2, to: 5, directed: true, data: {color: '#00A0B0', text: 'isMemberOf'}},
-			{from: 3, to: 5, directed: true, data: {color: '#00A0B0', text: 'isMemberOf'}},
-			{from: 4, to: 5, directed: true, data: {color: '#00A0B0', text: 'isMemberOf'}},
-			{from: 6, to: 5, directed: true, data: {color: '#6A4A3C', text: 'used'}},			
-			{from: 6, to: 12, directed: true, data: {color: '#DA70D6', text: 'wasControlledBy'}},			
-			{from: 7, to: 6, directed: true, data: {color: '#7DBE3C', text: 'wasGeneratedBy'}},
-			{from: 7, to: 5, directed: true, data: {color: '#EB6841', text: 'wasDerivedFrom'}},
-			{from: 9, to: 7, directed: true, data: {color: '#6A4A3C', text: 'used'}},
-			{from: 9, to: 8, directed: true, data: {color: '#6A4A3C', text: 'used'}},
-			{from: 10, to: 9, directed: true, data: {color: '#7DBE3C', text: 'wasGeneratedBy'}},
-			{from: 11, to: 9, directed: true, data: {color: '#7DBE3C', text: 'wasGeneratedBy'}},
-			{from: 9, to: 13, directed: true, data: {color: '#DA70D6', text: 'wasControlledBy'}},
-			{from: 11, to: 7, directed: true, data: {color: '#EB6841', text: 'wasDerivedFrom'}}			
-		]
-	};
-
 var graph = new Graph();
-
 
 var n = [];
 
@@ -257,7 +219,8 @@ function filter_relationships(key, opt) {
 			var new_canvas = "<canvas id='explorer'/" + "></canvas>";
 			$( "#tabs-3" ).html("");
 			$( "#tabs-3" ).append( "<p><font size='4'><b>Experiment: " + expId + "</b></font>&nbsp;&nbsp;&nbsp;&nbsp;" + 
-			                       "<button id='back_exp'>Back to Experiments</button><button id='reload'>Reload Relationships</button></p>" );
+			                       "<button id='back_exp'>Back to Experiments</button><button id='reload'>Reload Relationships</button>"+ 
+			                       "<button id='savePNG'>Save as PNG</button></p>" );
 			var pos_left = (window.innerWidth - 100)/2;
 			var pos_top = (window.innerHeight - 250)/2;
 			$( "#tabs-3" ).append( "<div id='loader2' style='display:none;'><p><img style='position: absolute; left: "+pos_left+"px; top: "+pos_top+"px;'" + 
@@ -317,6 +280,14 @@ function filter_relationships(key, opt) {
 	        }
         }
       });
+      
+      $( "#savePNG" )
+			.button()
+			.click(function() {
+			    var save_canvas = document.getElementById("explorer");
+          var img    = save_canvas.toDataURL("image/png");
+          document.location.href = img.replace("image/png", "image/octet-stream");
+			});
       
       $( "#reload" )
 			.button()
