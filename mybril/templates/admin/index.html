@@ -292,11 +292,11 @@ function filter_relationships(key, opt) {
       $( "#reload" )
 			.button()
 			.click(function() {
-			    var graph2 = new Graph();
 	        var url = "http://localhost:8000/repo/experiments/" + expId + "/relationships/";
 	        $('#loader2').show();
 	        $.getJSON(url, function(data) {
 	          $('#loader2').hide();
+	          graph2.clearGraph();
 	          graph2.loadData(data);	          
 	        });	        
 			});

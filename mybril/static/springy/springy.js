@@ -127,6 +127,13 @@ Graph.prototype.getEdges = function(node1, node2)
 	return [];
 };
 
+Graph.prototype.clearGraph = function()
+{
+  this.nodes.forEach(function(node) {
+		  this.removeNode(node);
+	}, this);
+}
+
 // remove a node and it's associated edges from the graph
 Graph.prototype.removeNode = function(node)
 {

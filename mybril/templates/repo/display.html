@@ -2,6 +2,7 @@
 $( "#viewLink" )
   .button()
   .click(function() {
+    $('#viewer-dialog').dialog('close');
     $("#viewer-dialog").dialog({ 
         title: "Viewing: " + $("#title").text(), 
         height: 600, 
