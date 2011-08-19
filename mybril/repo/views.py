@@ -32,16 +32,20 @@ def exp_relationships(request, expId):
     node_id = 0
     nodes = []
     edges = []
+    objects_cache = []
     objects = []
     processes = []   
     relationship = []
     for obj_pid in exp_pids:
         o = repo.get_object(pid = obj_pid);
-        objects.append(o)
-    for obj in objects:
+        objects_cache.append(o)
+        
+    for obj in objects_cache:
         if (string.find(obj.pid, "process") != -1):
             processes.append(obj)
-            objects.remove(obj)
+    for obj in objects_cache:
+        if (string.find(obj.pid, "process") == -1):
+            objects.append(obj)
        
     # generate process nodes
     for process in processes:

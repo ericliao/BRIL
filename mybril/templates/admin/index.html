@@ -25,6 +25,7 @@
 
 <script>
 var graph = new Graph();
+var graph2 = new Graph();
 
 var n = [];
 
@@ -127,12 +128,12 @@ function filter(key, opt) {
 	  }
 	  if (jQuery.data(opt, key) == null) {
 	    var filtered_nodes = key + "_nodes";
-	    jQuery.data(opt, filtered_nodes, graph.filterNodes(nodeType, filter_key));
+	    jQuery.data(opt, filtered_nodes, graph2.filterNodes(filter_key));
 		  jQuery.data(opt, key, true);		  
 	  }
 	  else {
 		  var filtered_nodes = key + "_nodes";
-		  graph.merge(jQuery.data(opt, filtered_nodes));
+		  graph2.merge(jQuery.data(opt, filtered_nodes));
 		  jQuery.data(opt, key, null);		
 	  }		
 	}
@@ -142,12 +143,12 @@ function filter_relationships(key, opt) {
   if (opt != null) {
 	  if (jQuery.data(opt, key) == null) {	
 	    var filtered_relations = key + "_edges";	
-		  jQuery.data(opt, filtered_relations, graph.filterEdges(nodeType, key));
+		  jQuery.data(opt, filtered_relations, graph2.filterEdges(key));
 		  jQuery.data(opt, key, true);
 	  }
 	  else {
 		  var filtered_relations = key + "_edges";	
-		  graph.mergeEdges(jQuery.data(opt, filtered_relations));
+		  graph2.mergeEdges(jQuery.data(opt, filtered_relations));
 		  jQuery.data(opt, key, null);
 	  }
 	}		
@@ -165,55 +166,7 @@ function filter_relationships(key, opt) {
 		
 		$("#unique_tab_id").html("Relationship Explorer");
 		
-		var $tabs = $( "#tabs" ).tabs({
-		  tabTemplate: "<li><a href='#{href}'>#{label}</a> <span class='ui-icon ui-icon-close'></span></li>",
-		  add: function( event, ui ) {				
-				var new_canvas = "<canvas id='" + "explorer-" + tab_counter + "'/" + "></canvas>";
-				$( ui.panel ).append( new_canvas );
-				var canvas_path = "#tabs #tabs-" + tab_counter + " #explorer-" + tab_counter;
-				var tabs_path = "#tabs-" + tab_counter;
-				$tabs.tabs('select', '#' + ui.panel.id);	
-		    jQuery(canvas_path).springy({ 'graph': graph });
-				
-				/**************************************************
-	      * Menu for filtering display
-	      **************************************************/		 
-        $.contextMenu({
-            // define which elements trigger this menu
-            selector: tabs_path,
-            // define the elements of the menu
-            items: {	    	    	
-            	all_process: {name: "Filter Processes", type:'checkbox', callback: filter},
-            	sep1: "---------",
-                all_objects: {name: "Filter Objects",  type:'checkbox', callback: filter},
-                sep2: "---------",
-                controllers_menu: {
-			        name: "Filter Controllers",				
-			        items: {
-				        all_controllers: {name: "All", type:'checkbox', callback: filter},
-				        CCP4: {name: "CCP4",  type:'checkbox', callback: filter}					
-			        }
-		        },
-		        sep3: "---------",
-		        relationships_menu: {
-			        name: "Filter Relationships",				
-			        items: {
-				        all_relationships: {name: "All",  type:'checkbox', callback: filter_relationships},
-				        used: {name: "used",  type:'checkbox', callback: filter_relationships}					
-			        }
-		        },	        	       
-            },
-            events: {
-		        show: function(opt) {					
-			        $.each(opt.inputs, function(key, item) {					
-				        item.selected = jQuery.data(opt, key) ? true : null;										
-			        });				
-		        }
-	        }
-        });		   
-			}
-			
-		});					
+		var $tabs = $( "#tabs" ).tabs();		 
 		
 		function loadTab(expId) {
 			var new_canvas = "<canvas id='explorer'/" + "></canvas>";
@@ -232,7 +185,6 @@ function filter_relationships(key, opt) {
 			{
 	      jQuery(canvas_path).springy({ 'graph': graph });
 	    } else {
-	      var graph2 = new Graph();
 	      var url = "http://localhost:8000/repo/experiments/" + expId + "/relationships/";	      	      
 	      jQuery(canvas_path).springy({ 'graph': graph2 });   	   
 	      $('#loader2').show();
@@ -247,9 +199,12 @@ function filter_relationships(key, opt) {
 			/**************************************************
       * Menu for filtering display
       **************************************************/		 
+      
+      // use a django template to fill this in automatically?
+      
       $.contextMenu({
           // define which elements trigger this menu
-          selector: "#tabs-3",
+          selector: "#explorer",
           // define the elements of the menu
           items: {	    	    	
           	all_process: {name: "Filter Processes", type:'checkbox', callback: filter},
@@ -268,7 +223,11 @@ function filter_relationships(key, opt) {
 		        name: "Filter Relationships",				
 		        items: {
 			        all_relationships: {name: "All",  type:'checkbox', callback: filter_relationships},
-			        used: {name: "used",  type:'checkbox', callback: filter_relationships}					
+			        isMemberOf: {name: "isMemberOf",  type:'checkbox', callback: filter_relationships},
+			        used: {name: "used",  type:'checkbox', callback: filter_relationships},
+			        wasGeneratedBy: {name: "wasGeneratedBy",  type:'checkbox', callback: filter_relationships},
+			        wasDerivedFrom: {name: "wasDerivedFrom",  type:'checkbox', callback: filter_relationships},
+			        wasControlledBy: {name: "wasControlledBy",  type:'checkbox', callback: filter_relationships}
 		        }
 	        },	        	       
           },

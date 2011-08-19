@@ -268,7 +268,7 @@ Graph.prototype.mergeEdges = function(edges)
 	}, this);
 };
 
-Graph.prototype.filterNodes = function(fn, shape)
+Graph.prototype.filterNodes = function(shape)
 {
 	var tmpNodes = this.nodes.slice();
 	var o = {};
@@ -307,7 +307,7 @@ Graph.prototype.filterNode = function(node)
 	return o;
 };
 
-Graph.prototype.filterEdges = function(fn, text)
+Graph.prototype.filterEdges = function(text)
 {	
 	var tmpEdges = this.edges.slice();	
 	var filtered_edges = [];	
