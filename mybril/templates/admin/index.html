@@ -16,6 +16,7 @@
 {% if user.is_staff %}
 <script src="{{ STATIC_URL }}jquery/jquery-1.6.2.min.js"></script>
 <script src="{{ STATIC_URL }}jquery/jquery-ui-1.8.15.custom.min.js"></script>
+<script src="{{ STATIC_URL }}jquery/jquery.mousewheel.min.js"></script>
 <script src="{{ STATIC_URL }}springy/springy.js"></script>
 <script src="{{ STATIC_URL }}springy/springyui.js"></script>
 <script src="{{ STATIC_URL }}contextMenu/jquery.ui.position.js" type="text/javascript"></script>
@@ -173,8 +174,8 @@ function filter_relationships(key, opt) {
 			$( "#tabs-3" ).html("");
 			$( "#tabs-3" ).append( "<p><font size='4'><b>Experiment: " + expId + "</b></font>&nbsp;&nbsp;&nbsp;&nbsp;" + 
 			                       "<button id='back_exp'>Back to Experiments</button><button id='reload'>Reload Relationships</button>"+ 
-			                       "<button id='savePNG'>Save as PNG</button></p>" );
-			var pos_left = (window.innerWidth - 100)/2;
+			                       "<button id='savePNG'>Save as PNG</button><button id='reset'>Reset Zoom</button></p>" );
+			var pos_left = (window.innerWidth - 100)/2 - 50;
 			var pos_top = (window.innerHeight - 250)/2;
 			$( "#tabs-3" ).append( "<div id='loader2' style='display:none;'><p><img style='position: absolute; left: "+pos_left+"px; top: "+pos_top+"px;'" + 
 			                       "src='{{ STATIC_URL }}jquery/ajax-loader.gif' alt='Loading'></p><div>" );                       
@@ -187,11 +188,12 @@ function filter_relationships(key, opt) {
 	    } else {
 	      var url = "http://localhost:8000/repo/experiments/" + expId + "/relationships/";	      	      
 	      jQuery(canvas_path).springy({ 'graph': graph2 });   	   
+
 	      $('#loader2').show();
 	      $.getJSON(url, function(data) {
 	          $('#loader2').hide();
 	          graph2.loadData(data);	          
-	      });	     
+	      });
 	    }
 			
 			$("#unique_tab_id").html("Relationship Explorer: " + expId);
@@ -211,13 +213,7 @@ function filter_relationships(key, opt) {
           	sep1: "---------",
               all_objects: {name: "Filter Objects",  type:'checkbox', callback: filter},
               sep2: "---------",
-              controllers_menu: {
-		        name: "Filter Controllers",				
-		        items: {
-			        all_controllers: {name: "All", type:'checkbox', callback: filter},
-			        CCP4: {name: "CCP4",  type:'checkbox', callback: filter}					
-		        }
-	        },
+              all_controllers: {name: "Filter Controllers", type:'checkbox', callback: filter},
 	        sep3: "---------",
 	        relationships_menu: {
 		        name: "Filter Relationships",				
@@ -227,7 +223,8 @@ function filter_relationships(key, opt) {
 			        used: {name: "used",  type:'checkbox', callback: filter_relationships},
 			        wasGeneratedBy: {name: "wasGeneratedBy",  type:'checkbox', callback: filter_relationships},
 			        wasDerivedFrom: {name: "wasDerivedFrom",  type:'checkbox', callback: filter_relationships},
-			        wasControlledBy: {name: "wasControlledBy",  type:'checkbox', callback: filter_relationships}
+			        wasControlledBy: {name: "wasControlledBy",  type:'checkbox', callback: filter_relationships},
+			        wasTriggeredBy: {name: "wasTriggeredBy",  type:'checkbox', callback: filter_relationships}
 		        }
 	        },	        	       
           },
@@ -239,6 +236,13 @@ function filter_relationships(key, opt) {
 	        }
         }
       });
+      
+      $( "#reset" )
+			.button()
+			.click(function() {
+			    // todo: how to reset the scale + location?
+			    console.log(jQuery(canvas_path).springy.scale);
+			});
       
       $( "#savePNG" )
 			.button()

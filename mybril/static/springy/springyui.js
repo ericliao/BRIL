@@ -36,11 +36,23 @@ jQuery.fn.springy = function(params) {
     }
     
     var stiffness = params.stiffness || 500.0;
-    var repulsion = params.repulsion || 50.0;
-    var damping = params.damping || 0.25;    
+    var repulsion = params.repulsion || 300.0;
+    var damping = params.damping || 0.5;    
+    
+    var scale = 1;
+    var originx = 0;
+    var originy = 0;
+    var prevX = null;
+    var prevY = null;
+    var xVisible = 0;
+    var yVisible = 0;
+    var xTranslation = 0;
+    var yTranslation = 0;
+    var widthVisible = 0;
+    var heightVisible = 0;
         
 	  var canvas = this[0];
-	  canvas.width  = window.innerWidth - 125;
+	  canvas.width  = window.innerWidth - 125;	  
 	  canvas.height = window.innerHeight - 275;
     var ctx = canvas.getContext("2d");
 	  var layout = new Layouts.ForceDirected(graph, stiffness, repulsion, damping);    
@@ -49,8 +61,8 @@ jQuery.fn.springy = function(params) {
 	  var currentBB = layout.getBoundingBox();
 	  var targetBB = {bottomleft: new Vector(-2, -2), topright: new Vector(2, 2)};
 
-	  // auto adjusting bounding box	
-	  setInterval(function(){
+    // auto adjusting bounding box
+	  Layouts.requestAnimationFrame(function adjust() {
 		  targetBB = layout.getBoundingBox();
 		  // current gets 20% closer to target every iteration
 		  currentBB = {
@@ -58,9 +70,11 @@ jQuery.fn.springy = function(params) {
 				  .divide(10)),
 			  topright: currentBB.topright.add( targetBB.topright.subtract(currentBB.topright)
 				  .divide(10))
-		  };
-	  }, 50);
-        
+		};
+
+		Layouts.requestAnimationFrame(adjust);
+	});
+    
 	  // convert to/from screen coordinates	  
 	  toScreen = function(p) {
 		  var size = currentBB.topright.subtract(currentBB.bottomleft);
@@ -87,6 +101,8 @@ jQuery.fn.springy = function(params) {
 
 		var pos = jQuery(this).offset();
 		var p = fromScreen({x: e.pageX - pos.left, y: e.pageY - pos.top});
+		prevX = p.x;
+		prevY = p.y;
 		selected = nearest = dragged = layout.nearest(p);				
 		if (selected.node !== null)
 		{
@@ -106,14 +122,42 @@ jQuery.fn.springy = function(params) {
 			dragged.point.p.x = p.x;
 			dragged.point.p.y = p.y;
 			$(this).addClass('noclick');
-		}
-
-		renderer.start();		
+		} else if (dragged !== null && dragged.node == null) {
+		  // moving the canvas				  
+		  if (prevX == null) {prevX = p.x; }
+		  if (prevY == null) {prevY = p.y; }
+		  xTranslation += (p.x - prevX);
+      yTranslation += (p.y - prevY);
+		  ctx.translate((p.x - prevX)/scale, (p.y - prevY)/scale);
+		}  
 	});
 
 	jQuery(canvas).bind('mouseup',function(e){
 		dragged = null;
+		prevX = prevY = null;
 	});
+
+  jQuery(canvas).bind('mousewheel',function(e, delta){
+    
+    var pos = jQuery(this).offset();  
+    var mousex = e.pageX - pos.left;
+    var mousey = e.pageY - pos.top;
+    var wheel = delta/10;
+    var zoom = 1 + wheel/2;
+    ctx.translate(originx, originy);
+
+    ctx.scale(zoom, zoom);
+        
+    ctx.translate(
+        -( mousex / scale + originx - mousex / ( scale * zoom ) ),
+        -( mousey / scale + originy - mousey / ( scale * zoom ) )
+    );
+
+    originx = ( mousex / scale + originx - mousex / ( scale * zoom ) );
+    originy = ( mousey / scale + originy - mousey / ( scale * zoom ) );
+    scale *= zoom;  
+    
+  });
 
 	// node selection
 	jQuery(canvas).click(function(e){
@@ -176,12 +220,19 @@ jQuery.fn.springy = function(params) {
 	    }
 	});			
 
-	Node.prototype.getWidth = function() {
-		ctx.save();
+  Node.prototype.getWidth = function() {
 		var text = typeof(this.data.label) !== 'undefined' ? this.data.label : this.id;
-		ctx.font = "11px Verdana, sans-serif";
+		if (this._width && this._width[text])
+			return this._width[text];
+
+		ctx.save();
+		ctx.font = "16px Verdana, sans-serif";
 		var width = ctx.measureText(text).width + 10;
 		ctx.restore();
+
+		this._width || (this._width = {});
+		this._width[text] = width;
+
 		return width;
 	};
 
@@ -196,8 +247,11 @@ jQuery.fn.springy = function(params) {
 	var renderer = new Renderer(1, layout,
 		
 		function clear()
-		{
-			ctx.clearRect(0,0,canvas.width,canvas.height);
+		{		
+      widthVisible = canvas.width/scale;
+      heightVisible = canvas.height/scale; 
+		  ctx.clearRect(originx, originy, widthVisible, heightVisible);
+			//ctx.clearRect(0,0,canvas.width,canvas.height);
 		},
 				
 		function drawEdge(edge, p1, p2)
@@ -215,6 +269,7 @@ jQuery.fn.springy = function(params) {
 
 			var total = from.length + to.length;
 
+      // Figure out edge's position in relation to other edges between the same nodes
 			var n = 0;
 			for (var i=0; i<from.length; i++)
 			{
@@ -252,7 +307,7 @@ jQuery.fn.springy = function(params) {
 			arrowWidth = 4 + ctx.lineWidth;
 			arrowLength = 16;
 
-			var directional = typeof(edge.data.directional) !== 'undefined' ? edge.data.directional : true;
+			var directional = typeof(edge.data.directed) !== 'undefined' ? edge.data.directed : true;
 
 			// line
 			var lineEnd;

@@ -200,11 +200,12 @@ Graph.prototype.loadData = function(data)
 {
 	var nodes = [];
 	data.nodes.forEach(function(n) {
-		nodes.push(this.addNode(new Node(n.id, n.data)));
+		nodes[n.id] = this.addNode(new Node(n.id, n.data));
+		//nodes.push(this.addNode(new Node(n.id, n.data)));
 	}, this);
 
 	data.edges.forEach(function(e) {
-		var from = nodes[e._from];
+		var from = nodes[e._from];				
 		var to = nodes[e._to];
 
 		var id = (e.directed)
@@ -212,7 +213,7 @@ Graph.prototype.loadData = function(data)
 			: (from.id < to.id) // normalise id for non-directed edges
 				? e.type + "-" + from.id + "-" + to.id
 				: e.type + "-" + to.id + "-" + from.id;
-
+				
 		var edge = this.addEdge(new Edge(id, from, to, e.data));
 		edge.data.type = e.type;
 	}, this);
@@ -233,7 +234,8 @@ Graph.prototype.merge = function(data)
 {
 	var nodes = [];	
 	data.nodes.forEach(function(n) {
-		nodes.push(this.addNode(new Node(n.id, n.data)));
+		nodes[n.id] = this.addNode(new Node(n.id, n.data));
+		//nodes.push(this.addNode(new Node(n.id, n.data)));
 	}, this);
 
 	data.edges.forEach(function(e) {
@@ -327,13 +329,20 @@ Graph.prototype.addGraphListener = function(obj)
 	this.eventListeners.push(obj);
 };
 
+/*
 Graph.prototype.notify = function()
 {
 	this.eventListeners.forEach(function(obj){var layout = new Layouts.ForceDirected(graph, 400.0, 400.0, 0.5);
 		obj.graphChanged();
 	});
 };
+*/
 
+Graph.prototype.notify = function() {
+	this.eventListeners.forEach(function(obj){
+		obj.graphChanged();
+	});
+};
 // -----------
 var Layouts = {};
 Layouts.ForceDirected = function(graph, stiffness, repulsion, damping)
@@ -493,6 +502,16 @@ Layouts.ForceDirected.prototype.totalEnergy = function(timestep)
 	return energy;
 };
 
+var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }; // stolen from coffeescript, thanks jashkenas! ;-)
+
+Layouts.requestAnimationFrame = __bind(window.requestAnimationFrame ||
+	window.webkitRequestAnimationFrame ||
+	window.mozRequestAnimationFrame ||
+	window.oRequestAnimationFrame ||
+	window.msRequestAnimationFrame ||
+	function(callback, element) {
+		window.setTimeout(callback, 100);
+	}, window);
 
 // start simulation
 Layouts.ForceDirected.prototype.start = function(interval, render, done)
@@ -503,7 +522,7 @@ Layouts.ForceDirected.prototype.start = function(interval, render, done)
 		return; // already running
 	}
 
-	this.intervalId = setInterval(function() {
+	this.intervalId = setInterval(function step() {
 		t.applyCoulombsLaw();
 		t.applyHookesLaw();
 		t.attractToCentre();
@@ -513,12 +532,13 @@ Layouts.ForceDirected.prototype.start = function(interval, render, done)
 		if (typeof(render) !== 'undefined') { render(); }
 
 		// stop simulation when energy of the system goes below a threshold
-		if (t.totalEnergy() < 0.1)
-		{
-			clearInterval(t.intervalId);
-			t.intervalId = null;
+		if (t.totalEnergy() < 0.1) {
+			t._started = false;
 			if (typeof(done) !== 'undefined') { done(); }
+		} else {
+			Layouts.requestAnimationFrame(step);
 		}
+		
 	}, interval);
 };
 
@@ -666,7 +686,7 @@ Renderer.prototype.graphChanged = function(e)
 Renderer.prototype.start = function()
 {
 	var t = this;
-	this.layout.start(50, function render() {
+	this.layout.start(100, function render() {
 		t.clear();
 
 		t.layout.eachEdge(function(edge, spring) {

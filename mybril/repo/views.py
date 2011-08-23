@@ -4,7 +4,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponse
 from django.template import RequestContext
 from eulfedora.views import raw_datastream
-import os, json, string
+import os, string, simplejson
 
 def display(request, pid):
     repo = Repository()
@@ -49,9 +49,8 @@ def exp_relationships(request, expId):
        
     # generate process nodes
     for process in processes:
-        process_node = dict(id=node_id, data=dict(label=process.dc.content.title, shape='square', pid=process.dc.content.identifier))        
-        nodes.append(process_node)                
-        node_id += 1
+        process_node = dict(id=process.dc.content.identifier, data=dict(label=process.dc.content.title, shape='square', pid=process.dc.content.identifier, format='process'))        
+        nodes.append(process_node)
 
         controllers = []
         for o in repo.risearch.get_objects("info:fedora/"+ process.pid, "http://purl.org/net/opmv/ns#wasControlledBy"):
@@ -59,18 +58,38 @@ def exp_relationships(request, expId):
         
         # generate controller nodes and 'wasControlledBy' relationships
         for controller in controllers:
-            controller_node = dict(id=node_id, data=dict(label=controller, shape='hexagon', pid='null'))
+            controller_node = dict(id=node_id, data=dict(label=controller, shape='hexagon', pid='null', format='controller'))
             nodes.append(controller_node)
             node_id += 1
             edge = dict(_from=process_node.get('id', {}), _to=controller_node.get('id', {}), 
-                        directed='true', data=dict(color='#DA70D6', text='wasControlledBy'))                        
+                        directed='false', data=dict(color='#DA70D6', text='wasControlledBy'))                        
             edges.append(edge)
+   
+    # generate 'wasTriggeredBy' relationships
+    relationship = []
+    for process in processes:
+        for o in repo.risearch.get_objects("info:fedora/"+ process.pid, "http://purl.org/net/opmv/ns#wasTriggeredBy"):
+            relationship.append([process.pid, string.replace(o, 'info:fedora/', '')])
+    
+    edge_from = []
+    edge_to = []    
+    for r in relationship:
+        # search for matching pid in nodes
+        for node in nodes:
+            if ((node.get('data', {}).get('pid', {})) == r[0]):
+                edge_from.append(node.get('id', {}))
+            if ((node.get('data', {}).get('pid', {})) == r[1]):
+                edge_to.append(node.get('id', {}))
+    
+    for e_from, e_to in zip(edge_from, edge_to):           
+        edge = dict(_from=e_from, _to=e_to, directed='false', data=dict(color='#FFD800', text='wasTriggeredBy'))
+        edges.append(edge);
    
     # generate object nodes
     for obj in objects:
-        object_node = dict(id=node_id, data=dict(label=os.path.basename(obj.dc.content.title), shape='circle', pid=obj.dc.content.identifier))
+        object_node = dict(id=obj.dc.content.identifier, data=dict(label=os.path.basename(obj.dc.content.title), shape='circle', pid=obj.dc.content.identifier, format=obj.dc.content.format))
         nodes.append(object_node)
-        node_id += 1
+        #node_id += 1
              
     # generate 'used' relationships
     relationship = []
@@ -89,7 +108,7 @@ def exp_relationships(request, expId):
                 edge_to.append(node.get('id', {}))
     
     for e_from, e_to in zip(edge_from, edge_to):           
-        edge = dict(_from=e_from, _to=e_to, directed='true', data=dict(color='#6A4A3C', text='used'))
+        edge = dict(_from=e_from, _to=e_to, directed='false', data=dict(color='#6A4A3C', text='used'))
         edges.append(edge);
 
     # generate 'isMemberOf' relationships
@@ -109,7 +128,7 @@ def exp_relationships(request, expId):
                 edge_to.append(node.get('id', {}))
     
     for e_from, e_to in zip(edge_from, edge_to):           
-        edge = dict(_from=e_from, _to=e_to, directed='true', data=dict(color='#00A0B0', text='isMemberOf'))
+        edge = dict(_from=e_from, _to=e_to, directed='false', data=dict(color='#00A0B0', text='isMemberOf'))
         edges.append(edge);    
     
     # generate 'wasDerivedFrom' relationships
@@ -129,7 +148,7 @@ def exp_relationships(request, expId):
                 edge_to.append(node.get('id', {}))
     
     for e_from, e_to in zip(edge_from, edge_to):           
-        edge = dict(_from=e_from, _to=e_to, directed='true', data=dict(color='#EB6841', text='wasDerivedFrom'))
+        edge = dict(_from=e_from, _to=e_to, directed='false', data=dict(color='#EB6841', text='wasDerivedFrom'))
         edges.append(edge);      
     
     # generate 'wasGeneratedBy' relationships
@@ -149,11 +168,13 @@ def exp_relationships(request, expId):
                 edge_to.append(node.get('id', {}))
     
     for e_from, e_to in zip(edge_from, edge_to):           
-        edge = dict(_from=e_from, _to=e_to, directed='true', data=dict(color='#7DBE3C', text='wasGeneratedBy'))
+        edge = dict(_from=e_from, _to=e_to, directed='false', data=dict(color='#7DBE3C', text='wasGeneratedBy'))
         edges.append(edge);
 
+    # TODO: scan nodes for unique formats
+
     # JSONify and return
-    json_output = json.JSONEncoder().encode(dict(nodes=nodes, edges=edges))
+    json_output = simplejson.JSONEncoder().encode(dict(nodes=nodes, edges=edges))
     return HttpResponse(json_output, mimetype="application/json")
     
     
