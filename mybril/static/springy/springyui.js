@@ -39,41 +39,39 @@ jQuery.fn.springy = function(params) {
     var repulsion = params.repulsion || 300.0;
     var damping = params.damping || 0.5;    
     
-    var scale = 1;
+    //scale = 1;
     var originx = 0;
     var originy = 0;
     var prevX = null;
     var prevY = null;
     var xVisible = 0;
     var yVisible = 0;
-    var xTranslation = 0;
-    var yTranslation = 0;
     var widthVisible = 0;
     var heightVisible = 0;
         
 	  var canvas = this[0];
 	  canvas.width  = window.innerWidth - 125;	  
-	  canvas.height = window.innerHeight - 275;
+	  canvas.height = window.innerHeight - 250;
     var ctx = canvas.getContext("2d");
-	  var layout = new Layouts.ForceDirected(graph, stiffness, repulsion, damping);    
+	  var layout = new Layout.ForceDirected(graph, stiffness, repulsion, damping);    
 
 	  // calculate bounding box of graph layout.. with ease-in
 	  var currentBB = layout.getBoundingBox();
 	  var targetBB = {bottomleft: new Vector(-2, -2), topright: new Vector(2, 2)};
 
     // auto adjusting bounding box
-	  Layouts.requestAnimationFrame(function adjust() {
-		  targetBB = layout.getBoundingBox();
-		  // current gets 20% closer to target every iteration
-		  currentBB = {
-			  bottomleft: currentBB.bottomleft.add( targetBB.bottomleft.subtract(currentBB.bottomleft)
-				  .divide(10)),
-			  topright: currentBB.topright.add( targetBB.topright.subtract(currentBB.topright)
-				  .divide(10))
-		};
+	  Layout.requestAnimationFrame(function adjust() {
+		    targetBB = layout.getBoundingBox();
+		    // current gets 20% closer to target every iteration
+		    currentBB = {
+			    bottomleft: currentBB.bottomleft.add( targetBB.bottomleft.subtract(currentBB.bottomleft)
+				    .divide(10)),
+			    topright: currentBB.topright.add( targetBB.topright.subtract(currentBB.topright)
+				    .divide(10))
+		    };
 
-		Layouts.requestAnimationFrame(adjust);
-	});
+		    Layout.requestAnimationFrame(adjust);
+	  });
     
 	  // convert to/from screen coordinates	  
 	  toScreen = function(p) {
@@ -85,8 +83,8 @@ jQuery.fn.springy = function(params) {
     
 	  fromScreen = function(s) {
 		  var size = currentBB.topright.subtract(currentBB.bottomleft);
-		  var px = (s.x / canvas.width) * size.x + currentBB.bottomleft.x;
-		  var py = (s.y / canvas.height) * size.y + currentBB.bottomleft.y;
+		  var px = ((s.x / canvas.width) * size.x) + currentBB.bottomleft.x;
+		  var py = ((s.y / canvas.height) * size.y) + currentBB.bottomleft.y;
 		  return new Vector(px, py);
 	  };
 	  
@@ -108,28 +106,27 @@ jQuery.fn.springy = function(params) {
 		{
 			dragged.point.m = 10000.0;
 		}		
-
-		renderer.start();
 	});
-
+  
 	jQuery(canvas).mousemove(function(e){
 		var pos = jQuery(this).offset();
 		var p = fromScreen({x: e.pageX - pos.left, y: e.pageY - pos.top});
-		nearest = layout.nearest(p);
-
+    
 		if (dragged !== null && dragged.node !== null)
 		{
 			dragged.point.p.x = p.x;
 			dragged.point.p.y = p.y;
-			$(this).addClass('noclick');
-		} else if (dragged !== null && dragged.node == null) {
-		  // moving the canvas				  
+			$(this).addClass('noclick');		  
+		} 		
+		
+		/*
+		else if (dragged !== null && dragged.node == null) {
+		  // moving the canvas      
 		  if (prevX == null) {prevX = p.x; }
 		  if (prevY == null) {prevY = p.y; }
-		  xTranslation += (p.x - prevX);
-      yTranslation += (p.y - prevY);
-		  ctx.translate((p.x - prevX)/scale, (p.y - prevY)/scale);
-		}  
+		  ctx.translate((p.x - prevX)/graph.scale, (p.y - prevY)/graph.scale);
+		} 
+		*/		
 	});
 
 	jQuery(canvas).bind('mouseup',function(e){
@@ -137,6 +134,7 @@ jQuery.fn.springy = function(params) {
 		prevX = prevY = null;
 	});
 
+  /*
   jQuery(canvas).bind('mousewheel',function(e, delta){
     
     var pos = jQuery(this).offset();  
@@ -149,16 +147,16 @@ jQuery.fn.springy = function(params) {
     ctx.scale(zoom, zoom);
         
     ctx.translate(
-        -( mousex / scale + originx - mousex / ( scale * zoom ) ),
-        -( mousey / scale + originy - mousey / ( scale * zoom ) )
+        -( mousex / graph.scale + originx - mousex / ( graph.scale * zoom ) ),
+        -( mousey / graph.scale + originy - mousey / ( graph.scale * zoom ) )
     );
 
-    originx = ( mousex / scale + originx - mousex / ( scale * zoom ) );
-    originy = ( mousey / scale + originy - mousey / ( scale * zoom ) );
-    scale *= zoom;  
-    
+    originx = ( mousex / graph.scale + originx - mousex / ( graph.scale * zoom ) );
+    originy = ( mousey / graph.scale + originy - mousey / ( graph.scale * zoom ) );
+    graph.scale *= zoom;  
   });
-
+  */
+  
 	// node selection
 	jQuery(canvas).click(function(e){
 		var pos = jQuery(this).offset();
@@ -248,10 +246,7 @@ jQuery.fn.springy = function(params) {
 		
 		function clear()
 		{		
-      widthVisible = canvas.width/scale;
-      heightVisible = canvas.height/scale; 
-		  ctx.clearRect(originx, originy, widthVisible, heightVisible);
-			//ctx.clearRect(0,0,canvas.width,canvas.height);
+		  ctx.clearRect(0, 0, canvas.width, canvas.height);
 		},
 				
 		function drawEdge(edge, p1, p2)

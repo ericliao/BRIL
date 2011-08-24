@@ -17,8 +17,10 @@
 <script src="{{ STATIC_URL }}jquery/jquery-1.6.2.min.js"></script>
 <script src="{{ STATIC_URL }}jquery/jquery-ui-1.8.15.custom.min.js"></script>
 <script src="{{ STATIC_URL }}jquery/jquery.mousewheel.min.js"></script>
-<script src="{{ STATIC_URL }}springy/springy.js"></script>
+<!--<script src="{{ STATIC_URL }}springy/springy.js"></script>-->
 <script src="{{ STATIC_URL }}springy/springyui.js"></script>
+<script src="{{ STATIC_URL }}raphael/raphael-min.js"></script>
+<script src="{{ STATIC_URL }}springy/springy-test.js"></script>
 <script src="{{ STATIC_URL }}contextMenu/jquery.ui.position.js" type="text/javascript"></script>
 <script src="{{ STATIC_URL }}contextMenu/jquery.contextMenu.js" type="text/javascript"></script>
 <link href="{{ STATIC_URL }}contextMenu/jquery.contextMenu.css" rel="stylesheet" type="text/css" />
@@ -164,6 +166,7 @@ function filter_relationships(key, opt) {
 	  var $tab_title_input = $("#tab_title"),
 		$tab_content_input = $("#tab_content");
     var tab_counter = 3;
+		var visual = null;
 		
 		$("#unique_tab_id").html("Relationship Explorer");
 		
@@ -175,16 +178,101 @@ function filter_relationships(key, opt) {
 			$( "#tabs-3" ).append( "<p><font size='4'><b>Experiment: " + expId + "</b></font>&nbsp;&nbsp;&nbsp;&nbsp;" + 
 			                       "<button id='back_exp'>Back to Experiments</button><button id='reload'>Reload Relationships</button>"+ 
 			                       "<button id='savePNG'>Save as PNG</button><button id='reset'>Reset Zoom</button></p>" );
+			
+			// TODO: how to pass the controls of the zoom to the context?                       
+			                       
 			var pos_left = (window.innerWidth - 100)/2 - 50;
 			var pos_top = (window.innerHeight - 250)/2;
 			$( "#tabs-3" ).append( "<div id='loader2' style='display:none;'><p><img style='position: absolute; left: "+pos_left+"px; top: "+pos_top+"px;'" + 
 			                       "src='{{ STATIC_URL }}jquery/ajax-loader.gif' alt='Loading'></p><div>" );                       
 			$( "#tabs-3" ).append( new_canvas );
+			//$( "#tabs-3" ).append( "<div id='graph'></div>" );
 			var canvas_path = "#tabs #tabs-3 #explorer";
 			$tabs.tabs('select', '#tabs-3');
 			if (expId == 1)	
 			{
 	      jQuery(canvas_path).springy({ 'graph': graph });
+	      
+	      /*
+	      var width  = window.innerWidth - 125;	  
+	      var height = window.innerHeight - 250;
+	      
+        var paper = Raphael("graph", width, height);
+         
+        var layout = new Layout.ForceDirected(graph, 500.0, 300.0, 0.5);
+         
+        var boxWidth = 30;
+        var boxHeight = 20;
+         
+        var renderer = new Renderer(1, layout,
+	        function clear()
+	        {
+		        paper.clear();
+		        var r = paper.rect(0,0,width-1,height-1);
+		        r.attr({"fill": "#FFFFFF", "stroke": "none"});
+	        },
+	        function drawEdge(edge, p1, p2)
+	        {
+		        var x1 = toScreen(p1).x;
+		        var y1 = toScreen(p1).y;
+		        var x2 = toScreen(p2).x;
+		        var y2 = toScreen(p2).y;
+         
+		        var direction = new Vector(x2-x1, y2-y1);
+		        var normal = direction.normal().normalise();
+         
+		        var from = graph.getEdges(edge.source, edge.target);
+		        var to = graph.getEdges(edge.target, edge.source);
+         
+		        var total = from.length + to.length;
+		        var n = from.indexOf(edge);
+         
+		        var spacing = 6.0;
+		        var totalWidth = total * spacing;
+         
+		        // Figure out how far off centre the line should be drawn
+		        var offset = normal.multiply(-((total - 1) * spacing)/2.0 + (n * spacing));
+         
+		        var stroke = typeof(edge.data.stroke) !== 'undefined' ? edge.data.stroke : "#000000";
+         
+		        var s1 = toScreen(p1).add(offset);
+		        var s2 = toScreen(p2).add(offset);
+         
+		        var intersection = intersect_line_box(s1, s2, {x: x2-boxWidth/2.0, y: y2-boxHeight/2.0}, boxWidth, boxHeight);
+         
+		        var c2 = paper.path(["M", s1.x, s1.y, "L", intersection.x, intersection.y]);
+		        c2.attr({stroke: stroke, "stroke-width": 2});
+         
+		        var arrow = paper.path(["M", -7, 4, "L", 0, 0, "L", 7, 0, "L", 0, 0, "L", -7, -4, "L", -5, 0, "z"]);
+		        arrow.rotate(Math.atan2(y2 - y1, x2 - x1) * (180.0 / Math.PI), 0, 0);
+		        arrow.translate(intersection.x, intersection.y);
+		        arrow.attr({fill: stroke, stroke: "none"});
+         
+	        },
+	        function drawNode(node, p)
+	        {
+		        var fill = typeof(node.data.fill) !== 'undefined' ? node.data.fill : "#FFFFFF";
+         
+		        var s = toScreen(p);
+		        var rect = paper.rect(s.x - boxWidth/2.0, s.y - boxHeight/2.0, boxWidth, boxHeight, 4);
+		        rect.attr({fill: fill, "stroke-width": 2});
+         
+		        if (typeof(node.data.label) !== 'undefined')
+		        {
+			        var text = paper.text(s.x, s.y, node.data.label);
+			        text.attr({
+				        "font-family": "Helvetica Neue",
+				        "font-size": "12px",
+				        "font-weight": "bold",
+			        });
+         
+		        }
+	        }
+        );
+         
+        renderer.start();
+	      */
+	      
 	    } else {
 	      var url = "http://localhost:8000/repo/experiments/" + expId + "/relationships/";	      	      
 	      jQuery(canvas_path).springy({ 'graph': graph2 });   	   
@@ -235,13 +323,13 @@ function filter_relationships(key, opt) {
 		        });				
 	        }
         }
-      });
+      });      
       
       $( "#reset" )
 			.button()
 			.click(function() {
 			    // todo: how to reset the scale + location?
-			    console.log(jQuery(canvas_path).springy.scale);
+			    console.log(visual);
 			});
       
       $( "#savePNG" )
