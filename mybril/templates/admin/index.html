@@ -172,12 +172,12 @@ function filter_relationships(key, opt) {
 		
 		var $tabs = $( "#tabs" ).tabs();		 
 		
-		function loadTab(expId) {
+		function loadTab(expId, expTitle) {
 			var new_canvas = "<canvas id='explorer'/" + "></canvas>";
 			$( "#tabs-3" ).html("");
-			$( "#tabs-3" ).append( "<p><font size='4'><b>Experiment: " + expId + "</b></font>&nbsp;&nbsp;&nbsp;&nbsp;" + 
+			$( "#tabs-3" ).append( "<p><font size='4'><b>Experiment: " + expTitle + "</b></font>&nbsp;&nbsp;&nbsp;&nbsp;" + 
 			                       "<button id='back_exp'>Back to Experiments</button><button id='reload'>Reload Relationships</button>"+ 
-			                       "<button id='savePNG'>Save as PNG</button><button id='reset'>Reset Zoom</button></p>" );
+			                       "<button id='savePNG'>Save as PNG</button><button id='exportORE'>Export Relationships in OAI-ORE format</button></p>" );
 			
 			// TODO: how to pass the controls of the zoom to the context?                       
 			                       
@@ -284,7 +284,7 @@ function filter_relationships(key, opt) {
 	      });
 	    }
 			
-			$("#unique_tab_id").html("Relationship Explorer: " + expId);
+			$("#unique_tab_id").html("Relationship Explorer: " + expTitle);
 				
 			/**************************************************
       * Menu for filtering display
@@ -324,12 +324,18 @@ function filter_relationships(key, opt) {
 	        }
         }
       });      
-      
+
       $( "#reset" )
 			.button()
 			.click(function() {
 			    // todo: how to reset the scale + location?
 			    console.log(visual);
+			});
+      
+      $( "#exportORE" )
+			.button()
+			.click(function() {
+          // TODO:
 			});
       
       $( "#savePNG" )
@@ -365,13 +371,14 @@ function filter_relationships(key, opt) {
 		$( "#add_tab_1" )
 			.button()
 			.click(function() {
-				loadTab(1);
+				//loadTab(1);
+				loadTab($( "#add_tab_1" ).attr("value"), "IgyFc34");				
 			});
 		
 	  $( "#add_tab_2" )
 			.button()
 			.click(function() {
-				loadTab($( "#add_tab_2" ).attr("value"));
+				loadTab($( "#add_tab_2" ).attr("value"), "baa5d5");
 			});
 		
 		$( "#tabs span.ui-icon-close" ).live( "click", function() {
@@ -471,12 +478,12 @@ function filter_relationships(key, opt) {
 	</div>
 	<div id="tabs-2" class="ui-helper-clearfix">
 		  <h2>Browse Experiments</h2>
-      <button id="add_tab_1">Explore Relationships of Experiment 1</button>
+      <button id="add_tab_1" value="bril:exp-5774e47e-2b23-4ae4-a6f9-ebcaee69c005">Explore Relationships of Experiment: IgyFc34</button>
       <br/>
       <br/>
       <hr/>
       <br/>
-      <button id="add_tab_2" value="bril:exp-87ac3d68-eb0b-4bff-9ab7-b8fbddf2a49d">Explore Relationships of 'bril:exp-87ac3d68-eb0b-4bff-9ab7-b8fbddf2a49d'</button>  
+      <button id="add_tab_2" value="bril:exp-87ac3d68-eb0b-4bff-9ab7-b8fbddf2a49d">Explore Relationships of Experiment: baa5d5</button>  
 	</div>
 	<div id="tabs-3" class="ui-helper-clearfix">	
 	    <h2 id="note">Please select an experiment to view it's relationships.</h2>
@@ -484,12 +491,12 @@ function filter_relationships(key, opt) {
 	{% else %}
 	<div id="tabs-2" class="ui-helper-clearfix">
 	    <h2>Browse Experiments</h2>
-      <button id="add_tab_1">Explore Relationships of Experiment 1</button>
+      <button id="add_tab_1" value="bril:exp-5774e47e-2b23-4ae4-a6f9-ebcaee69c005">Explore Relationships of Experiment: IgyFc34</button>
       <br/>
       <br/>
       <hr/>
       <br/>    
-      <button id="add_tab_2" value="bril:exp-87ac3d68-eb0b-4bff-9ab7-b8fbddf2a49d">Explore Relationships of 'bril:exp-87ac3d68-eb0b-4bff-9ab7-b8fbddf2a49d'</button>  
+      <button id="add_tab_2" value="bril:exp-87ac3d68-eb0b-4bff-9ab7-b8fbddf2a49d">Explore Relationships of Experiment: baa5d5</button>  
 	</div>
 	<div id="tabs-3" class="ui-helper-clearfix">
 	<h2 id="note">Please select an experiment to view it's relationships.</h2>

@@ -374,7 +374,7 @@ Layouts.ForceDirected.prototype.spring = function(edge)
 {
 	if (typeof(this.edgeSprings[edge.id]) === 'undefined')
 	{
-		var length = typeof(edge.data.length) !== 'undefined' ? edge.data.length : 1.0;
+		var length = typeof(edge.data.length) !== 'undefined' ? edge.data.length : 5.0;
 
 		var existingSpring = false;
 

@@ -281,6 +281,13 @@ Graph.prototype.notify = function()
 	});
 };
 
+Graph.prototype.clearGraph = function()
+{
+  this.nodes.forEach(function(node) {
+		  this.removeNode(node);
+	}, this);
+}
+
 // -----------
 var Layout = {};
 Layout.ForceDirected = function(graph, stiffness, repulsion, damping)
@@ -448,7 +455,7 @@ Layout.requestAnimationFrame = __bind(window.requestAnimationFrame ||
 	window.oRequestAnimationFrame ||
 	window.msRequestAnimationFrame ||
 	function(callback, element) {
-		window.setTimeout(callback, 10);
+		window.setTimeout(callback, 100);
 	}, window);
 
 // start simulation
@@ -463,8 +470,8 @@ Layout.ForceDirected.prototype.start = function(interval, render, done)
 		t.applyCoulombsLaw();
 		t.applyHookesLaw();
 		t.attractToCentre();
-		t.updateVelocity(0.04);
-		t.updatePosition(0.04);
+		t.updateVelocity(0.03);
+		t.updatePosition(0.03);
 
 		if (typeof(render) !== 'undefined') { render(); }
 
@@ -481,6 +488,7 @@ Layout.ForceDirected.prototype.start = function(interval, render, done)
 // Find the nearest point to a particular position
 Layout.ForceDirected.prototype.nearest = function(pos)
 {
+  /*
 	var min = {node: null, point: null, distance: null};
 	var t = this;
 	this.graph.nodes.forEach(function(n){
@@ -494,6 +502,18 @@ Layout.ForceDirected.prototype.nearest = function(pos)
 	});
 
 	return min;
+	*/
+	var min = {node: null, point: null, distance: null};
+	var t = this;
+	this.graph.nodes.forEach(function(n){
+		var point = t.point(n);
+		var distance = point.p.subtract(pos).magnitude();
+		if (distance < 0.5) {
+			min = {node: n, point: point, distance: distance};
+		}
+	});
+
+	return min;  
 };
 
 // returns [bottomleft, topright]
@@ -620,7 +640,7 @@ Renderer.prototype.graphChanged = function(e)
 Renderer.prototype.start = function()
 {
 	var t = this;
-	this.layout.start(50, function render() {
+	this.layout.start(100, function render() {
 		t.clear();
 
 		t.layout.eachEdge(function(edge, spring) {

@@ -35,9 +35,9 @@ jQuery.fn.springy = function(params) {
         return;
     }
     
-    var stiffness = params.stiffness || 500.0;
-    var repulsion = params.repulsion || 300.0;
-    var damping = params.damping || 0.5;    
+    var stiffness = params.stiffness || 600.0;
+    var repulsion = params.repulsion || 600.0;
+    var damping = params.damping || 0.4;    
     
     //scale = 1;
     var originx = 0;
@@ -101,11 +101,12 @@ jQuery.fn.springy = function(params) {
 		var p = fromScreen({x: e.pageX - pos.left, y: e.pageY - pos.top});
 		prevX = p.x;
 		prevY = p.y;
-		selected = nearest = dragged = layout.nearest(p);				
+		selected = nearest = dragged = layout.nearest(p);
 		if (selected.node !== null)
 		{
 			dragged.point.m = 10000.0;
-		}		
+		}
+		renderer.start();		
 	});
   
 	jQuery(canvas).mousemove(function(e){
@@ -118,7 +119,7 @@ jQuery.fn.springy = function(params) {
 			dragged.point.p.y = p.y;
 			$(this).addClass('noclick');		  
 		} 		
-		
+		renderer.start();
 		/*
 		else if (dragged !== null && dragged.node == null) {
 		  // moving the canvas      
