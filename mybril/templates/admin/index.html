@@ -17,7 +17,6 @@
 <script src="{{ STATIC_URL }}jquery/jquery-1.6.2.min.js"></script>
 <script src="{{ STATIC_URL }}jquery/jquery-ui-1.8.15.custom.min.js"></script>
 <script src="{{ STATIC_URL }}jquery/jquery.mousewheel.min.js"></script>
-<!--<script src="{{ STATIC_URL }}springy/springy.js"></script>-->
 <script src="{{ STATIC_URL }}springy/springyui.js"></script>
 <script src="{{ STATIC_URL }}raphael/raphael-min.js"></script>
 <script src="{{ STATIC_URL }}springy/springy-test.js"></script>
@@ -28,88 +27,6 @@
 
 <script>
 var graph = new Graph();
-var graph2 = new Graph();
-
-var n = [];
-
-n[0] = graph.newNode({label: 'h2-2_MS_1_001.img', shape: 'circle', format: 'diffractionImage'});
-n[1] = graph.newNode({label: 'h2-2_MS_1_002.img', shape: 'circle', format: 'diffractionImage'});
-n[2] = graph.newNode({label: 'h2-2_MS_1_003.img', shape: 'circle', format: 'diffractionImage'});
-n[3] = graph.newNode({label: 'h2-2_MS_1_004.img', shape: 'circle', format: 'diffractionImage'});
-n[4] = graph.newNode({label: 'h2-2_MS_1_005.img', shape: 'circle', format: 'diffractionImage'});
-n[5] = graph.newNode({label: 'DiffractionImageSet', shape: 'circle', format: 'diffractionImageSet'});
-n[6] = graph.newNode({label: 'IntegrateDiffractionImagesProcess', shape: 'square'});
-n[7] = graph.newNode({label: 'high.mtz', shape: 'circle', format: 'mtzReflectionFile'});
-
-n[8] = graph.newNode({label: 'sort.com', shape: 'circle', format: 'comFile'});
-n[9] = graph.newNode({label: 'CCP4 Process: SORTMTZ', shape: 'square'});
-n[10] = graph.newNode({label: 'sort.log', shape: 'circle', format: 'logFile'});
-n[11] = graph.newNode({label: 'sorted-high.mtz', shape: 'circle', format: 'mtzReflectionFile'});
-
-n[12] = graph.newNode({label: 'scala1.com', shape: 'circle', format: 'comFile'});
-n[13] = graph.newNode({label: 'CCP4 Process: SCALA', shape: 'square'});
-n[14] = graph.newNode({label: 'scala1.log', shape: 'circle', format: 'logFile'});
-n[15] = graph.newNode({label: 'scala1.mtz', shape: 'circle', format: 'mtzReflectionFile'});
-
-n[16] = graph.newNode({label: 'truncate.com', shape: 'circle', format: 'comFile'});
-n[17] = graph.newNode({label: 'CCP4 Process: TRUNCATE', shape: 'square', format: 'CCP4Process'});
-n[18] = graph.newNode({label: 'truncate.log', shape: 'circle', format: 'logFile'});
-n[19] = graph.newNode({label: 'truncate.mtz', shape: 'circle', format: 'mtzReflectionFile'});
-
-n[20] = graph.newNode({label: 'free.com', shape: 'circle', format: 'comFile'});
-n[21] = graph.newNode({label: 'CCP4 Process: FREERFLAG', shape: 'square', format: 'CCP4Process'});
-n[22] = graph.newNode({label: 'free.log', shape: 'circle', format: 'logFile'});
-n[23] = graph.newNode({label: '5d5.mtz', shape: 'circle', format: 'mtzReflectionFile'});
-
-n[24] = graph.newNode({label: 'Mosflm', shape: 'hexagon'});
-n[25] = graph.newNode({label: 'CCP4', shape: 'hexagon'});
-n[26] = graph.newNode({label: 'CCP4', shape: 'hexagon'});
-n[27] = graph.newNode({label: 'CCP4', shape: 'hexagon'});
-n[28] = graph.newNode({label: 'CCP4', shape: 'hexagon'});
-
-graph.newEdge(n[0], n[5], {color: '#00A0B0', text: 'isMemberOf'});
-graph.newEdge(n[1], n[5], {color: '#00A0B0', text: 'isMemberOf'});
-graph.newEdge(n[2], n[5], {color: '#00A0B0', text: 'isMemberOf'});
-graph.newEdge(n[3], n[5], {color: '#00A0B0', text: 'isMemberOf'});
-graph.newEdge(n[4], n[5], {color: '#00A0B0', text: 'isMemberOf'});
-
-graph.newEdge(n[6], n[5], {color: '#6A4A3C', text: 'used'});
-graph.newEdge(n[6], n[24], {color: '#DA70D6', text: 'wasControlledBy'});
-
-graph.newEdge(n[7], n[6], {color: '#7DBE3C', text: 'wasGeneratedBy'});
-graph.newEdge(n[7], n[5], {color: '#EB6841', text: 'wasDerivedFrom'});
-
-graph.newEdge(n[9], n[7], {color: '#6A4A3C', text: 'used'});
-graph.newEdge(n[9], n[8], {color: '#6A4A3C', text: 'used'});
-graph.newEdge(n[10], n[9], {color: '#7DBE3C', text: 'wasGeneratedBy'});
-graph.newEdge(n[11], n[9], {color: '#7DBE3C', text: 'wasGeneratedBy'});
-graph.newEdge(n[9], n[25], {color: '#DA70D6', text: 'wasControlledBy'});
-
-graph.newEdge(n[11], n[7], {color: '#EB6841', text: 'wasDerivedFrom'});
-
-graph.newEdge(n[13], n[11], {color: '#6A4A3C', text: 'used'});
-graph.newEdge(n[13], n[12], {color: '#6A4A3C', text: 'used'});
-graph.newEdge(n[14], n[13], {color: '#7DBE3C', text: 'wasGeneratedBy'});
-graph.newEdge(n[15], n[13], {color: '#7DBE3C', text: 'wasGeneratedBy'});
-graph.newEdge(n[13], n[26], {color: '#DA70D6', text: 'wasControlledBy'});
-
-graph.newEdge(n[15], n[11], {color: '#EB6841', text: 'wasDerivedFrom'});
-
-graph.newEdge(n[17], n[15], {color: '#6A4A3C', text: 'used'});
-graph.newEdge(n[17], n[16], {color: '#6A4A3C', text: 'used'});
-graph.newEdge(n[18], n[17], {color: '#7DBE3C', text: 'wasGeneratedBy'});
-graph.newEdge(n[19], n[17], {color: '#7DBE3C', text: 'wasGeneratedBy'});
-graph.newEdge(n[17], n[27], {color: '#DA70D6', text: 'wasControlledBy'});
-
-graph.newEdge(n[19], n[15], {color: '#EB6841', text: 'wasDerivedFrom'});
-
-graph.newEdge(n[21], n[19], {color: '#6A4A3C', text: 'used'});
-graph.newEdge(n[21], n[20], {color: '#6A4A3C', text: 'used'});
-graph.newEdge(n[22], n[21], {color: '#7DBE3C', text: 'wasGeneratedBy'});
-graph.newEdge(n[23], n[21], {color: '#7DBE3C', text: 'wasGeneratedBy'});
-graph.newEdge(n[21], n[28], {color: '#DA70D6', text: 'wasControlledBy'});
-
-graph.newEdge(n[23], n[19], {color: '#EB6841', text: 'wasDerivedFrom'});
 
 function filter(key, opt) {
   if (opt != null) {
@@ -131,12 +48,12 @@ function filter(key, opt) {
 	  }
 	  if (jQuery.data(opt, key) == null) {
 	    var filtered_nodes = key + "_nodes";
-	    jQuery.data(opt, filtered_nodes, graph2.filterNodes(filter_key));
+	    jQuery.data(opt, filtered_nodes, graph.filterNodes(filter_key));
 		  jQuery.data(opt, key, true);		  
 	  }
 	  else {
 		  var filtered_nodes = key + "_nodes";
-		  graph2.merge(jQuery.data(opt, filtered_nodes));
+		  graph.merge(jQuery.data(opt, filtered_nodes));
 		  jQuery.data(opt, key, null);		
 	  }		
 	}
@@ -146,12 +63,12 @@ function filter_relationships(key, opt) {
   if (opt != null) {
 	  if (jQuery.data(opt, key) == null) {	
 	    var filtered_relations = key + "_edges";	
-		  jQuery.data(opt, filtered_relations, graph2.filterEdges(key));
+		  jQuery.data(opt, filtered_relations, graph.filterEdges(key));
 		  jQuery.data(opt, key, true);
 	  }
 	  else {
 		  var filtered_relations = key + "_edges";	
-		  graph2.mergeEdges(jQuery.data(opt, filtered_relations));
+		  graph.mergeEdges(jQuery.data(opt, filtered_relations));
 		  jQuery.data(opt, key, null);
 	  }
 	}		
@@ -177,112 +94,25 @@ function filter_relationships(key, opt) {
 			$( "#tabs-3" ).html("");
 			$( "#tabs-3" ).append( "<p><font size='4'><b>Experiment: " + expTitle + "</b></font>&nbsp;&nbsp;&nbsp;&nbsp;" + 
 			                       "<button id='back_exp'>Back to Experiments</button><button id='reload'>Reload Relationships</button>"+ 
-			                       "<button id='savePNG'>Save as PNG</button><button id='exportORE'>Export Relationships in OAI-ORE format</button></p>" );
-			
-			// TODO: how to pass the controls of the zoom to the context?                       
-			                       
+			                       "<button id='savePNG'>Save as PNG</button><button id='exportORE'>Export Experiment using OAI-ORE format</button></p>" );
+						                       
 			var pos_left = (window.innerWidth - 100)/2 - 50;
 			var pos_top = (window.innerHeight - 250)/2;
-			$( "#tabs-3" ).append( "<div id='loader2' style='display:none;'><p><img style='position: absolute; left: "+pos_left+"px; top: "+pos_top+"px;'" + 
+			$( "#tabs-3" ).append( "<div id='loader2' class='loader2-invisible'><p><img style='position: absolute; left: "+pos_left+"px; top: "+pos_top+"px;'" + 
 			                       "src='{{ STATIC_URL }}jquery/ajax-loader.gif' alt='Loading'></p><div>" );                       
 			$( "#tabs-3" ).append( new_canvas );
-			//$( "#tabs-3" ).append( "<div id='graph'></div>" );
 			var canvas_path = "#tabs #tabs-3 #explorer";
 			$tabs.tabs('select', '#tabs-3');
-			if (expId == 1)	
-			{
-	      jQuery(canvas_path).springy({ 'graph': graph });
-	      
-	      /*
-	      var width  = window.innerWidth - 125;	  
-	      var height = window.innerHeight - 250;
-	      
-        var paper = Raphael("graph", width, height);
-         
-        var layout = new Layout.ForceDirected(graph, 500.0, 300.0, 0.5);
-         
-        var boxWidth = 30;
-        var boxHeight = 20;
-         
-        var renderer = new Renderer(1, layout,
-	        function clear()
-	        {
-		        paper.clear();
-		        var r = paper.rect(0,0,width-1,height-1);
-		        r.attr({"fill": "#FFFFFF", "stroke": "none"});
-	        },
-	        function drawEdge(edge, p1, p2)
-	        {
-		        var x1 = toScreen(p1).x;
-		        var y1 = toScreen(p1).y;
-		        var x2 = toScreen(p2).x;
-		        var y2 = toScreen(p2).y;
-         
-		        var direction = new Vector(x2-x1, y2-y1);
-		        var normal = direction.normal().normalise();
-         
-		        var from = graph.getEdges(edge.source, edge.target);
-		        var to = graph.getEdges(edge.target, edge.source);
-         
-		        var total = from.length + to.length;
-		        var n = from.indexOf(edge);
-         
-		        var spacing = 6.0;
-		        var totalWidth = total * spacing;
-         
-		        // Figure out how far off centre the line should be drawn
-		        var offset = normal.multiply(-((total - 1) * spacing)/2.0 + (n * spacing));
-         
-		        var stroke = typeof(edge.data.stroke) !== 'undefined' ? edge.data.stroke : "#000000";
-         
-		        var s1 = toScreen(p1).add(offset);
-		        var s2 = toScreen(p2).add(offset);
-         
-		        var intersection = intersect_line_box(s1, s2, {x: x2-boxWidth/2.0, y: y2-boxHeight/2.0}, boxWidth, boxHeight);
-         
-		        var c2 = paper.path(["M", s1.x, s1.y, "L", intersection.x, intersection.y]);
-		        c2.attr({stroke: stroke, "stroke-width": 2});
-         
-		        var arrow = paper.path(["M", -7, 4, "L", 0, 0, "L", 7, 0, "L", 0, 0, "L", -7, -4, "L", -5, 0, "z"]);
-		        arrow.rotate(Math.atan2(y2 - y1, x2 - x1) * (180.0 / Math.PI), 0, 0);
-		        arrow.translate(intersection.x, intersection.y);
-		        arrow.attr({fill: stroke, stroke: "none"});
-         
-	        },
-	        function drawNode(node, p)
-	        {
-		        var fill = typeof(node.data.fill) !== 'undefined' ? node.data.fill : "#FFFFFF";
-         
-		        var s = toScreen(p);
-		        var rect = paper.rect(s.x - boxWidth/2.0, s.y - boxHeight/2.0, boxWidth, boxHeight, 4);
-		        rect.attr({fill: fill, "stroke-width": 2});
-         
-		        if (typeof(node.data.label) !== 'undefined')
-		        {
-			        var text = paper.text(s.x, s.y, node.data.label);
-			        text.attr({
-				        "font-family": "Helvetica Neue",
-				        "font-size": "12px",
-				        "font-weight": "bold",
-			        });
-         
-		        }
-	        }
-        );
-         
-        renderer.start();
-	      */
-	      
-	    } else {
-	      var url = "http://localhost:8000/repo/experiments/" + expId + "/relationships/";	      	      
-	      jQuery(canvas_path).springy({ 'graph': graph2 });   	   
+      var url = "http://localhost:8000/repo/experiments/" + expId + "/relationships/";	      	      
+      jQuery(canvas_path).springy({ 'graph': graph });   	   
 
-	      $('#loader2').show();
-	      $.getJSON(url, function(data) {
-	          $('#loader2').hide();
-	          graph2.loadData(data);	          
-	      });
-	    }
+      $('#loader2').removeClass('loader2-invisible');
+      $('#loader2').addClass('loader2-visible');
+      $.getJSON(url, function(data) {
+          $('#loader2').addClass('loader2-invisible');
+          $('#loader2').removeClass('loader2-visible');
+          graph.loadData(data);	          
+      });
 			
 			$("#unique_tab_id").html("Relationship Explorer: " + expTitle);
 				
@@ -290,31 +120,30 @@ function filter_relationships(key, opt) {
       * Menu for filtering display
       **************************************************/		 
       
-      // use a django template to fill this in automatically?
-      
+      // use a django template to fill this in automatically?      
       $.contextMenu({
           // define which elements trigger this menu
           selector: "#explorer",
           // define the elements of the menu
           items: {	    	    	
-          	all_process: {name: "Filter Processes", type:'checkbox', callback: filter},
-          	sep1: "---------",
-              all_objects: {name: "Filter Objects",  type:'checkbox', callback: filter},
-              sep2: "---------",
-              all_controllers: {name: "Filter Controllers", type:'checkbox', callback: filter},
-	        sep3: "---------",
-	        relationships_menu: {
-		        name: "Filter Relationships",				
-		        items: {
-			        all_relationships: {name: "All",  type:'checkbox', callback: filter_relationships},
-			        isMemberOf: {name: "isMemberOf",  type:'checkbox', callback: filter_relationships},
-			        used: {name: "used",  type:'checkbox', callback: filter_relationships},
-			        wasGeneratedBy: {name: "wasGeneratedBy",  type:'checkbox', callback: filter_relationships},
-			        wasDerivedFrom: {name: "wasDerivedFrom",  type:'checkbox', callback: filter_relationships},
-			        wasControlledBy: {name: "wasControlledBy",  type:'checkbox', callback: filter_relationships},
-			        wasTriggeredBy: {name: "wasTriggeredBy",  type:'checkbox', callback: filter_relationships}
-		        }
-	        },	        	       
+            	all_process: {name: "Filter Processes", type:'checkbox', callback: filter},
+            	sep1: "---------",
+                all_objects: {name: "Filter Objects",  type:'checkbox', callback: filter},
+                sep2: "---------",
+                all_controllers: {name: "Filter Controllers", type:'checkbox', callback: filter},
+	          sep3: "---------",
+	          relationships_menu: {
+		          name: "Filter Relationships",				
+		          items: {
+			          all_relationships: {name: "All",  type:'checkbox', callback: filter_relationships},
+			          isMemberOf: {name: "isMemberOf",  type:'checkbox', callback: filter_relationships},
+			          used: {name: "used",  type:'checkbox', callback: filter_relationships},
+			          wasGeneratedBy: {name: "wasGeneratedBy",  type:'checkbox', callback: filter_relationships},
+			          wasDerivedFrom: {name: "wasDerivedFrom",  type:'checkbox', callback: filter_relationships},
+			          wasControlledBy: {name: "wasControlledBy",  type:'checkbox', callback: filter_relationships},
+			          wasTriggeredBy: {name: "wasTriggeredBy",  type:'checkbox', callback: filter_relationships}
+		          }
+	          },	        	       
           },
           events: {
 	        show: function(opt) {					
@@ -323,38 +152,33 @@ function filter_relationships(key, opt) {
 		        });				
 	        }
         }
-      });      
-
-      $( "#reset" )
-			.button()
-			.click(function() {
-			    // todo: how to reset the scale + location?
-			    console.log(visual);
-			});
+      });        
       
       $( "#exportORE" )
 			.button()
 			.click(function() {
-          // TODO:
-			});
+          window.location = "http://localhost:8000/repo/experiments/" + expId + "/ORE/";
+      });			
       
       $( "#savePNG" )
 			.button()
 			.click(function() {
 			    var save_canvas = document.getElementById("explorer");
-          var img    = save_canvas.toDataURL("image/png");
-          document.location.href = img.replace("image/png", "image/octet-stream");
+          var img    = save_canvas.toDataURL("image/png");        
+          window.location = img.replace("image/png", "image/octet-stream");
 			});
       
       $( "#reload" )
 			.button()
 			.click(function() {
 	        var url = "http://localhost:8000/repo/experiments/" + expId + "/relationships/";
-	        $('#loader2').show();
+	        $('#loader2').removeClass('loader2-invisible');
+          $('#loader2').addClass('loader2-visible');
 	        $.getJSON(url, function(data) {
-	          $('#loader2').hide();
-	          graph2.clearGraph();
-	          graph2.loadData(data);	          
+	          $('#loader2').addClass('loader2-invisible');
+            $('#loader2').removeClass('loader2-visible');
+	          graph.clearGraph();
+	          graph.loadData(data);	          
 	        });	        
 			});
       
@@ -371,7 +195,6 @@ function filter_relationships(key, opt) {
 		$( "#add_tab_1" )
 			.button()
 			.click(function() {
-				//loadTab(1);
 				loadTab($( "#add_tab_1" ).attr("value"), "IgyFc34");				
 			});
 		

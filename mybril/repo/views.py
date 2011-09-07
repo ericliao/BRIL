@@ -83,6 +83,7 @@ def export_ORE(request, expId):
         if (string.find(obj.pid, "process") == -1):
             objects.append(obj)
     
+    # Generate the resources to be aggregated
     for obj in objects:
         artefact = AggregatedResource("http://bril.cerch.kcl.ac.uk/" + obj.dc.content.identifier)
         artefact.title = obj.dc.content.title
@@ -100,7 +101,7 @@ def export_ORE(request, expId):
         aggregated_objects[proc.dc.content.identifier] = process
     
       
-    # add 'used' relationships
+    # Add 'used' relationships
     relationships = []
     for process in processes:
         for o in repo.risearch.get_objects("info:fedora/"+ process.pid, "http://purl.org/net/opmv/ns#used"):
@@ -109,7 +110,7 @@ def export_ORE(request, expId):
     edge_from = []
     edge_to = []
     for r in relationships:
-        # search for matching pid in nodes
+        # Search for matching pid in objects
         for pid, agg_object in aggregated_objects.iteritems():
         
             if (pid == r[0]):
@@ -121,7 +122,7 @@ def export_ORE(request, expId):
         e_from._opmv.used = e_to
     
     
-    # add 'wasGeneratedBy' relationships
+    # Add 'wasGeneratedBy' relationships
     relationship = []
     for obj in objects:
         for o in repo.risearch.get_objects("info:fedora/"+ obj.pid, "http://purl.org/net/opmv/ns#wasGeneratedBy"):
@@ -130,7 +131,7 @@ def export_ORE(request, expId):
     edge_from = []
     edge_to = []
     for r in relationships:
-        # search for matching pid in nodes
+        # Search for matching pid in objects
         for pid, agg_object in aggregated_objects.iteritems():
         
             if (pid == r[0]):
@@ -141,7 +142,7 @@ def export_ORE(request, expId):
     for e_from, e_to in zip(edge_from, edge_to):           
         e_to._opmv.wasGeneratedBy = e_from
           
-    # add 'wasDerivedFrom' relationships
+    # Add 'wasDerivedFrom' relationships
     relationship = []
     for obj in objects:
         for o in repo.risearch.get_objects("info:fedora/"+ obj.pid, "http://purl.org/net/opmv/ns#wasDerivedFrom"):
@@ -150,7 +151,7 @@ def export_ORE(request, expId):
     edge_from = []
     edge_to = []
     for r in relationships:
-        # search for matching pid in nodes
+        # Search for matching pid in objects
         for pid, agg_object in aggregated_objects.iteritems():
         
             if (pid == r[0]):
@@ -162,7 +163,6 @@ def export_ORE(request, expId):
         e_to._opmv.wasDerivedFrom = e_from
     
     # TODO: convert 'isMemberOf' relationships to nested aggregation?
-    '''
     relationship = []
     for obj in objects:
         for o in repo.risearch.get_objects("info:fedora/"+ obj.pid, "info:fedora/fedora-system:def/relations-external#isMemberOf"):
@@ -171,7 +171,7 @@ def export_ORE(request, expId):
     edge_from = []
     edge_to = []
     for r in relationships:
-        # search for matching pid in nodes
+        # Search for matching pid in objects
         for pid, agg_object in aggregated_objects.iteritems():
         
             if (pid == r[0]):
@@ -180,8 +180,7 @@ def export_ORE(request, expId):
                 edge_to.append(agg_object)
     
     for e_from, e_to in zip(edge_from, edge_to):           
-        e_from._opmv.wasGeneratedBy = e_to
-    '''
+        e_from._opmv.isMemberOf = e_to
             
     for key, agg_object in aggregated_objects.iteritems():
         a.add_resource(agg_object)
@@ -189,13 +188,15 @@ def export_ORE(request, expId):
     # Add modified time for aggregation
     a._dcterms.modified = datetime.now().isoformat(' ')
     
-    # add resource map and return XML
+    # Add resource map and return XML
     rdfxml = RdfLibSerializer("xml")
     rem = ResourceMap("http://bril.cerch.kcl.ac.uk/rem/rdf/" + expId)
     rem.set_aggregation(a)
     remdoc = rem.register_serialization(rdfxml)
     remdoc = rem.get_serialization()    
-    return HttpResponse(remdoc.data, mimetype="application/xml")
+    response = HttpResponse(remdoc.data, mimetype='application/xml')
+    response['Content-Disposition'] = 'attachment; filename='+ expId + '-ORE.xml'
+    return response
       
 def exp_relationships(request, expId):
     repo = Repository()
