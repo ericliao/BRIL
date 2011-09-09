@@ -17,9 +17,10 @@
 <script src="{{ STATIC_URL }}jquery/jquery-1.6.2.min.js"></script>
 <script src="{{ STATIC_URL }}jquery/jquery-ui-1.8.15.custom.min.js"></script>
 <script src="{{ STATIC_URL }}jquery/jquery.mousewheel.min.js"></script>
-<script src="{{ STATIC_URL }}springy/springyui.js"></script>
 <script src="{{ STATIC_URL }}raphael/raphael-min.js"></script>
-<script src="{{ STATIC_URL }}springy/springy-test.js"></script>
+<script src="{{ STATIC_URL }}springy/springy.js"></script>
+<script src="{{ STATIC_URL }}openlayers/OpenLayers.js"></script>
+<script src="{{ STATIC_URL }}openlayers/graphLayer.js"></script>
 <script src="{{ STATIC_URL }}contextMenu/jquery.ui.position.js" type="text/javascript"></script>
 <script src="{{ STATIC_URL }}contextMenu/jquery.contextMenu.js" type="text/javascript"></script>
 <link href="{{ STATIC_URL }}contextMenu/jquery.contextMenu.css" rel="stylesheet" type="text/css" />
@@ -83,7 +84,6 @@ function filter_relationships(key, opt) {
 	  var $tab_title_input = $("#tab_title"),
 		$tab_content_input = $("#tab_content");
     var tab_counter = 3;
-		var visual = null;
 		
 		$("#unique_tab_id").html("Relationship Explorer");
 		
@@ -95,17 +95,45 @@ function filter_relationships(key, opt) {
 			$( "#tabs-3" ).append( "<p><font size='4'><b>Experiment: " + expTitle + "</b></font>&nbsp;&nbsp;&nbsp;&nbsp;" + 
 			                       "<button id='back_exp'>Back to Experiments</button><button id='reload'>Reload Relationships</button>"+ 
 			                       "<button id='savePNG'>Save as PNG</button><button id='exportORE'>Export Experiment using OAI-ORE format</button></p>" );
-						                       
-			var pos_left = (window.innerWidth - 100)/2 - 50;
-			var pos_top = (window.innerHeight - 250)/2;
-			$( "#tabs-3" ).append( "<div id='loader2' class='loader2-invisible'><p><img style='position: absolute; left: "+pos_left+"px; top: "+pos_top+"px;'" + 
-			                       "src='{{ STATIC_URL }}jquery/ajax-loader.gif' alt='Loading'></p><div>" );                       
-			$( "#tabs-3" ).append( new_canvas );
-			var canvas_path = "#tabs #tabs-3 #explorer";
-			$tabs.tabs('select', '#tabs-3');
-      var url = "http://localhost:8000/repo/experiments/" + expId + "/relationships/";	      	      
-      jQuery(canvas_path).springy({ 'graph': graph });   	   
 
+      var div_width = window.innerWidth - 100;
+			var div_height = window.innerHeight - 250;						                       
+			var pos_left = div_width/2 - 50;
+			var pos_top = div_height/2;
+			
+			$( "#tabs-3" ).append( "<div id='loader2' class='loader2-invisible'><p><img style='position: absolute; left: "+pos_left+"px; top: "+pos_top+"px;'" + 
+			                       "src='{{ STATIC_URL }}jquery/ajax-loader.gif' alt='Loading'></p><div>" );                       			
+			$( "#tabs-3" ).append("<div id='map' style='height:" + div_height + "px; width:" + div_width + "px'></div>");			
+			$( "#tabs-3" ).append( new_canvas );
+			$tabs.tabs('select', '#tabs-3');
+			
+			var canvas_path = "#tabs #tabs-3 #explorer";
+			
+			// Add OpenLayer for navigation			
+			var EPSG4326 = new OpenLayers.Projection("EPSG:4326");
+      var EPSG900913 = new OpenLayers.Projection("EPSG:900913");
+      var b = 20037508.34;       
+      var map = new OpenLayers.Map('map', {
+          controls: [
+              new OpenLayers.Control.Navigation(),
+              new OpenLayers.Control.PanZoomBar(),
+          ],
+       		maxExtent: new OpenLayers.Bounds(-1*b, -1*b, b, b),
+		      maxResolution: 156543.0399,				      
+		      units: 'm',
+		      projection: EPSG900913,
+		      displayProjection: EPSG4326,
+		      numZoomLevels: 5,
+      });                            		
+			
+			var graphLayer = new NodeGraph.Layer("NodeGraph", { 'graph': graph, 'canvas': $(canvas_path), 'render_map': map});
+      var nobase = new OpenLayers.Layer("No Basemap",{isBaseLayer: true, 'displayInLayerSwitcher': true});
+      map.addLayers([graphLayer, nobase]);			
+      var initialZoom = 0;
+      map.zoomTo(initialZoom);          
+			
+			// Load relationship data from Fedora
+      var url = "http://localhost:8000/repo/experiments/" + expId + "/relationships/";
       $('#loader2').removeClass('loader2-invisible');
       $('#loader2').addClass('loader2-visible');
       $.getJSON(url, function(data) {
@@ -113,7 +141,7 @@ function filter_relationships(key, opt) {
           $('#loader2').removeClass('loader2-visible');
           graph.loadData(data);	          
       });
-			
+
 			$("#unique_tab_id").html("Relationship Explorer: " + expTitle);
 				
 			/**************************************************
@@ -202,13 +230,7 @@ function filter_relationships(key, opt) {
 			.button()
 			.click(function() {
 				loadTab($( "#add_tab_2" ).attr("value"), "baa5d5");
-			});
-		
-		$( "#tabs span.ui-icon-close" ).live( "click", function() {
-			var index = $( "li", $tabs ).index( $( this ).parent() );					
-			$tabs.tabs( "remove", index);
-		});
-		
+			});			
 	});
 </script>
 
