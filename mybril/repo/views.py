@@ -1,3 +1,6 @@
+# Modified by Eric Liao
+# Contact: the.eric.liao@gmail.com
+
 import os, string, simplejson
 from foresite import *
 from rdflib import URIRef, Namespace

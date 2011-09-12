@@ -1,4 +1,7 @@
 # Django settings for mybril project.
+#
+# Modified by Eric Liao
+# Contact: the.eric.liao@gmail.com
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -86,7 +89,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 # Make this unique, and don't share it with anybody.

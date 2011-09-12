@@ -1,47 +1,80 @@
-<script>
-$( "#viewLink" )
-  .button()
-  .click(function() {
-    $('#viewer-dialog').dialog('close');
-    $("#viewer-dialog").dialog({ 
+<!-- 
+  Modified by Eric Liao 2011
+  Contact: the.eric.liao@gmail.com
+-->
+
+<link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% load adminmedia %}{% admin_media_prefix %}css/base.css{% endblock %}" />
+<style type="text/css">
+pre {
+	overflow-x: auto; /* Use horizontal scroller if needed; for Firefox 2, not needed in Firefox 3 */
+	white-space: pre-wrap; /* css-3 */
+	white-space: -moz-pre-wrap !important; /* Mozilla, since 1999 */
+	white-space: -pre-wrap; /* Opera 4-6 */
+	white-space: -o-pre-wrap; /* Opera 7 */ /*
+	width: 99%; */
+	word-wrap: break-word; /* Internet Explorer 5.5+ */
+}
+</style>
+
+{% load static %}
+{% get_static_prefix as STATIC_URL %}
+<script src="{{ STATIC_URL }}jquery/jquery-1.6.2.min.js"></script>
+<script src="{{ STATIC_URL }}jquery/jquery-ui-1.8.15.custom.min.js"></script>
+<link href="{{ STATIC_URL }}css/smoothness/jquery-ui-1.8.15.custom.css" rel="stylesheet" type="text/css" />
+<script type="application/javascript">
+$(window).load(function () {
+  $( "#viewLink" )
+    .button()
+    .click(function() {
+      $('#viewer-dialog').dialog('close');
+      $("#viewer-dialog").dialog({ 
         title: "Viewing: " + $("#title").text(), 
         height: 600, 
         width: 600,
         open: function(event, ui) {
           var url = "http://localhost:8000/repo/objects/" + $( "#viewLink" ).attr("value") + "/view/";
-	        $('#viewer').load(url);
+          $('#viewer').load(url);
         }                
-    });
+      });
+  });
+
+  $( "#downloadLink" ).button();
 });
-
-$( "#downloadLink" ).button();
-
 </script>
-<h1 id="title">{{ obj.dc.content.title }}</h1>
-<h2>{{ obj.dc.content.description }}</h2>
-<hr/>
-<p>Uploaded at {{ obj.created }}; last modified {{ obj.modified }} ({{  obj.modified|timesince }} ago).</p>
-<hr/>
-<br/>
-<h3>Dublin Core</h3>
-<table id="description">    
-    {% with obj.dc.content as dc %}
-        <tr><th>title:</th><td>{{ dc.title|default:'' }}</td></tr>
-        <tr><th>description:</th><td>{{ dc.description|default:'' }}</td></tr>
-        <tr><th>date:</th><td>{{ dc.date|default:'' }}</td></tr>
-        <tr><th>format:</th><td>{{ dc.format|default:'' }}</td></tr>
-        <tr><th>identifier:</th><td>{{ dc.identifier|default:'' }}</td></tr>
- {% endwith %}
-</table>
-<br/>
-<h3>BRIL Metadata</h3>
-<pre>{{ obj.brilmeta.content }}</pre>
-<hr/>
-<br/>
-<h3>Original Data</h3>
-<p>({{ obj.file.info.size|filesizeformat }}, {{ obj.file.mimetype }})</p>
-{% if obj.file.info.size > 0 and obj.file.mimetype == "text/plain"%}
-  <button id="viewLink" value="{{ obj.pid }}">View File</button>
-{% endif %}
-<a href="{% url download obj.pid %}" id="downloadLink">Download File</a>
-
+<div id="viewer-dialog" style="width:600px;overflow:auto">
+  <div id="viewer"></div>
+</div>
+<div class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable ui-resizable" style="width:600px;overflow:auto" id="dialog">
+   <div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix">
+      <span id="ui-dialog-title-dialog" class="ui-dialog-title">{{ obj.dc.content.title }}</span>
+   </div>
+   <div style="width: auto;" class="ui-dialog-content ui-widget-content" id="dialog_content">
+      <h1 id="title">{{ obj.dc.content.title }}</h1>
+      <h2>{{ obj.dc.content.description }}</h2>
+      <hr/>
+      <p>Uploaded at {{ obj.created }}; last modified {{ obj.modified }} ({{  obj.modified|timesince }} ago).</p>
+      <hr/>
+      <br/>
+      <h3>Dublin Core</h3>
+      <table id="description">    
+        {% with obj.dc.content as dc %}
+          <tr><th>title:</th><td>{{ dc.title|default:'' }}</td></tr>
+          <tr><th>description:</th><td>{{ dc.description|default:'' }}</td></tr>
+          <tr><th>date:</th><td>{{ dc.date|default:'' }}</td></tr>
+          <tr><th>format:</th><td>{{ dc.format|default:'' }}</td></tr>
+          <tr><th>identifier:</th><td>{{ dc.identifier|default:'' }}</td></tr>
+        {% endwith %}
+      </table>
+      <br/>
+      <h3>BRIL Metadata</h3>
+      <pre>{{ obj.brilmeta.content }}</pre>
+      <hr/>
+      <br/>
+      <h3>Original Data</h3>      
+      <p>({{ obj.file.info.size|filesizeformat }}, {{ obj.file.mimetype }})</p>      
+      {% if obj.file.info.size > 0 and obj.file.mimetype == "text/plain"%}
+        <button id="viewLink" value="{{ obj.pid }}">View File</button>
+      {% endif %}
+      <a href="{% url download obj.pid %}" id="downloadLink">Download File</a>
+   </div>
+</div>

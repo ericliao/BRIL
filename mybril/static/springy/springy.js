@@ -1,3 +1,8 @@
+/*
+ *  Modified by Eric Liao 2011
+ *  Contact: the.eric.liao@gmail.com
+ *
+ */
 
 var Graph = function()
 {

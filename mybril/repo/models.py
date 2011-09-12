@@ -1,3 +1,6 @@
+# Modified by Eric Liao
+# Contact: the.eric.liao@gmail.com
+
 from django.db import models
 from eulfedora.models import DigitalObject, FileDatastream, Datastream
 

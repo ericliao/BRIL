@@ -1,3 +1,6 @@
+# Modified by Eric Liao
+# Contact: the.eric.liao@gmail.com
+
 from django.conf.urls.defaults import *
 
 urlpatterns = patterns('repo.views',

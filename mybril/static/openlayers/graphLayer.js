@@ -3,6 +3,8 @@
  * This module is licensed under the same terms as OpenLayers itself.
  *
  *  Modified by Eric Liao 2011
+ *  Contact: the.eric.liao@gmail.com
+ *
  */
 
 NodeGraph = {};
@@ -59,7 +61,7 @@ NodeGraph.Layer = OpenLayers.Class(OpenLayers.Layer, {
 	  this.original_height = window.innerHeight - 250;
     var ctx = canvas.getContext("2d");
 	  var layout = new Layout.ForceDirected(graph, stiffness, repulsion, damping);
-    
+	  	    
     // calculate bounding box of graph layout.. with ease-in
 	  var currentBB = layout.getBoundingBox();
 	  var targetBB = {bottomleft: new Vector(-2, -2), topright: new Vector(2, 2)};
@@ -177,12 +179,27 @@ NodeGraph.Layer = OpenLayers.Class(OpenLayers.Layer, {
 	                  position: [e.pageX + 25, e.pageY + 25],
 	                  open: function(event, ui) {
 	                      if (selected.node.data.pid != "null") {
-	                          var url = "http://localhost:8000/repo/objects/" + selected.node.data.pid;
+	                          var url = "http://localhost:8000/repo/objects/" + selected.node.data.pid + " #dialog_content";
 	                          $('#loader').show();
 	                          $('#msg').hide();
                             $('#msg').load( url, function() {
-                                $('#loader').hide();
+                                $('#loader').hide();                                
                                 $('#msg').show();
+                                $( "#viewLink" )
+                                  .button()
+                                  .click(function() {
+                                    $('#viewer-dialog').dialog('close');
+                                    $("#viewer-dialog").dialog({ 
+                                      title: "Viewing: " + $("#title").text(), 
+                                      height: 600, 
+                                      width: 600,
+                                      open: function(event, ui) {
+                                        var url = "http://localhost:8000/repo/objects/" + $( "#viewLink" ).attr("value") + "/view/";
+                                        $('#viewer').load(url);
+                                      }                
+                                    });
+                                });
+                                $( "#downloadLink" ).button();
                             });
 	                      } else {
 	                          $('#msg').html("<h3>Controller Object</h3>");
@@ -240,6 +257,16 @@ NodeGraph.Layer = OpenLayers.Class(OpenLayers.Layer, {
 				
 		  function drawEdge(edge, p1, p2)
 		  {
+		    
+		    var zoom_levels = new Array();
+        zoom_levels[0] = 1.00;
+        zoom_levels[1] = 1.05;
+        zoom_levels[2] = 1.10;
+        zoom_levels[3] = 1.15;
+        zoom_levels[4] = 1.20;
+	      
+	      var zoom = zoom_levels[render_map.zoom];
+		    
 			  var x1 = toScreen(p1).x;
 			  var y1 = toScreen(p1).y;
 			  var x2 = toScreen(p2).x;
@@ -271,8 +298,8 @@ NodeGraph.Layer = OpenLayers.Class(OpenLayers.Layer, {
 			  var s1 = toScreen(p1).add(offset);
 			  var s2 = toScreen(p2).add(offset);
 
-			  var boxWidth = edge.target.getRadius();
-			  var boxHeight = edge.target.getRadius();
+			  var boxWidth = edge.target.getRadius()*zoom;
+			  var boxHeight = edge.target.getRadius()*zoom;
 
 			  var intersection = intersect_line_box(s1, s2, {x: x2-boxWidth/2.0, y: y2-boxHeight/2.0}, boxWidth, boxHeight);
 
@@ -287,9 +314,9 @@ NodeGraph.Layer = OpenLayers.Class(OpenLayers.Layer, {
 
 			  var weight = typeof(edge.data.weight) !== 'undefined' ? edge.data.weight : 1.0;
 
-			  ctx.lineWidth = Math.max(weight *  2, 0.1);
-			  arrowWidth = 4 + ctx.lineWidth;
-			  arrowLength = 16;
+			  ctx.lineWidth = Math.max(weight *  2, 0.1)*zoom;
+			  arrowWidth = (4 + ctx.lineWidth)*zoom;
+			  arrowLength = 16*zoom;
 
 			  var directional = typeof(edge.data.directed) !== 'undefined' ? edge.data.directed : true;
 
@@ -331,13 +358,23 @@ NodeGraph.Layer = OpenLayers.Class(OpenLayers.Layer, {
 			  ctx.save();
 			  ctx.fillStyle = '#00f';
     		var x = parseInt((x1 + x2 - (edge.data.text.length * 5)) / 2); 
-    		var y = parseInt((y1 + y2 ) /2);  	  		
+    		var y = parseInt((y1 + y2)/2);
     		ctx.fillText(edge.data.text, x, y);
     		ctx.restore();
 		  },
 		
 		  function drawNode(node, p)
-		  {
+		  {		  		    
+		  
+		    var zoom_levels = new Array();
+        zoom_levels[0] = 1.00;
+        zoom_levels[1] = 1.05;
+        zoom_levels[2] = 1.10;
+        zoom_levels[3] = 1.15;
+        zoom_levels[4] = 1.20;
+	      
+	      var zoom = zoom_levels[render_map.zoom];
+		  
 			  var s = toScreen(p);
 
 			  ctx.save();
@@ -345,7 +382,7 @@ NodeGraph.Layer = OpenLayers.Class(OpenLayers.Layer, {
 			  ctx.textAlign = "left";
 			  ctx.textBaseline = "top";
 			  ctx.font = "12px Verdana, sans-serif";			
-			  ctx.fillText(node.data.label, s.x - (node.data.label.length * 5) / 2, s.y + 20);			 
+			  ctx.fillText(node.data.label, s.x - (node.data.label.length * 5) / 2, s.y + 20*zoom);
 			
 			  ctx.fillStyle = "#FFFFFF";
 			  ctx.strokeStyle = "#000000";
@@ -354,39 +391,39 @@ NodeGraph.Layer = OpenLayers.Class(OpenLayers.Layer, {
 			  {
 				  case "circle":
 					  ctx.beginPath();
-				    ctx.arc(s.x, s.y, 15, 0, Math.PI * 2, true);
+				    ctx.arc(s.x, s.y, 15*zoom, 0, Math.PI * 2, true);
 				    ctx.closePath();
 				    ctx.fill();
 				    ctx.stroke();
 					  break;
 				  case "highlighted-circle":
 					  ctx.beginPath();			
-					  ctx.arc(s.x, s.y, 15, 0, Math.PI * 2, true);
+					  ctx.arc(s.x, s.y, 15*zoom, 0, Math.PI * 2, true);
 					  ctx.closePath();
 					  ctx.stroke();
             ctx.fill();			          
             ctx.lineWidth = 3;
 					  ctx.strokeStyle = "#f00";
 					  ctx.beginPath();	    		
-				    ctx.arc(s.x, s.y, 20, 0, Math.PI * 2, true);				  
+				    ctx.arc(s.x, s.y, 20*zoom, 0, Math.PI * 2, true);				  
 				    ctx.stroke();
 				    ctx.closePath();
 					  break;	
 				  case "square":
-					  ctx.strokeRect(s.x - 15, s.y - 15, 2*15, 2*15);	
-					  ctx.fillRect(s.x - 15, s.y - 15, 2*15, 2*15);					
+					  ctx.strokeRect(s.x - 15, s.y - 15, 2*15*zoom, 2*15*zoom);	
+					  ctx.fillRect(s.x - 15, s.y - 15, 2*15*zoom, 2*15*zoom);					
 					  break;
           case "highlighted-square":          
-					  ctx.strokeRect(s.x - 15, s.y - 15, 2*15, 2*15);	
-					  ctx.fillRect(s.x - 15, s.y - 15, 2*15, 2*15);		
+					  ctx.strokeRect(s.x - 15, s.y - 15, 2*15*zoom, 2*15*zoom);	
+					  ctx.fillRect(s.x - 15, s.y - 15, 2*15*zoom, 2*15*zoom);		
 					  ctx.lineWidth = 3;
 					  ctx.strokeStyle = "#f00";			
-					  ctx.strokeRect(s.x - 20, s.y - 20, 2*20, 2*20);	
+					  ctx.strokeRect(s.x - 20, s.y - 20, 2*20*zoom, 2*20*zoom);	
 					  break;							
 				  case "hexagon":	
 					  ctx.translate(s.x, s.y);
 					  ctx.beginPath();
-					  var points = get_points(15, 6);
+					  var points = get_points(15*zoom, 6);
 					  for (var idx = 0; idx < points.length; idx++)
 					  {
 					      if (idx == 0)
@@ -401,7 +438,7 @@ NodeGraph.Layer = OpenLayers.Class(OpenLayers.Layer, {
 				  case "highlighted-hexagon":	
 					  ctx.translate(s.x, s.y);
 					  ctx.beginPath();
-					  var points = get_points(15, 6);
+					  var points = get_points(15*zoom, 6);
 					  for (var idx = 0; idx < points.length; idx++)
 					  {
 					      if (idx == 0)
@@ -415,7 +452,7 @@ NodeGraph.Layer = OpenLayers.Class(OpenLayers.Layer, {
 				    ctx.lineWidth = 3;
 					  ctx.strokeStyle = "#f00";
 					  ctx.beginPath();
-            points = get_points(20, 6);
+            points = get_points(20*zoom_levels[zoom], 6);
 					  for (idx = 0; idx < points.length; idx++)
 					  {
 					      if (idx == 0)
