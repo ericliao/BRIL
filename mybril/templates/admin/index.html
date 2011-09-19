@@ -22,7 +22,6 @@
 <script src="{{ STATIC_URL }}jquery/jquery-1.6.2.min.js"></script>
 <script src="{{ STATIC_URL }}jquery/jquery-ui-1.8.15.custom.min.js"></script>
 <script src="{{ STATIC_URL }}jquery/jquery.mousewheel.min.js"></script>
-<script src="{{ STATIC_URL }}raphael/raphael-min.js"></script>
 <script src="{{ STATIC_URL }}springy/springy.js"></script>
 <script src="{{ STATIC_URL }}openlayers/OpenLayers.js"></script>
 <script src="{{ STATIC_URL }}openlayers/graphLayer.js"></script>
@@ -79,6 +78,43 @@ function filter_relationships(key, opt) {
 	  }
 	}		
 }
+
+$(document).ajaxSend(function(event, xhr, settings) {
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    function sameOrigin(url) {
+        // url could be relative or scheme relative or absolute
+        var host = document.location.host; // host + port
+        var protocol = document.location.protocol;
+        var sr_origin = '//' + host;
+        var origin = protocol + sr_origin;
+        // Allow absolute or scheme relative URLs to same origin
+        return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+            (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+            // or any other URL that isn't scheme relative or absolute i.e relative.
+            !(/^(\/\/|http:|https:).*/.test(url));
+    }
+    function safeMethod(method) {
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    if (!safeMethod(settings.type) && sameOrigin(settings.url)) {
+        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+    }
+});
 
 </script>
 {% endif %}
@@ -198,8 +234,11 @@ function filter_relationships(key, opt) {
 			.click(function() {
 			    var save_canvas = document.getElementById("explorer");
           var img    = save_canvas.toDataURL("image/png");        
-          window.location = img.replace("image/png", "image/octet-stream");
-			});
+          var url = "http://localhost:8000/repo/experiments/" + expId + "/savePNG/"
+          var download_url = "http://localhost:8000/repo/experiments/" + expId + "/getPNG/"          
+          $.post(url, {data: img}, function () {
+              window.location.href =  download_url});        
+      });
       
       $( "#reload" )
 			.button()
@@ -250,7 +289,7 @@ function filter_relationships(key, opt) {
   <div id="viewer"></div>
 </div>
 
-<div id="tabs" >
+<div id="tabs">
 	<ul>
 	  {% if user.is_superuser %}
 		  <li><a href="#tabs-1">Admin</a></li>

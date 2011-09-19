@@ -11,6 +11,8 @@ from django.http import HttpResponse
 from django.template import RequestContext
 from eulfedora.views import raw_datastream
 from datetime import datetime
+from base64 import decodestring
+from PIL import Image, ImageDraw
 
 def display(request, pid):
     repo = Repository()
@@ -32,6 +34,32 @@ def file(request, pid):
     }
     return raw_datastream(request, pid, dsid, type=FileObject, headers=extra_headers)
 
+def save_PNG(request, expId):
+    if request.is_ajax():
+      if request.method == 'POST':          
+      
+        # save canvas data to PNG file
+        filename = expId + ".png"
+        data = request.POST['data']
+        imagestr = data[data.find(',') + 1:]                
+        fh = open('/home/eric/workspace/mybril/media/' + filename, 'wb')                
+        fh.write(decodestring(imagestr))
+        fh.close()        
+        return HttpResponse(status=240)
+    else:
+        return HttpResponse(status=400)
+
+def get_PNG(request, expId):
+
+    filename = expId + ".png"
+    im = Image.open('/home/eric/workspace/mybril/media/' + filename)
+    
+    # return PNG file for download
+    response = HttpResponse(mimetype='image/png')
+    im.save(response, 'PNG')
+    response['Content-Disposition'] = 'attachment; filename='+ filename
+    return response
+
 def export_ORE(request, expId):
     
     # add OPMV namespace
@@ -50,7 +78,6 @@ def export_ORE(request, expId):
     a = Aggregation("http://bril.cerch.kcl.ac.uk/aggregation/" + expId)
     a.title = "OAI-ORE Aggregation of Experiment: " + exp_title
     a._dcterms.abstract = "OAI-ORE Aggregation of: " + exp_description
-    # TODO: get current time
     a._dcterms.created = datetime.now().isoformat(' ')
     creator = Agent("http://bril.cerch.kcl.ac.uk")
     creator.name = "BRIL Repository"

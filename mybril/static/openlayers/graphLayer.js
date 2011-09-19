@@ -252,7 +252,8 @@ NodeGraph.Layer = OpenLayers.Class(OpenLayers.Layer, {
 		
 		  function clear()
 		  {		
-		    ctx.clearRect(0, 0, canvas.width, canvas.height);
+		    ctx.fillStyle = '#ffffff';		
+		    ctx.fillRect(0, 0, canvas.width, canvas.height);
 		  },
 				
 		  function drawEdge(edge, p1, p2)
@@ -382,6 +383,7 @@ NodeGraph.Layer = OpenLayers.Class(OpenLayers.Layer, {
 			  ctx.textAlign = "left";
 			  ctx.textBaseline = "top";
 			  ctx.font = "12px Verdana, sans-serif";			
+			  ctx.fillStyle = "rgb(0,0,0)";
 			  ctx.fillText(node.data.label, s.x - (node.data.label.length * 5) / 2, s.y + 20*zoom);
 			
 			  ctx.fillStyle = "#FFFFFF";
