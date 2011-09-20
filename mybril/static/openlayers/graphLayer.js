@@ -53,9 +53,9 @@ NodeGraph.Layer = OpenLayers.Class(OpenLayers.Layer, {
     var repulsion = options.repulsion || 600.0;
     var damping = options.damping || 0.4;
     
-    canvas.width  = window.innerWidth - 125;
-    this.canvas.width  = window.innerWidth - 125;	  	  
-    this.original_width  = window.innerWidth - 125;	  	  
+    canvas.width  = window.innerWidth - 100;
+    this.canvas.width  = window.innerWidth - 100;	  	  
+    this.original_width  = window.innerWidth - 100;	  	  
 	  canvas.height = window.innerHeight - 250;
 	  this.canvas.height = window.innerHeight - 250;
 	  this.original_height = window.innerHeight - 250;

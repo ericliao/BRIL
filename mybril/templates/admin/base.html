@@ -1,24 +1,33 @@
-<!-- 
-  Modified by Eric Liao 2011
-  Contact: the.eric.liao@gmail.com
--->
-
 {% load url from future %}<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="{{ LANGUAGE_CODE|default:"en-us" }}" xml:lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
 <head>
 <title>{% block title %}{% endblock %}</title>
 <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% load adminmedia %}{% admin_media_prefix %}css/base.css{% endblock %}" />
 <style type="text/css">
-  .dashboard #content {
-      width: 95%;
-      height: 100%;
-  }
 
   #content-main {
       float: left;
       width: 75%;
   }
 
+  .left {      
+      float: left;
+  }
+  
+  .right {
+      float: right;
+  }
+
+  .container {
+    overflow: hidden;
+	  width: 100%;
+  }  
+  
+  .dashboard #content {
+      width: 97.75%;
+      height: 100%;
+  }
+  
   #content-related {    
       width: 20%;
       margin-right: 1.4em;
@@ -58,8 +67,9 @@
   }
   
   div.loader2-visible{
-    /*make visible*/
-    display:block;
+    /*make visible and overlay everything*/
+    display:block;    
+    z-index: 2000;
 
     /*position it at the very top-left corner*/
     position:absolute;

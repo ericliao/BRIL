@@ -133,18 +133,20 @@ $(document).ajaxSend(function(event, xhr, settings) {
 		function loadTab(expId, expTitle) {
 			var new_canvas = "<canvas id='explorer'/" + "></canvas>";
 			$( "#tabs-3" ).html("");
-			$( "#tabs-3" ).append( "<p><font size='4'><b>Experiment: " + expTitle + "</b></font>&nbsp;&nbsp;&nbsp;&nbsp;" + 
+			
+			$( "#tabs-3" ).append( "<div class='container'><p class='left'><font size='4'><b>Experiment: " + expTitle + "</b></font>&nbsp;&nbsp;&nbsp;&nbsp;" + 
 			                       "<button id='back_exp'>Back to Experiments</button><button id='reload'>Reload Relationships</button>"+ 
-			                       "<button id='savePNG'>Save as PNG</button><button id='exportORE'>Export Experiment using OAI-ORE format</button></p>" );
+			                       "<button id='savePNG'>Save as PNG</button><button id='exportORE'>Export Experiment using OAI-ORE format</button></p>" +
+			                       "<p class='right'><button id='legend'>Legend</button><button id='help'>Help</button></p></div>" );
 
       var div_width = window.innerWidth - 100;
 			var div_height = window.innerHeight - 250;						                       
 			var pos_left = div_width/2 - 50;
 			var pos_top = div_height/2;
 			
-			$( "#tabs-3" ).append( "<div id='loader2' class='loader2-invisible'><p><img style='position: absolute; left: "+pos_left+"px; top: "+pos_top+"px;'" + 
-			                       "src='{{ STATIC_URL }}jquery/ajax-loader.gif' alt='Loading'></p><div>" );                       			
-			$( "#tabs-3" ).append("<div id='map' style='height:" + div_height + "px; width:" + div_width + "px'></div>");			
+			$( "#tabs-3" ).append( "<div id='loader2' class='loader2-invisible'><img style='position: absolute; left: "+pos_left+"px; top: "+pos_top+"px;'" + 
+			                       "src='{{ STATIC_URL }}jquery/ajax-loader.gif' alt='Loading'></div>" );                       			
+			$( "#tabs-3" ).append("<div id='map' style='height:" + div_height + "px; width:" + div_width + "px'></div>");
 			$( "#tabs-3" ).append( new_canvas );
 			$tabs.tabs('select', '#tabs-3');
 			
@@ -167,7 +169,7 @@ $(document).ajaxSend(function(event, xhr, settings) {
 		      numZoomLevels: 5,
       });                            		
 			
-			var graphLayer = new NodeGraph.Layer("NodeGraph", { 'graph': graph, 'canvas': $(canvas_path), 'render_map': map});
+			var graphLayer = new NodeGraph.Layer("NodeGraph", {'graph':graph, 'canvas':$(canvas_path), 'render_map':map});
       var nobase = new OpenLayers.Layer("No Basemap",{isBaseLayer: true, 'displayInLayerSwitcher': true});
       map.addLayers([graphLayer, nobase]);			
       var initialZoom = 0;
@@ -176,7 +178,7 @@ $(document).ajaxSend(function(event, xhr, settings) {
 			// Load relationship data from Fedora
       var url = "http://localhost:8000/repo/experiments/" + expId + "/relationships/";
       $('#loader2').removeClass('loader2-invisible');
-      $('#loader2').addClass('loader2-visible');
+      $('#loader2').addClass('loader2-visible');      
       $.getJSON(url, function(data) {
           $('#loader2').addClass('loader2-invisible');
           $('#loader2').removeClass('loader2-visible');
@@ -261,6 +263,30 @@ $(document).ajaxSend(function(event, xhr, settings) {
           $( "#tabs-3" ).html("<h2 id='note'>Please select an experiment to view it's relationships.</h2>");
           $("#dialog").dialog('close');
           $tabs.tabs('select', '#tabs-2');
+			});
+			
+			$( "#help" )
+			.button()
+			.click(function() {
+          $("#help-dialog").dialog('close');
+          $("#help-dialog").dialog({
+            title: "Help", 
+            height: 500, 
+            width: 300,
+            position: [window.innerWidth - 350, 175]
+        })
+			});
+			
+			$( "#legend" )
+			.button()
+			.click(function() {
+			    $("#legend-dialog").dialog('close');
+          $("#legend-dialog").dialog({
+            title: "Legend", 
+            height: 400, 
+            width: 325,
+            position: [window.innerWidth - 690, 175]
+        })
 			});      
 		}    
  
@@ -287,6 +313,50 @@ $(document).ajaxSend(function(event, xhr, settings) {
 
 <div id="viewer-dialog" style="width:600px;overflow:auto">
   <div id="viewer"></div>
+</div>
+
+<div id="help-dialog" style="display:none;">
+  <h2>Interacting with this demo:</h2>  
+  <hr/>
+  <h4>Selecting Nodes</h4>
+  <p>Click on a node to highlight it and display a dialog box.</p>
+  <hr/>
+  <h4>Dragging Nodes</h4>
+  <p>Click and drag a node to drag it around.</p>
+  <hr/>
+  <h4>Context Menu</h4>
+  <p>Right click on the background for a menu to filter the displaying of nodes and relationships.</p>
+  <hr/>
+  <h4>Panning</h4>
+  <p>Use the navigation controls or click and drag on the background to scroll around.</p>
+  <hr/>
+  <h4>Zooming In and Out</h4>
+  <p>Use the navigation controls or scroll the mouse wheel to zoom in/out.</p>  
+</div>
+
+<div id="legend-dialog" style="display:none;">
+  <h2>Open Provenance Model Vocabulary (OPM-V) Notation</h2>
+  <br/>
+  <table>
+    <tr>
+      <td><b>Circle</b></td>
+      <td>Artifact is a general concept that represents immutable piece of state, which may have a physical embodiment in a physical object, or a digital representation in a computer system.</td>
+    </tr>
+    <tr class="alt">
+      <td><b>Square</b></td>
+      <td>Process refers to an action or series of actions performed on or caused by artifacts, and resulting in new artifacts.</td>    
+    </tr>
+    <tr>
+      <td><b>Hexagon</b></td>
+      <td>Agent is a contextual entity acting as a catalyst of a process, enabling, facilitating, controlling, or affecting its execution.</td>
+    </tr>
+    <tr class="alt">
+      <td><b>Arrow</b></td>
+      <td>Object properties describe relationship between artifacts and processes and agents. These can include: wasDerivedFrom, wasControlledBy, wasGeneratedBy, used</td>
+    </tr>
+  </table>
+  <br/>
+  <p style="font-size:x-small">For a detailed description of OPM-V, please see the <a href="http://open-biomed.sourceforge.net/opmv/ns.html">OPM-V webpage</a>.</p>
 </div>
 
 <div id="tabs">
