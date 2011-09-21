@@ -135,8 +135,7 @@ $(document).ajaxSend(function(event, xhr, settings) {
 			$( "#tabs-3" ).html("");
 			
 			$( "#tabs-3" ).append( "<div class='container'><p class='left'><font size='4'><b>Experiment: " + expTitle + "</b></font>&nbsp;&nbsp;&nbsp;&nbsp;" + 
-			                       "<button id='back_exp'>Back to Experiments</button><button id='reload'>Reload Relationships</button>"+ 
-			                       "<button id='savePNG'>Save as PNG</button><button id='exportORE'>Export Experiment using OAI-ORE format</button></p>" +
+			                       "<button id='back_exp'>Back to Experiments</button><button id='reload'>Reload Relationships</button><button id='savePNG'>Save as PNG</button></p>" +
 			                       "<p class='right'><button id='legend'>Legend</button><button id='help'>Help</button></p></div>" );
 
       var div_width = window.innerWidth - 100;
@@ -224,12 +223,6 @@ $(document).ajaxSend(function(event, xhr, settings) {
 	        }
         }
       });        
-      
-      $( "#exportORE" )
-			.button()
-			.click(function() {
-          window.location = "http://localhost:8000/repo/experiments/" + expId + "/ORE/";
-      });			
       
       $( "#savePNG" )
 			.button()

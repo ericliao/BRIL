@@ -179,30 +179,30 @@ NodeGraph.Layer = OpenLayers.Class(OpenLayers.Layer, {
 	                  position: [e.pageX + 25, e.pageY + 25],
 	                  open: function(event, ui) {
 	                      if (selected.node.data.pid != "null") {
-	                          var url = "http://localhost:8000/repo/objects/" + selected.node.data.pid + " #dialog_content";
-	                          $('#loader').show();
-	                          $('#msg').hide();
-                            $('#msg').load( url, function() {
-                                $('#loader').hide();                                
-                                $('#msg').show();
-                                $( "#viewLink" )
-                                  .button()
-                                  .click(function() {
-                                    $('#viewer-dialog').dialog('close');
-                                    $("#viewer-dialog").dialog({ 
-                                      title: "Viewing: " + $("#title").text(), 
-                                      height: 600, 
-                                      width: 600,
-                                      open: function(event, ui) {
-                                        var url = "http://localhost:8000/repo/objects/" + $( "#viewLink" ).attr("value") + "/view/";
-                                        $('#viewer').load(url);
-                                      }                
-                                    });
-                                });
-                                $( "#downloadLink" ).button();
-                            });
+                          var url = "http://localhost:8000/repo/objects/" + selected.node.data.pid + "/details/ #dialog-content";
+                          $('#loader').show();
+                          $('#msg').hide();
+                          $('#msg').load( url, function() {
+                              $('#loader').hide();                                
+                              $('#msg').show();
+                              $( "#viewLink" )
+                                .button()
+                                .click(function() {
+                                  $('#viewer-dialog').dialog('close');
+                                  $("#viewer-dialog").dialog({ 
+                                    title: "Viewing: " + $("#title").text(), 
+                                    height: 600, 
+                                    width: 600,
+                                    open: function(event, ui) {
+                                      var url = "http://localhost:8000/repo/objects/" + $( "#viewLink" ).attr("value") + "/view/";
+                                      $('#viewer').load(url);
+                                    }                
+                                  });
+                              });
+                              $( "#downloadLink" ).button();
+                          });
 	                      } else {
-	                          $('#msg').html("<h3>Controller Object</h3>");
+	                        $('#msg').html("<h3>Controller Object</h3>");
 	                      }
 	                  },
 	                  close: function(event, ui) {

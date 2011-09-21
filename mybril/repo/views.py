@@ -34,6 +34,113 @@ def file(request, pid):
     }
     return raw_datastream(request, pid, dsid, type=FileObject, headers=extra_headers)
 
+def get_object_ORE(request, pid):
+    
+    # add OPMV namespace
+    utils.namespaces['opmv'] = Namespace('http://purl.org/net/opmv/ns#')
+    utils.namespaceSearchOrder.append('opmv')
+    
+    # Find the experiment this object belongs to
+    repo = Repository()
+    experiment = repo.risearch.get_objects("info:fedora/" + pid, "info:fedora/fedora-system:def/relations-external#isPartOf")        
+    expId = experiment.next();
+    exp_obj = repo.get_object(expId)
+    exp_title = exp_obj.dc.content.title
+    exp_description = exp_obj.dc.content.description
+    exp_created = exp_obj.info.created
+    exp_modified = exp_obj.info.modified
+    
+    # create aggregation using foresite OAI-ORE library
+    a = Aggregation("http://bril.cerch.kcl.ac.uk/aggregation/" + expId)
+    a.title = "OAI-ORE Aggregation of Experiment: " + exp_title
+    a._dcterms.abstract = "OAI-ORE Aggregation of: " + exp_description
+    a._dcterms.created = datetime.now().isoformat(' ')
+    creator = Agent("http://bril.cerch.kcl.ac.uk")
+    creator.name = "BRIL Repository"
+    a.add_agent(creator, "creator")
+    
+    # add experiment to aggregation    
+    exp = AggregatedResource("http://bril.cerch.kcl.ac.uk/" + expId)
+    exp.title = exp_title
+    exp._dcterms.abstract = exp_description
+    exp._dcterms.created = exp_created
+    exp._dcterms.modified = exp_modified
+    exp_agent = Agent("http://bril.cerch.kcl.ac.uk/agents/stella")
+    exp_agent.name = "Stella Fabiane"
+    exp.add_agent(exp_agent, "creator")
+    a.add_resource(exp)
+          
+    related_objects = []
+    relationships = []           
+    aggregated_objects = {}
+    
+    obj = repo.get_object(pid, type=FileObject)                 
+    this_artefact = AggregatedResource("http://bril.cerch.kcl.ac.uk/" + obj.dc.content.identifier)
+    this_artefact.title = obj.dc.content.title
+    this_artefact._dcterms.abstract = obj.dc.content.description
+    this_artefact._dcterms.created = obj.info.created
+    this_artefact._dcterms.modified = obj.info.modified              
+    
+    # Search for relationships to the object and add each related object as an Aggregated Resource
+    if (string.find(obj.pid, "process") != -1):
+      for related_pid in repo.risearch.get_objects("info:fedora/"+ obj.pid, "http://purl.org/net/opmv/ns#used"):
+        related_objects.append(repo.get_object(related_pid))
+        relationships.append(["used", string.replace(related_pid, 'info:fedora/', '')])
+
+    if (string.find(obj.pid, "process") == -1):
+      for related_pid in repo.risearch.get_objects("info:fedora/"+ obj.pid, "http://purl.org/net/opmv/ns#wasGeneratedBy"):
+        related_objects.append(repo.get_object(related_pid))  
+        relationships.append(["wasGeneratedBy", string.replace(related_pid, 'info:fedora/', '')])
+    
+      for related_pid in repo.risearch.get_objects("info:fedora/"+ obj.pid, "http://purl.org/net/opmv/ns#wasDerivedFrom"):
+        related_objects.append(repo.get_object(related_pid))
+        relationships.append(["wasDerivedFrom", string.replace(related_pid, 'info:fedora/', '')])
+      
+      for related_pid in repo.risearch.get_objects("info:fedora/"+ obj.pid, "info:fedora/fedora-system:def/relations-external#isMemberOf"):
+        related_objects.append(repo.get_object(related_pid))
+        relationships.append(["isMemberOf", string.replace(related_pid, 'info:fedora/', '')])    
+  
+    for related_obj in related_objects:
+        artefact = AggregatedResource("http://bril.cerch.kcl.ac.uk/" + related_obj.dc.content.identifier)
+        artefact.title = related_obj.dc.content.title
+        artefact._dcterms.abstract = related_obj.dc.content.description
+        artefact._dcterms.created = related_obj.info.created
+        artefact._dcterms.modified = related_obj.info.modified
+        aggregated_objects[related_obj.dc.content.identifier] = artefact
+                
+    edge_from = []
+    edge_to = []
+    for r in relationships: 
+        if (string.find(r[0], "used") != -1):               
+          this_artefact._opmv.used = aggregated_objects[r[1]]
+        elif (string.find(r[0], "wasGeneratedBy") != -1):
+          this_artefact._opmv.wasGeneratedBy = aggregated_objects[r[1]]
+        elif (string.find(r[0], "wasDerivedFrom") != -1):
+          this_artefact._opmv.wasDerivedFrom = aggregated_objects[r[1]]
+        elif (string.find(r[0], "isMemberOf") != -1):
+          this_artefact._opmv.isMemberOf = aggregated_objects[r[1]]
+    
+    for key, agg_object in aggregated_objects.iteritems():
+        a.add_resource(agg_object)
+    
+    a.add(this_artefact)
+                    
+    # Add modified time for aggregation
+    a._dcterms.modified = datetime.now().isoformat(' ')
+    
+    # Add resource map and return embedded RDF
+    rdfa = RdfLibSerializer('rdfa')
+    rem = ResourceMap("http://bril.cerch.kcl.ac.uk/rem/rdf/" + expId)
+    rem.set_aggregation(a)
+    remdoc = rem.register_serialization(rdfa)
+    remdoc = rem.get_serialization()    
+    return render_to_response('repo/ORE_display.html', {'obj': obj, 'rdfa': remdoc})
+
+def display_experiment(request, expId):
+    repo = Repository()
+    obj = repo.get_object(expId, type=FileObject)
+    return render_to_response('repo/display.html', {'obj': obj})
+
 def save_PNG(request, expId):
     if request.is_ajax():
       if request.method == 'POST':          
@@ -60,9 +167,9 @@ def get_PNG(request, expId):
     response['Content-Disposition'] = 'attachment; filename='+ filename
     return response
 
-def export_ORE(request, expId):
+def get_experiment_ORE(request, expId):
     
-    # add OPMV namespace
+    # Add OPMV namespace
     utils.namespaces['opmv'] = Namespace('http://purl.org/net/opmv/ns#')
     utils.namespaceSearchOrder.append('opmv')
     
@@ -74,7 +181,7 @@ def export_ORE(request, expId):
     exp_created = exp_obj.info.created
     exp_modified = exp_obj.info.modified
     
-    # create aggregation using foresite OAI-ORE library
+    # Create aggregation using foresite OAI-ORE library
     a = Aggregation("http://bril.cerch.kcl.ac.uk/aggregation/" + expId)
     a.title = "OAI-ORE Aggregation of Experiment: " + exp_title
     a._dcterms.abstract = "OAI-ORE Aggregation of: " + exp_description
@@ -83,7 +190,7 @@ def export_ORE(request, expId):
     creator.name = "BRIL Repository"
     a.add_agent(creator, "creator")
     
-    # add experiment to aggregation    
+    # Add experiment to aggregation    
     exp = AggregatedResource("http://bril.cerch.kcl.ac.uk/" + expId)
     exp.title = exp_title
     exp._dcterms.abstract = exp_description
@@ -99,11 +206,10 @@ def export_ORE(request, expId):
     objects_cache = []
     objects = []
     processes = []
-    relationship = []           
     aggregated_objects = {}
     
     for obj_pid in exp_pids:
-        o = repo.get_object(pid = obj_pid);
+        o = repo.get_object(pid = obj_pid)
         objects_cache.append(o)
         
     for obj in objects_cache:
@@ -128,8 +234,7 @@ def export_ORE(request, expId):
         process._dcterms.abstract = proc.dc.content.description
         process._dcterms.created = proc.info.created
         process._dcterms.modified = proc.info.modified
-        aggregated_objects[proc.dc.content.identifier] = process
-    
+        aggregated_objects[proc.dc.content.identifier] = process    
       
     # Add 'used' relationships
     relationships = []
@@ -150,13 +255,12 @@ def export_ORE(request, expId):
     
     for e_from, e_to in zip(edge_from, edge_to):           
         e_from._opmv.used = e_to
-    
-    
+      
     # Add 'wasGeneratedBy' relationships
-    relationship = []
+    relationships = []
     for obj in objects:
         for o in repo.risearch.get_objects("info:fedora/"+ obj.pid, "http://purl.org/net/opmv/ns#wasGeneratedBy"):
-            relationship.append([obj.pid, string.replace(o, 'info:fedora/', '')])
+            relationships.append([obj.pid, string.replace(o, 'info:fedora/', '')])
     
     edge_from = []
     edge_to = []
@@ -170,13 +274,13 @@ def export_ORE(request, expId):
                 edge_to.append(agg_object)
     
     for e_from, e_to in zip(edge_from, edge_to):           
-        e_to._opmv.wasGeneratedBy = e_from
+        e_from._opmv.wasGeneratedBy = e_to
           
     # Add 'wasDerivedFrom' relationships
-    relationship = []
+    relationships = []
     for obj in objects:
         for o in repo.risearch.get_objects("info:fedora/"+ obj.pid, "http://purl.org/net/opmv/ns#wasDerivedFrom"):
-            relationship.append([obj.pid, string.replace(o, 'info:fedora/', '')])
+            relationships.append([obj.pid, string.replace(o, 'info:fedora/', '')])
     
     edge_from = []
     edge_to = []
@@ -190,13 +294,12 @@ def export_ORE(request, expId):
                 edge_to.append(agg_object)
     
     for e_from, e_to in zip(edge_from, edge_to):           
-        e_to._opmv.wasDerivedFrom = e_from
+        e_from._opmv.wasDerivedFrom = e_to
     
-    # TODO: convert 'isMemberOf' relationships to nested aggregation?
-    relationship = []
+    relationships = []
     for obj in objects:
         for o in repo.risearch.get_objects("info:fedora/"+ obj.pid, "info:fedora/fedora-system:def/relations-external#isMemberOf"):
-            relationship.append([obj.pid, string.replace(o, 'info:fedora/', '')])
+            relationships.append([obj.pid, string.replace(o, 'info:fedora/', '')])
         
     edge_from = []
     edge_to = []
@@ -218,15 +321,13 @@ def export_ORE(request, expId):
     # Add modified time for aggregation
     a._dcterms.modified = datetime.now().isoformat(' ')
     
-    # Add resource map and return XML
-    rdfxml = RdfLibSerializer("xml")
+    # Add resource map and return embedded RDF
+    rdfa = RdfLibSerializer('rdfa')
     rem = ResourceMap("http://bril.cerch.kcl.ac.uk/rem/rdf/" + expId)
     rem.set_aggregation(a)
-    remdoc = rem.register_serialization(rdfxml)
-    remdoc = rem.get_serialization()    
-    response = HttpResponse(remdoc.data, mimetype='application/xml')
-    response['Content-Disposition'] = 'attachment; filename='+ expId + '-ORE.xml'
-    return response
+    remdoc = rem.register_serialization(rdfa)
+    remdoc = rem.get_serialization()   
+    return render_to_response('repo/ORE_display.html', {'obj': exp_obj, 'rdfa': remdoc})
       
 def exp_relationships(request, expId):
     repo = Repository()
@@ -239,7 +340,7 @@ def exp_relationships(request, expId):
     processes = []   
     relationship = []
     for obj_pid in exp_pids:
-        o = repo.get_object(pid = obj_pid);
+        o = repo.get_object(pid = obj_pid)
         objects_cache.append(o)
         
     for obj in objects_cache:
@@ -285,7 +386,7 @@ def exp_relationships(request, expId):
     
     for e_from, e_to in zip(edge_from, edge_to):           
         edge = dict(_from=e_from, _to=e_to, directed='false', data=dict(color='#FFD800', text='wasTriggeredBy'))
-        edges.append(edge);
+        edges.append(edge)        
    
     # generate object nodes
     for obj in objects:
@@ -310,7 +411,7 @@ def exp_relationships(request, expId):
     
     for e_from, e_to in zip(edge_from, edge_to):           
         edge = dict(_from=e_from, _to=e_to, directed='false', data=dict(color='#6A4A3C', text='used'))
-        edges.append(edge);
+        edges.append(edge)        
 
     # generate 'isMemberOf' relationships
     relationship = []
@@ -330,7 +431,7 @@ def exp_relationships(request, expId):
     
     for e_from, e_to in zip(edge_from, edge_to):           
         edge = dict(_from=e_from, _to=e_to, directed='false', data=dict(color='#00A0B0', text='isMemberOf'))
-        edges.append(edge);    
+        edges.append(edge)
     
     # generate 'wasDerivedFrom' relationships
     relationship = []
@@ -350,7 +451,7 @@ def exp_relationships(request, expId):
     
     for e_from, e_to in zip(edge_from, edge_to):           
         edge = dict(_from=e_from, _to=e_to, directed='false', data=dict(color='#EB6841', text='wasDerivedFrom'))
-        edges.append(edge);      
+        edges.append(edge)
     
     # generate 'wasGeneratedBy' relationships
     relationship = []
@@ -370,7 +471,7 @@ def exp_relationships(request, expId):
     
     for e_from, e_to in zip(edge_from, edge_to):           
         edge = dict(_from=e_from, _to=e_to, directed='false', data=dict(color='#7DBE3C', text='wasGeneratedBy'))
-        edges.append(edge);
+        edges.append(edge)
 
     # TODO: scan nodes for unique formats
 

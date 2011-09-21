@@ -83,6 +83,13 @@ pre {
         {% endif %}
         <a href="{% url download obj.pid %}" id="downloadLink">Download File</a>
       {% endif %}
-    </div>
+      <br/>
+      <br/>
+      <hr/>
+      <h3>OAI-ORE</h3>
+      {% autoescape off %} 
+      {{ rdfa.data }}
+      {% endautoescape %}       
+    </div>        
 </div>
 </html>
