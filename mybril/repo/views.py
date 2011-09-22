@@ -50,6 +50,8 @@ def get_object_ORE(request, pid):
     exp_created = exp_obj.info.created
     exp_modified = exp_obj.info.modified
     
+    expId = string.replace(expId, 'info:fedora/', '')
+    
     # create aggregation using foresite OAI-ORE library
     a = Aggregation("http://bril.cerch.kcl.ac.uk/aggregation/" + expId)
     a.title = "OAI-ORE Aggregation of Experiment: " + exp_title
@@ -107,18 +109,31 @@ def get_object_ORE(request, pid):
         artefact._dcterms.created = related_obj.info.created
         artefact._dcterms.modified = related_obj.info.modified
         aggregated_objects[related_obj.dc.content.identifier] = artefact
+    
+    used_relationships = []
+    wasGeneratedBy_relationships = []
+    wasDerivedFrom_relationships = []
+    wasTriggeredBy_relationships = []
+    isMemberOf_relationships = []
                 
     edge_from = []
     edge_to = []
     for r in relationships: 
         if (string.find(r[0], "used") != -1):               
           this_artefact._opmv.used = aggregated_objects[r[1]]
+          used_relationships.append(r[1])
         elif (string.find(r[0], "wasGeneratedBy") != -1):
           this_artefact._opmv.wasGeneratedBy = aggregated_objects[r[1]]
+          wasGeneratedBy_relationships.append(r[1])
         elif (string.find(r[0], "wasDerivedFrom") != -1):
           this_artefact._opmv.wasDerivedFrom = aggregated_objects[r[1]]
+          wasDerivedFrom_relationships.append(r[1])
+        elif (string.find(r[0], "wasTriggeredBy") != -1):
+          this_artefact._opmv.wasTriggeredBy = aggregated_objects[r[1]]
+          wasTriggeredBy_relationships.append(r[1])
         elif (string.find(r[0], "isMemberOf") != -1):
           this_artefact._opmv.isMemberOf = aggregated_objects[r[1]]
+          isMemberOf_relationships.append(r[1])
     
     for key, agg_object in aggregated_objects.iteritems():
         a.add_resource(agg_object)
@@ -133,13 +148,74 @@ def get_object_ORE(request, pid):
     rem = ResourceMap("http://bril.cerch.kcl.ac.uk/rem/rdf/" + expId)
     rem.set_aggregation(a)
     remdoc = rem.register_serialization(rdfa)
-    remdoc = rem.get_serialization()    
-    return render_to_response('repo/ORE_display.html', {'obj': obj, 'rdfa': remdoc})
+    remdoc = rem.get_serialization()
+    
+    # Generate related object links for display
+    related_objects_html = ""    
+    if len(used_relationships) > 0:
+        related_objects_html += "<h3>used</h3><table>"
+        for r in used_relationships:
+            related_objects_html += "<tr><td><a href='http://localhost:8000/repo/objects/" + r + "'>" + aggregated_objects[r].title[0] + "</a></td></tr>"
+        related_objects_html += "</table>"
+        
+    if len(wasGeneratedBy_relationships) > 0:    
+        related_objects_html += "<h3>wasGeneratedBy</h3><table>"
+        for r in wasGeneratedBy_relationships:
+            related_objects_html += "<tr><td><a href='http://localhost:8000/repo/objects/" + r + "'>" + aggregated_objects[r].title[0] + "</a></td></tr>"
+        related_objects_html += "</table>"
+
+    if len(wasDerivedFrom_relationships) > 0:
+        related_objects_html += "<h3>wasDerivedFrom</h3><table>"
+        for r in wasDerivedFrom_relationships:
+            related_objects_html += "<tr><td><a href='http://localhost:8000/repo/objects/" + r + "'>" + aggregated_objects[r].title[0] + "</a></td></tr>"
+        related_objects_html += "</table>"
+        
+    if len(wasTriggeredBy_relationships) > 0:    
+        related_objects_html += "<h3>wasTriggeredBy</h3><table>"
+        for r in wasTriggeredBy_relationships:
+            related_objects_html += "<tr><td><a href='http://localhost:8000/repo/objects/" + r + "'>" + aggregated_objects[r].title[0] + "</a></td></tr>"
+        related_objects_html += "</table>"    
+
+    if len(isMemberOf_relationships) > 0:    
+        related_objects_html += "<h3>isMemberOf</h3><table>"
+        for r in isMemberOf_relationships:
+            related_objects_html += "<tr><td><a href='http://localhost:8000/repo/objects/" + r + "'>" + aggregated_objects[r].title[0] + "</a></td></tr>"
+        related_objects_html += "</table>"    
+    
+    experiment_html = "<h3>isPartOf</h3><table><tr><td><a href='http://localhost:8000/repo/experiments/" + expId + "'>" + exp_title + ":" + exp_description + "</a></td></tr></table>"   
+    related_html = related_objects_html + experiment_html;
+    return render_to_response('repo/ORE_display.html', {'obj': obj, 'related': related_html, 'rdfa': remdoc})
 
 def display_experiment(request, expId):
     repo = Repository()
-    obj = repo.get_object(expId, type=FileObject)
-    return render_to_response('repo/display.html', {'obj': obj})
+    exp_obj = repo.get_object(expId, type=FileObject)
+    exp_pids = repo.risearch.get_subjects("info:fedora/fedora-system:def/relations-external#isPartOf", "info:fedora/" + expId)
+    related_objects = []
+    processes = []
+    objects = []
+    
+    # Generate related object links for display
+    for obj_pid in exp_pids:    
+        related_objects.append(repo.get_object(obj_pid))
+            
+    for obj in related_objects:
+        if (string.find(obj.pid, "process") != -1):
+            processes.append(obj)
+    for obj in related_objects:
+        if (string.find(obj.pid, "process") == -1):
+            objects.append(obj)
+    
+    related_objects_html = "<h3>processes</h3><table>"        
+    for o in processes:
+        related_objects_html += "<tr><td><a href='http://localhost:8000/repo/objects/" + o.dc.content.identifier + "'>" + o.dc.content.title + "</a></td></tr>"
+    
+    related_objects_html += "</table><h3>artefacts</h3><table>"
+    
+    for o in objects:
+        related_objects_html += "<tr><td><a href='http://localhost:8000/repo/objects/" + o.dc.content.identifier + "'>" + o.dc.content.title + "</a></td></tr>"
+    
+    related_objects_html += "</table>"            
+    return render_to_response('repo/display.html', {'obj': exp_obj, 'related': related_objects_html})
 
 def save_PNG(request, expId):
     if request.is_ajax():
@@ -477,4 +553,4 @@ def exp_relationships(request, expId):
 
     # JSONify and return
     json_output = simplejson.JSONEncoder().encode(dict(nodes=nodes, edges=edges))
-    return HttpResponse(json_output, mimetype="application/json")
+    return HttpResponse(json_output, mimetype="application/json")  

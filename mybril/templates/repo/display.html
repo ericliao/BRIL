@@ -18,6 +18,15 @@ pre {
 	width: 99%; */
 	word-wrap: break-word; /* Internet Explorer 5.5+ */
 }
+
+.ui-widget-content a {
+  color: #5B80B2 !important
+}
+
+.ui-widget-content a:hover {
+  color: #036 !important
+}
+
 </style>
 
 {% load static %}
@@ -82,7 +91,12 @@ pre {
           <button id="viewLink" value="{{ obj.pid }}">View File</button>
         {% endif %}
         <a href="{% url download obj.pid %}" id="downloadLink">Download File</a>
+        <hr/>
+        </br>
       {% endif %}
+      {% autoescape off %} 
+      {{ related }}
+      {% endautoescape %}  
     </div>
 </div>
 </html>

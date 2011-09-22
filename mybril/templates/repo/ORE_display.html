@@ -18,6 +18,15 @@ pre {
 	width: 99%; */
 	word-wrap: break-word; /* Internet Explorer 5.5+ */
 }
+
+.ui-widget-content a {
+  color: #5B80B2 !important
+}
+
+.ui-widget-content a:hover {
+  color: #036 !important
+}
+
 </style>
 
 {% load static %}
@@ -73,21 +82,22 @@ pre {
       <br/>
       <h3>BRIL Metadata</h3>
       <pre>{{ obj.brilmeta.content }}</pre>
-      <hr/>
-      <br/>
+      <hr/>      
       {% if obj.file.info.size > 0 %}
+        <br/>
         <h3>Original Data</h3>      
         <p>({{ obj.file.info.size|filesizeformat }}, {{ obj.file.mimetype }})</p>      
         {% if obj.file.mimetype == "text/plain"%}
           <button id="viewLink" value="{{ obj.pid }}">View File</button>
         {% endif %}
         <a href="{% url download obj.pid %}" id="downloadLink">Download File</a>
-      {% endif %}
+        <br/>
+        <br/>
+        <hr/>
+      {% endif %}      
       <br/>
-      <br/>
-      <hr/>
-      <h3>OAI-ORE</h3>
       {% autoescape off %} 
+      {{ related }}
       {{ rdfa.data }}
       {% endautoescape %}       
     </div>        
