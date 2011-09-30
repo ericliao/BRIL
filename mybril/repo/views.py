@@ -1,11 +1,11 @@
 # Modified by Eric Liao
 # Contact: the.eric.liao@gmail.com
 
-import os, string, simplejson
+import os, string, simplejson, uuid
 from foresite import *
 from rdflib import URIRef, Namespace
 from eulfedora.server import Repository
-from mybril.repo.models import FileObject
+from mybril.repo.models import FileObject, AggregationObject
 from django.shortcuts import render_to_response
 from django.http import HttpResponse
 from django.template import RequestContext
@@ -34,12 +34,8 @@ def file(request, pid):
     }
     return raw_datastream(request, pid, dsid, type=FileObject, headers=extra_headers)
 
-def get_object_ORE(request, pid):
-    
-    # add OPMV namespace
-    utils.namespaces['opmv'] = Namespace('http://purl.org/net/opmv/ns#')
-    utils.namespaceSearchOrder.append('opmv')
-    
+def get_object_relationships(request, pid):
+        
     # Find the experiment this object belongs to
     repo = Repository()
     experiment = repo.risearch.get_objects("info:fedora/" + pid, "info:fedora/fedora-system:def/relations-external#isPartOf")        
@@ -51,37 +47,12 @@ def get_object_ORE(request, pid):
     exp_modified = exp_obj.info.modified
     
     expId = string.replace(expId, 'info:fedora/', '')
-    
-    # create aggregation using foresite OAI-ORE library
-    a = Aggregation("http://bril.cerch.kcl.ac.uk/aggregation/" + expId)
-    a.title = "OAI-ORE Aggregation of Experiment: " + exp_title
-    a._dcterms.abstract = "OAI-ORE Aggregation of: " + exp_description
-    a._dcterms.created = datetime.now().isoformat(' ')
-    creator = Agent("http://bril.cerch.kcl.ac.uk")
-    creator.name = "BRIL Repository"
-    a.add_agent(creator, "creator")
-    
-    # add experiment to aggregation    
-    exp = AggregatedResource("http://bril.cerch.kcl.ac.uk/" + expId)
-    exp.title = exp_title
-    exp._dcterms.abstract = exp_description
-    exp._dcterms.created = exp_created
-    exp._dcterms.modified = exp_modified
-    exp_agent = Agent("http://bril.cerch.kcl.ac.uk/agents/stella")
-    exp_agent.name = "Stella Fabiane"
-    exp.add_agent(exp_agent, "creator")
-    a.add_resource(exp)
-          
+              
     related_objects = []
     relationships = []           
     aggregated_objects = {}
     
-    obj = repo.get_object(pid, type=FileObject)                 
-    this_artefact = AggregatedResource("http://bril.cerch.kcl.ac.uk/" + obj.dc.content.identifier)
-    this_artefact.title = obj.dc.content.title
-    this_artefact._dcterms.abstract = obj.dc.content.description
-    this_artefact._dcterms.created = obj.info.created
-    this_artefact._dcterms.modified = obj.info.modified              
+    obj = repo.get_object(pid, type=FileObject)                           
     
     # Search for relationships to the object and add each related object as an Aggregated Resource
     if (string.find(obj.pid, "process") != -1):
@@ -103,12 +74,7 @@ def get_object_ORE(request, pid):
         relationships.append(["isMemberOf", string.replace(related_pid, 'info:fedora/', '')])    
   
     for related_obj in related_objects:
-        artefact = AggregatedResource("http://bril.cerch.kcl.ac.uk/" + related_obj.dc.content.identifier)
-        artefact.title = related_obj.dc.content.title
-        artefact._dcterms.abstract = related_obj.dc.content.description
-        artefact._dcterms.created = related_obj.info.created
-        artefact._dcterms.modified = related_obj.info.modified
-        aggregated_objects[related_obj.dc.content.identifier] = artefact
+        aggregated_objects[related_obj.dc.content.identifier] = related_obj.dc.content.title
     
     used_relationships = []
     wasGeneratedBy_relationships = []
@@ -120,77 +86,57 @@ def get_object_ORE(request, pid):
     edge_to = []
     for r in relationships: 
         if (string.find(r[0], "used") != -1):               
-          this_artefact._opmv.used = aggregated_objects[r[1]]
           used_relationships.append(r[1])
         elif (string.find(r[0], "wasGeneratedBy") != -1):
-          this_artefact._opmv.wasGeneratedBy = aggregated_objects[r[1]]
           wasGeneratedBy_relationships.append(r[1])
         elif (string.find(r[0], "wasDerivedFrom") != -1):
-          this_artefact._opmv.wasDerivedFrom = aggregated_objects[r[1]]
           wasDerivedFrom_relationships.append(r[1])
         elif (string.find(r[0], "wasTriggeredBy") != -1):
-          this_artefact._opmv.wasTriggeredBy = aggregated_objects[r[1]]
           wasTriggeredBy_relationships.append(r[1])
         elif (string.find(r[0], "isMemberOf") != -1):
-          this_artefact._opmv.isMemberOf = aggregated_objects[r[1]]
           isMemberOf_relationships.append(r[1])
-    
-    for key, agg_object in aggregated_objects.iteritems():
-        a.add_resource(agg_object)
-    
-    a.add(this_artefact)
-                    
-    # Add modified time for aggregation
-    a._dcterms.modified = datetime.now().isoformat(' ')
-    
-    # Add resource map and return embedded RDF
-    rdfa = RdfLibSerializer('rdfa')
-    rem = ResourceMap("http://bril.cerch.kcl.ac.uk/rem/rdf/" + expId)
-    rem.set_aggregation(a)
-    remdoc = rem.register_serialization(rdfa)
-    remdoc = rem.get_serialization()
-    
+        
     # Generate related object links for display
     related_objects_html = ""    
     if len(used_relationships) > 0:
         related_objects_html += "<h3>used</h3><table>"
         for r in used_relationships:
-            related_objects_html += "<tr><td><a href='http://localhost:8000/repo/objects/" + r + "'>" + aggregated_objects[r].title[0] + "</a></td></tr>"
+            related_objects_html += "<tr><td><a href='http://localhost:8000/repo/objects/" + r + "'>" + aggregated_objects[r] + "</a></td></tr>"
         related_objects_html += "</table>"
         
     if len(wasGeneratedBy_relationships) > 0:    
         related_objects_html += "<h3>wasGeneratedBy</h3><table>"
         for r in wasGeneratedBy_relationships:
-            related_objects_html += "<tr><td><a href='http://localhost:8000/repo/objects/" + r + "'>" + aggregated_objects[r].title[0] + "</a></td></tr>"
+            related_objects_html += "<tr><td><a href='http://localhost:8000/repo/objects/" + r + "'>" + aggregated_objects[r] + "</a></td></tr>"
         related_objects_html += "</table>"
 
     if len(wasDerivedFrom_relationships) > 0:
         related_objects_html += "<h3>wasDerivedFrom</h3><table>"
         for r in wasDerivedFrom_relationships:
-            related_objects_html += "<tr><td><a href='http://localhost:8000/repo/objects/" + r + "'>" + aggregated_objects[r].title[0] + "</a></td></tr>"
+            related_objects_html += "<tr><td><a href='http://localhost:8000/repo/objects/" + r + "'>" + aggregated_objects[r] + "</a></td></tr>"
         related_objects_html += "</table>"
         
     if len(wasTriggeredBy_relationships) > 0:    
         related_objects_html += "<h3>wasTriggeredBy</h3><table>"
         for r in wasTriggeredBy_relationships:
-            related_objects_html += "<tr><td><a href='http://localhost:8000/repo/objects/" + r + "'>" + aggregated_objects[r].title[0] + "</a></td></tr>"
+            related_objects_html += "<tr><td><a href='http://localhost:8000/repo/objects/" + r + "'>" + aggregated_objects[r] + "</a></td></tr>"
         related_objects_html += "</table>"    
 
     if len(isMemberOf_relationships) > 0:    
         related_objects_html += "<h3>isMemberOf</h3><table>"
         for r in isMemberOf_relationships:
-            related_objects_html += "<tr><td><a href='http://localhost:8000/repo/objects/" + r + "'>" + aggregated_objects[r].title[0] + "</a></td></tr>"
+            related_objects_html += "<tr><td><a href='http://localhost:8000/repo/objects/" + r + "'>" + aggregated_objects[r] + "</a></td></tr>"
         related_objects_html += "</table>"    
     
     experiment_html = "<h3>isPartOf</h3><table><tr><td><a href='http://localhost:8000/repo/experiments/" + expId + "'>" + exp_title + ":" + exp_description + "</a></td></tr></table>"   
     related_html = related_objects_html + experiment_html;
-    return render_to_response('repo/ORE_display.html', {'obj': obj, 'related': related_html, 'rdfa': remdoc})
+    return render_to_response('repo/ORE_display.html', {'obj': obj, 'related': related_html})
 
 def display_experiment(request, expId):
     repo = Repository()
     exp_obj = repo.get_object(expId, type=FileObject)
     exp_pids = repo.risearch.get_subjects("info:fedora/fedora-system:def/relations-external#isPartOf", "info:fedora/" + expId)
-    related_objects = []
+    related_objects = [] 
     processes = []
     objects = []
     
@@ -243,7 +189,7 @@ def get_PNG(request, expId):
     response['Content-Disposition'] = 'attachment; filename='+ filename
     return response
 
-def get_experiment_ORE(request, expId):
+def generate_experiment_ORE(request, expId):
     
     # Add OPMV namespace
     utils.namespaces['opmv'] = Namespace('http://purl.org/net/opmv/ns#')
@@ -397,13 +343,43 @@ def get_experiment_ORE(request, expId):
     # Add modified time for aggregation
     a._dcterms.modified = datetime.now().isoformat(' ')
     
-    # Add resource map and return embedded RDF
+    # Add resource map and generate RDFa + RDF/XML
     rdfa = RdfLibSerializer('rdfa')
-    rem = ResourceMap("http://bril.cerch.kcl.ac.uk/rem/rdf/" + expId)
-    rem.set_aggregation(a)
-    remdoc = rem.register_serialization(rdfa)
-    remdoc = rem.get_serialization()   
-    return render_to_response('repo/ORE_display.html', {'obj': exp_obj, 'rdfa': remdoc})
+    rdfxml = RdfLibSerializer('xml')
+    rem_rdfa = ResourceMap("http://bril.cerch.kcl.ac.uk/rem/rdf/" + expId)
+    rem_rdfa.set_aggregation(a)
+    rem_rdfa.register_serialization(rdfa)
+    rdfa_doc = rem_rdfa.get_serialization()   
+    
+    rem_rdfxml = ResourceMap("http://bril.cerch.kcl.ac.uk/rem/rdf/" + expId)
+    rem_rdfxml.set_aggregation(a)
+    rem_rdfxml.register_serialization(rdfxml)
+    rdfxml_doc = rem_rdfxml.get_serialization()
+    
+    # Look for an existing aggregation for this experiment
+    aggregations = []
+    agg_pids = repo.risearch.get_subjects("http://purl.org/net/opmv/ns#used", "info:fedora/" + expId)
+    for agg_pid in agg_pids:
+        o = repo.get_object(pid = agg_pid, type = AggregationObject)
+        aggregations.append(o)
+    
+    if len(aggregations) == 0: 
+        # There is no existing aggregation for this experiment, create Aggregation fedora object in repository
+        # + add rdfa + rdfxml as datastreams + add relationship to experiment
+        agg_obj = repo.get_object(type = AggregationObject)
+        agg_obj.dc.content.title = "OAI-ORE Aggregation of Experiment: " + exp_title
+        agg_obj.dc.content.description = "OAI-ORE Aggregation of: " + exp_description
+        agg_obj.rdfa.content = rdfa_doc.data
+        agg_obj.rdfxml.content = rdfxml_doc.data
+        agg_obj.save()
+        agg_obj.add_relationship("http://purl.org/net/opmv/ns#used", exp_obj)
+        return HttpResponse(content="New OAI-ORE Aggregation object generated!")
+    else:
+        # There is an existing aggregation, just modify the rdfa + rdfxml datastreams
+        aggregations[0].rdfa.content = rdfa_doc.data
+        aggregations[0].rdfxml.content = rdfxml_doc.data
+        aggregations[0].save()
+        return HttpResponse(content="Modified existing OAI-ORE Aggregation object!")
       
 def exp_relationships(request, expId):
     repo = Repository()

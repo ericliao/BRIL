@@ -5,16 +5,19 @@ from django.conf.urls.defaults import *
 
 urlpatterns = patterns('repo.views',
 
+    # TODO: aggregation related views
+
     # experiment related views
-    url(r'^experiments/(?P<expId>[^/]+)/$', 'display_experiment', name='display'),
-    url(r'^experiments/(?P<expId>[^/]+)/relationships/$', 'exp_relationships', name='relationships'),
-    url(r'^experiments/(?P<expId>[^/]+)/ORE/$', 'get_experiment_ORE', name='ORE'),
-    url(r'^experiments/(?P<expId>[^/]+)/savePNG/$', 'save_PNG', name='savePNG'),
-    url(r'^experiments/(?P<expId>[^/]+)/getPNG/$', 'get_PNG', name='getPNG'),
+    url(r'^experiments/(?P<expId>[^/]+)/$', 'display_experiment'),
+    url(r'^experiments/(?P<expId>[^/]+)/relationships/$', 'exp_relationships'),
+    url(r'^experiments/(?P<expId>[^/]+)/details/$', 'display_experiment'),
+    url(r'^experiments/(?P<expId>[^/]+)/ORE/$', 'generate_experiment_ORE'),
+    url(r'^experiments/(?P<expId>[^/]+)/savePNG/$', 'save_PNG'),
+    url(r'^experiments/(?P<expId>[^/]+)/getPNG/$', 'get_PNG'),
         
     # object related views
-    url(r'^objects/(?P<pid>[^/]+)/$', 'get_object_ORE', name='ORE'),
-    url(r'^objects/(?P<pid>[^/]+)/details/$', 'display', name='display'),
-    url(r'^objects/(?P<pid>[^/]+)/view/$', 'view_object', name='view'),
-    url(r'^objects/(?P<pid>[^/]+)/file/$', 'file', name='download'),
+    url(r'^objects/(?P<pid>[^/]+)/$', 'get_object_relationships'),
+    url(r'^objects/(?P<pid>[^/]+)/details/$', 'display'),
+    url(r'^objects/(?P<pid>[^/]+)/view/$', 'view_object'),
+    url(r'^objects/(?P<pid>[^/]+)/file/$', 'file'),
 )
