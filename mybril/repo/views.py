@@ -34,6 +34,16 @@ def file(request, pid):
     }
     return raw_datastream(request, pid, dsid, type=FileObject, headers=extra_headers)
 
+def rdfxml(request, aggId):
+    dsid = AggregationObject.rdfxml.id
+    repo = Repository()
+    obj = repo.get_object(aggId, type=AggregationObject)
+    filename = os.path.basename(obj.dc.content.title)
+    extra_headers = {
+        'Content-Disposition': "attachment; filename=%s" % filename,
+    }
+    return raw_datastream(request, aggId, dsid, type=AggregationObject, headers=extra_headers)
+
 def get_object_relationships(request, pid):
         
     # Find the experiment this object belongs to
@@ -97,6 +107,7 @@ def get_object_relationships(request, pid):
           isMemberOf_relationships.append(r[1])
         
     # Generate related object links for display
+    # TODO: convert this to a multiselect box
     related_objects_html = ""    
     if len(used_relationships) > 0:
         related_objects_html += "<h3>used</h3><table>"
@@ -130,7 +141,7 @@ def get_object_relationships(request, pid):
     
     experiment_html = "<h3>isPartOf</h3><table><tr><td><a href='http://localhost:8000/repo/experiments/" + expId + "'>" + exp_title + ":" + exp_description + "</a></td></tr></table>"   
     related_html = related_objects_html + experiment_html;
-    return render_to_response('repo/ORE_display.html', {'obj': obj, 'related': related_html})
+    return render_to_response('repo/display.html', {'obj': obj, 'related': related_html})
 
 def display_experiment(request, expId):
     repo = Repository()
@@ -150,23 +161,34 @@ def display_experiment(request, expId):
     for obj in related_objects:
         if (string.find(obj.pid, "process") == -1):
             objects.append(obj)
-    
-    related_objects_html = "<h3>processes</h3><table>"        
+      
+    related_objects_html = "<h3>Processes</h3><table class='scrollTable' width='100%'><tbody class='scrollContent'>"
     for o in processes:
         related_objects_html += "<tr><td><a href='http://localhost:8000/repo/objects/" + o.dc.content.identifier + "'>" + o.dc.content.title + "</a></td></tr>"
     
-    related_objects_html += "</table><h3>artefacts</h3><table>"
-    
+    related_objects_html += "</tbody></table><br/><h3>Artefacts</h3><table class='scrollTable' width='100%'><tbody class='scrollContent'>"
     for o in objects:
         related_objects_html += "<tr><td><a href='http://localhost:8000/repo/objects/" + o.dc.content.identifier + "'>" + o.dc.content.title + "</a></td></tr>"
+    related_objects_html += "</tbody></table>"    
     
-    related_objects_html += "</table>"            
-    return render_to_response('repo/display.html', {'obj': exp_obj, 'related': related_objects_html})
+    # Add link for downloading aggregation RDF/XML
+    aggregations = []
+    agg_pids = repo.risearch.get_subjects("http://purl.org/net/opmv/ns#used", "info:fedora/" + expId)
+    for agg_pid in agg_pids:
+        agg_o = repo.get_object(pid = agg_pid, type = AggregationObject)
+        aggregations.append(agg_o)
+    
+    if len(aggregations) == 0: 
+        agg_url = "<p style='float:right;'>No RDF/XML available</p>"
+    else:
+        agg_url = "<p style='float:right;'><a href='http://localhost:8000/repo/aggregations/" + agg_o.dc.content.identifier + "/rdfxml'>RDF/XML</a></p>"
+    
+    return render_to_response('repo/display.html', {'obj': exp_obj, 'agg': agg_url, 'rdfa': agg_o.rdfa.content, 'related': related_objects_html})
 
 def save_PNG(request, expId):
     if request.is_ajax():
       if request.method == 'POST':          
-      
+            
         # save canvas data to PNG file
         filename = expId + ".png"
         data = request.POST['data']
