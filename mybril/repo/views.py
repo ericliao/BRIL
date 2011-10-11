@@ -106,42 +106,38 @@ def get_object_relationships(request, pid):
         elif (string.find(r[0], "isMemberOf") != -1):
           isMemberOf_relationships.append(r[1])
         
-    # Generate related object links for display
-    # TODO: convert this to a multiselect box
-    related_objects_html = ""    
-    if len(used_relationships) > 0:
-        related_objects_html += "<h3>used</h3><table>"
+    # Generate related object links for display 
+    related_objects = {}
+    
+    if len(used_relationships) > 0:    
+        related_objects['used'] = []
         for r in used_relationships:
-            related_objects_html += "<tr><td><a href='http://localhost:8000/repo/objects/" + r + "'>" + aggregated_objects[r] + "</a></td></tr>"
-        related_objects_html += "</table>"
+            related_objects['used'].append("<a href='http://localhost:8000/repo/objects/" + r + "'>" + aggregated_objects[r] + "</a>")
         
-    if len(wasGeneratedBy_relationships) > 0:    
-        related_objects_html += "<h3>wasGeneratedBy</h3><table>"
+    if len(wasGeneratedBy_relationships) > 0:
+        related_objects['wasGeneratedBy'] = []    
         for r in wasGeneratedBy_relationships:
-            related_objects_html += "<tr><td><a href='http://localhost:8000/repo/objects/" + r + "'>" + aggregated_objects[r] + "</a></td></tr>"
-        related_objects_html += "</table>"
+            related_objects['wasGeneratedBy'].append("<a href='http://localhost:8000/repo/objects/" + r + "'>" + aggregated_objects[r] + "</a>")
 
     if len(wasDerivedFrom_relationships) > 0:
-        related_objects_html += "<h3>wasDerivedFrom</h3><table>"
-        for r in wasDerivedFrom_relationships:
-            related_objects_html += "<tr><td><a href='http://localhost:8000/repo/objects/" + r + "'>" + aggregated_objects[r] + "</a></td></tr>"
-        related_objects_html += "</table>"
+        related_objects['wasDerivedFrom'] = []   
+        for r in wasDerivedFrom_relationships:   
+            related_objects['wasDerivedFrom'].append("<a href='http://localhost:8000/repo/objects/" + r + "'>" + aggregated_objects[r] + "</a>") 
         
-    if len(wasTriggeredBy_relationships) > 0:    
-        related_objects_html += "<h3>wasTriggeredBy</h3><table>"
+    if len(wasTriggeredBy_relationships) > 0:   
+        related_objects['wasTriggeredBy'] = []    
         for r in wasTriggeredBy_relationships:
-            related_objects_html += "<tr><td><a href='http://localhost:8000/repo/objects/" + r + "'>" + aggregated_objects[r] + "</a></td></tr>"
-        related_objects_html += "</table>"    
+            related_objects['wasTriggeredBy'].append("<a href='http://localhost:8000/repo/objects/" + r + "'>" + aggregated_objects[r] + "</a>")
 
-    if len(isMemberOf_relationships) > 0:    
-        related_objects_html += "<h3>isMemberOf</h3><table>"
+    if len(isMemberOf_relationships) > 0: 
+        related_objects['isMemberOf'] = []      
         for r in isMemberOf_relationships:
-            related_objects_html += "<tr><td><a href='http://localhost:8000/repo/objects/" + r + "'>" + aggregated_objects[r] + "</a></td></tr>"
-        related_objects_html += "</table>"    
-    
-    experiment_html = "<h3>isPartOf</h3><table><tr><td><a href='http://localhost:8000/repo/experiments/" + expId + "'>" + exp_title + ":" + exp_description + "</a></td></tr></table>"   
-    related_html = related_objects_html + experiment_html;
-    return render_to_response('repo/display.html', {'obj': obj, 'related': related_html})
+            related_objects['isMemberOf'].append("<a href='http://localhost:8000/repo/objects/" + r + "'>" + aggregated_objects[r] + "</a>")            
+        
+    related_objects['isPartOf'] = []
+    related_objects['isPartOf'].append("<a href='http://localhost:8000/repo/experiments/" + expId + "'>" + exp_title + ":" + exp_description + "</a>")
+        
+    return render_to_response('repo/display.html', {'obj': obj, 'agg': "object", 'related_objects': related_objects})
 
 def display_experiment(request, expId):
     repo = Repository()
@@ -162,14 +158,13 @@ def display_experiment(request, expId):
         if (string.find(obj.pid, "process") == -1):
             objects.append(obj)
       
-    related_objects_html = "<h3>Processes</h3><table class='scrollTable' width='100%'><tbody class='scrollContent'>"
-    for o in processes:
-        related_objects_html += "<tr><td><a href='http://localhost:8000/repo/objects/" + o.dc.content.identifier + "'>" + o.dc.content.title + "</a></td></tr>"
+    related_process_links = []
+    for o in processes:      
+        related_process_links.append("<a href='http://localhost:8000/repo/objects/" + o.dc.content.identifier + "'>" + o.dc.content.title + "</a>")
     
-    related_objects_html += "</tbody></table><br/><h3>Artefacts</h3><table class='scrollTable' width='100%'><tbody class='scrollContent'>"
+    related_object_links = []
     for o in objects:
-        related_objects_html += "<tr><td><a href='http://localhost:8000/repo/objects/" + o.dc.content.identifier + "'>" + o.dc.content.title + "</a></td></tr>"
-    related_objects_html += "</tbody></table>"    
+        related_object_links.append("<a href='http://localhost:8000/repo/objects/" + o.dc.content.identifier + "'>" + o.dc.content.title + "</a>")
     
     # Add link for downloading aggregation RDF/XML
     aggregations = []
@@ -179,11 +174,11 @@ def display_experiment(request, expId):
         aggregations.append(agg_o)
     
     if len(aggregations) == 0: 
-        agg_url = "<p style='float:right;'>No RDF/XML available</p>"
+        agg = ""
     else:
-        agg_url = "<p style='float:right;'><a href='http://localhost:8000/repo/aggregations/" + agg_o.dc.content.identifier + "/rdfxml'>RDF/XML</a></p>"
+        agg = "<a href='http://localhost:8000/repo/aggregations/" + agg_o.dc.content.identifier + "/rdfxml'>RDF/XML</a>"
     
-    return render_to_response('repo/display.html', {'obj': exp_obj, 'agg': agg_url, 'rdfa': agg_o.rdfa.content, 'related': related_objects_html})
+    return render_to_response('repo/display.html', {'obj': exp_obj, 'agg': agg, 'rdfa': agg_o.rdfa.content, 'processes': related_process_links, 'objects': related_object_links})
 
 def save_PNG(request, expId):
     if request.is_ajax():

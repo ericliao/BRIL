@@ -35,75 +35,6 @@ pre {
   color: #036 !important
 }
 
-</style>
-
-{% load static %}
-{% get_static_prefix as STATIC_URL %}
-<script src="{{ STATIC_URL }}jquery/jquery-1.6.2.min.js"></script>
-<script src="{{ STATIC_URL }}jquery/jquery-ui-1.8.15.custom.min.js"></script>
-<script src="{{ STATIC_URL }}jquery/jquery.fixedheadertable.min.js"></script>
-<link href="{{ STATIC_URL }}css/smoothness/jquery-ui-1.8.15.custom.css" rel="stylesheet" type="text/css" />
-{% if obj.file.info.size > 0 %}
-  <script type="application/javascript">
-  $(window).load(function () {
-    $( "#viewLink" )
-      .button()
-      .click(function() {
-        $('#viewer-dialog').dialog('close');
-        $("#viewer-dialog").dialog({ 
-          title: "Viewing: " + $("#title").text(), 
-          height: 600, 
-          width: 600,
-          open: function(event, ui) {
-            var url = "http://localhost:8000/repo/objects/" + $( "#viewLink" ).attr("value") + "/view/";
-            $('#viewer').load(url);
-          }                
-        });
-    });
-    $( "#downloadLink" ).button();    
-  });
-</script>
-{% endif %}
-<script type="text/javascript">
-function removeClassName (elem, className) {
-	elem.className = elem.className.replace(className, "").trim();
-}
-
-function addCSSClass (elem, className) {
-	removeClassName (elem, className);
-	elem.className = (elem.className + " " + className).trim();
-}
-
-String.prototype.trim = function() {
-	return this.replace( /^\s+|\s+$/, "" );
-}
-
-function stripedTable() {
-	if (document.getElementById && document.getElementsByTagName) {  
-		var allTables = document.getElementsByTagName('table');
-		if (!allTables) { return; }
-
-		for (var i = 0; i < allTables.length; i++) {
-			if (allTables[i].className.match(/[\w\s ]*scrollTable[\w\s ]*/)) {
-				var trs = allTables[i].getElementsByTagName("tr");
-				for (var j = 0; j < trs.length; j++) {
-					removeClassName(trs[j], 'alternateRow');
-					addCSSClass(trs[j], 'normalRow');
-				}
-				for (var k = 0; k < trs.length; k += 2) {
-					removeClassName(trs[k], 'normalRow');
-					addCSSClass(trs[k], 'alternateRow');
-				}
-			}
-		}
-	}
-}
-
-window.onload = function() { stripedTable(); }
-</script>
-
-<style type="text/css">
-                               */
 /* define height and width of scrollable area. Add 16px to width for scrollbar          */
 div.tableContainer {
 	clear: both;
@@ -236,6 +167,71 @@ html>body tbody.scrollContent td + td + td {
 
 </style>
 
+{% load static %}
+{% get_static_prefix as STATIC_URL %}
+<script src="{{ STATIC_URL }}jquery/jquery-1.6.2.min.js"></script>
+<script src="{{ STATIC_URL }}jquery/jquery-ui-1.8.15.custom.min.js"></script>
+<script src="{{ STATIC_URL }}jquery/jquery.fixedheadertable.min.js"></script>
+<link href="{{ STATIC_URL }}css/smoothness/jquery-ui-1.8.15.custom.css" rel="stylesheet" type="text/css" />
+{% if obj.file.info.size > 0 %}
+  <script type="application/javascript">
+  $(window).load(function () {
+    $( "#viewLink" )
+      .button()
+      .click(function() {
+        $('#viewer-dialog').dialog('close');
+        $("#viewer-dialog").dialog({ 
+          title: "Viewing: " + $("#title").text(), 
+          height: 600, 
+          width: 600,
+          open: function(event, ui) {
+            var url = "http://localhost:8000/repo/objects/" + $( "#viewLink" ).attr("value") + "/view/";
+            $('#viewer').load(url);
+          }                
+        });
+    });
+    $( "#downloadLink" ).button();    
+  });
+</script>
+{% endif %}
+<script type="text/javascript">
+function removeClassName (elem, className) {
+	elem.className = elem.className.replace(className, "").trim();
+}
+
+function addCSSClass (elem, className) {
+	removeClassName (elem, className);
+	elem.className = (elem.className + " " + className).trim();
+}
+
+String.prototype.trim = function() {
+	return this.replace( /^\s+|\s+$/, "" );
+}
+
+function stripedTable() {
+	if (document.getElementById && document.getElementsByTagName) {  
+		var allTables = document.getElementsByTagName('table');
+		if (!allTables) { return; }
+
+		for (var i = 0; i < allTables.length; i++) {
+			if (allTables[i].className.match(/[\w\s ]*scrollTable[\w\s ]*/)) {
+				var trs = allTables[i].getElementsByTagName("tr");
+				for (var j = 0; j < trs.length; j++) {
+					removeClassName(trs[j], 'alternateRow');
+					addCSSClass(trs[j], 'normalRow');
+				}
+				for (var k = 0; k < trs.length; k += 2) {
+					removeClassName(trs[k], 'normalRow');
+					addCSSClass(trs[k], 'alternateRow');
+				}
+			}
+		}
+	}
+}
+
+window.onload = function() { stripedTable(); }
+</script>
+
 <div id="viewer-dialog" style="width:600px;overflow:auto">
   <div id="viewer"></div>
 </div>
@@ -277,17 +273,87 @@ html>body tbody.scrollContent td + td + td {
         <hr/>
         </br>
       {% endif %}
-      {% autoescape off %} 
-      {{ related }}            
-      {% endautoescape %}
+      {% if processes %}
+        <h3>Processes</h3>
+        <table class='scrollTable' width='100%'>
+          <tbody class='scrollContent'>
+            {% for process in processes %}
+              <tr><td>{{ process|safe }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <br/>
+      {% endif %}
+      {% if objects %}
+        <h3>Artefacts</h3>
+        <table class='scrollTable' width='100%'>
+          <tbody class='scrollContent'>
+            {% for object in objects %}
+              <tr><td>{{ object|safe }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <br/>
+      {% endif %}           
+      {% if related_objects.used %}
+        <h3>used</h3>
+        <table>
+          {% for used in related_objects.used %}
+            <tr><td>{{ used|safe }}</td></tr>
+          {% endfor %}
+        </table>
+      {% endif %}
+      {% if related_objects.wasGeneratedBy %}
+        <h3>wasGeneratedBy</h3>
+        <table>
+          {% for wasGeneratedBy in related_objects.wasGeneratedBy %}
+            <tr><td>{{ wasGeneratedBy|safe }}</td></tr>
+          {% endfor %}
+        </table>
+      {% endif %}
+      {% if related_objects.wasDerivedFrom %}
+        <h3>wasDerivedFrom</h3>
+        <table>
+          {% for wasDerivedFrom in related_objects.wasDerivedFrom %}
+            <tr><td>{{ wasDerivedFrom|safe }}</td></tr>
+          {% endfor %}
+        </table>
+      {% endif %}
+      {% if related_objects.wasTriggeredBy %}
+        <h3>wasTriggeredBy</h3>
+        <table>
+          {% for wasTriggeredBy in related_objects.wasTriggeredBy %}
+            <tr><td>{{ wasTriggeredBy|safe }}</td></tr>
+          {% endfor %}
+        </table>
+      {% endif %}
+      {% if related_objects.isMemberOf %}
+        <h3>isMemberOf</h3>
+        <table>
+          {% for isMemberOf in related_objects.isMemberOf %}
+            <tr><td>{{ isMemberOf|safe }}</td></tr>
+          {% endfor %}
+        </table>
+      {% endif %}
+      {% if related_objects.isPartOf %}
+        <h3>isPartOf</h3>
+        <table>
+          {% for isPartOf in related_objects.isPartOf %}
+            <tr><td>{{ isPartOf|safe }}</td></tr>
+          {% endfor %}
+        </table>
+      {% endif %}
       <br/>  
-      <br/>    
-      {% autoescape off %} 
-      {{ agg }}
-      {% endautoescape %}                    
+      <br/>
+      {% ifequal agg "object" %}
+      {% else %}
+        {% if agg %}                
+          <p style='float:right;'>{{ agg|safe }}</p>        
+        {% else %}
+          <p style='float:right;'>No RDF/XML available</p>
+        {% endif %}
+      {% endifequal %}                  
     </div>
-    {% autoescape off %} 
-    {{ rdfa }}
-    {% endautoescape %}          
+    {{ rdfa|safe }}
 </div>
 </html>
