@@ -2,47 +2,99 @@
 <classpath>
 	<classpathentry excluding="uk/ac/kcl/cerch/bril/common/xml/|uk/ac/kcl/cerch/soapi/sip/MultiLayerDirectorySIPProcessor.java|uk/ac/kcl/cerch/soapi/test/|uk/ac/kcl/cerch/bril/workflow/|uk/ac/kcl/cerch/bril/dependency/|uk/ac/kcl/cerch/bril/contentstructure/" kind="src" path="src"/>
 	<classpathentry kind="src" path="config"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/activation.jar"/>
 	<classpathentry kind="lib" path="lib/activemq-core-5.3.0.jar"/>
-	<classpathentry kind="lib" path="lib/commons-collections-3.2.1.jar"/>
-	<classpathentry kind="lib" path="lib/commons-configuration-1.6.jar"/>
-	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar"/>
-	<classpathentry kind="lib" path="lib/commons-logging-4.0.6.jar"/>
-	<classpathentry kind="lib" path="lib/geronimo-j2ee-management_1.0_spec-1.0.jar"/>
-	<classpathentry kind="lib" path="lib/geronimo-jms_1.1_spec-1.1.1.jar"/>
-	<classpathentry kind="lib" path="lib/jetty-util-7.0.0.pre5.jar"/>
-	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
-	<classpathentry kind="lib" path="lib/soapi-characteriser.jar"/>
-	<classpathentry kind="lib" path="lib/geronimo-j2ee-connector_1.5_spec-2.0.0.jar"/>
-	<classpathentry kind="lib" path="lib/geronimo-jta_1.0.1B_spec-1.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/axis-ant.jar"/>
 	<classpathentry kind="lib" path="lib/axis.jar"/>
-	<classpathentry kind="lib" path="lib/commons-discovery-0.2.jar"/>
-	<classpathentry kind="lib" path="lib/jaxrpc.jar"/>
-	<classpathentry kind="lib" path="lib/saaj.jar"/>
-	<classpathentry kind="lib" path="lib/wsdl4j-1.5.1.jar"/>
-	<classpathentry kind="lib" path="lib/activation.jar"/>
 	<classpathentry kind="lib" path="lib/chilkat.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.5.jar"/>
+	<classpathentry kind="lib" path="lib/commons-collections-3.2.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-configuration-1.6.jar"/>
+	<classpathentry kind="lib" path="lib/commons-discovery-0.2.jar"/>
+	<classpathentry kind="lib" path="lib/commons-httpclient-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-io-2.0.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/commons-io-2.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-4.0.6.jar"/>
 	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
-	<classpathentry kind="lib" path="lib/jrdf-0.5.6.jar"/>
-	<classpathentry kind="lib" path="lib/junit-4.8.1.jar"/>
-	<classpathentry kind="lib" path="lib/mysql-connector-java-5.0.8-bin.jar"/>
-	<classpathentry kind="lib" path="lib/xercesImpl-2.7.1.jar"/>
-	<classpathentry kind="lib" path="lib/xmlpull_1_1_3_4c.jar"/>
-	<classpathentry kind="lib" path="lib/hibernate3.jar"/>
-	<classpathentry kind="lib" path="lib/trippi-1.1.2-core.jar"/>
-	<classpathentry kind="lib" path="lib/xpp3-1.1.3.3.jar"/>
-	<classpathentry kind="lib" path="lib/trippi-1.2-mptstore.jar"/>
-	<classpathentry kind="lib" path="lib/fedora-api-v.02.jar"/>
-	<classpathentry kind="lib" path="lib/jpathwatch-0-94.jar"/>
-	<classpathentry kind="lib" path="lib/spring.jar"/>
 	<classpathentry kind="lib" path="lib/fcrepo-client-admin-3.4.2.jar"/>
 	<classpathentry kind="lib" path="lib/fcrepo-common-3.4.2.jar"/>
 	<classpathentry kind="lib" path="lib/fcrepo-server-3.4.2.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/home/eric/workspace/BRIL-lib/soapi-characteriser-bril.jar"/>
+	<classpathentry kind="lib" path="lib/fedora-api-v.02.jar"/>
+	<classpathentry kind="lib" path="lib/geronimo-j2ee-connector_1.5_spec-2.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/geronimo-j2ee-management_1.0_spec-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/geronimo-jms_1.1_spec-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/geronimo-jta_1.0.1B_spec-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate3.jar"/>
+	<classpathentry kind="lib" path="lib/jaxrpc.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-util-7.0.0.pre5.jar"/>
+	<classpathentry kind="lib" path="lib/jpathwatch-0-94.jar"/>
+	<classpathentry kind="lib" path="lib/jrdf-0.5.6.jar"/>
+	<classpathentry kind="lib" path="lib/junit-4.8.1.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
+	<classpathentry kind="lib" path="lib/mysql-connector-java-5.0.8-bin.jar"/>
+	<classpathentry kind="lib" path="lib/saaj.jar"/>
+	<classpathentry kind="lib" path="lib/soapi-characteriser.jar"/>
+	<classpathentry kind="lib" path="lib/spring.jar"/>
+	<classpathentry kind="lib" path="lib/trippi-1.1.2-core.jar"/>
+	<classpathentry kind="lib" path="lib/trippi-1.2-mptstore.jar"/>
+	<classpathentry kind="lib" path="lib/wsdl4j-1.5.1.jar"/>
+	<classpathentry kind="lib" path="lib/xercesImpl-2.7.1.jar"/>
+	<classpathentry kind="lib" path="lib/xmlpull_1_1_3_4c.jar"/>
+	<classpathentry kind="lib" path="lib/xpp3-1.1.3.3.jar"/>
+	<classpathentry kind="lib" path="lib/fits/bcmail-jdk14-132.jar"/>
+	<classpathentry kind="lib" path="lib/fits/commons-cli-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/fits/fast-md5.jar"/>
+	<classpathentry kind="lib" path="lib/fits/fits.jar"/>
+	<classpathentry kind="lib" path="lib/fits/jaxen-core.jar"/>
+	<classpathentry kind="lib" path="lib/fits/jaxen-jdom.jar"/>
+	<classpathentry kind="lib" path="lib/fits/jdom.jar"/>
+	<classpathentry kind="lib" path="lib/fits/ots-schemas.jar"/>
+	<classpathentry kind="lib" path="lib/fits/saxon9.jar"/>
+	<classpathentry kind="lib" path="lib/fits/saxon9-dom.jar"/>
+	<classpathentry kind="lib" path="lib/fits/saxon9-jdom.jar"/>
+	<classpathentry kind="lib" path="lib/fits/saxpath.jar"/>
+	<classpathentry kind="lib" path="lib/fits/serializer.jar"/>
+	<classpathentry kind="lib" path="lib/fits/staxmate-2.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/fits/xmlunit-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/fits/droid/AllLibraries.jar"/>
+	<classpathentry kind="lib" path="lib/fits/droid/droid.jar"/>
+	<classpathentry kind="lib" path="lib/fits/droid/jaxb-api.jar"/>
+	<classpathentry kind="lib" path="lib/fits/droid/jaxb-impl.jar"/>
+	<classpathentry kind="lib" path="lib/fits/droid/jh.jar"/>
+	<classpathentry kind="lib" path="lib/fits/droid/jsr173_1.0_api.jar"/>
+	<classpathentry kind="lib" path="lib/fits/droid/looks-1.2.2.jar"/>
+	<classpathentry kind="lib" path="lib/fits/droid/mail.jar"/>
+	<classpathentry kind="lib" path="lib/fits/droid/soap.jar"/>
+	<classpathentry kind="lib" path="lib/fits/droid/xml-apis.jar"/>
+	<classpathentry kind="lib" path="lib/fits/jhove/jhove.jar"/>
+	<classpathentry kind="lib" path="lib/fits/jhove/JhoveApp.jar"/>
+	<classpathentry kind="lib" path="lib/fits/jhove/jhove-handler.jar"/>
+	<classpathentry kind="lib" path="lib/fits/jhove/jhove-module.jar"/>
+	<classpathentry kind="lib" path="lib/fits/nzmetool/bcprov-jdk14-132.jar"/>
+	<classpathentry kind="lib" path="lib/fits/nzmetool/bfj220.jar"/>
+	<classpathentry kind="lib" path="lib/fits/nzmetool/metadata.jar"/>
+	<classpathentry kind="lib" path="lib/fits/nzmetool/PDFBox-0.7.3.jar"/>
+	<classpathentry kind="lib" path="lib/fits/nzmetool/poi-2.5.1-final-20040804.jar"/>
+	<classpathentry kind="lib" path="lib/fits/nzmetool/adapters/xml_adapter_1_0.jar"/>
+	<classpathentry kind="lib" path="lib/fits/nzmetool/adapters/bmp_adapter_1_0.jar"/>
+	<classpathentry kind="lib" path="lib/fits/nzmetool/adapters/excel_adapter_1_0.jar"/>
+	<classpathentry kind="lib" path="lib/fits/nzmetool/adapters/gif_adapter_1_0.jar"/>
+	<classpathentry kind="lib" path="lib/fits/nzmetool/adapters/html_adapter_1_0.jar"/>
+	<classpathentry kind="lib" path="lib/fits/nzmetool/adapters/jpg_adapter_1_1.jar"/>
+	<classpathentry kind="lib" path="lib/fits/nzmetool/adapters/mp3_adapter_1_0.jar"/>
+	<classpathentry kind="lib" path="lib/fits/nzmetool/adapters/msword_adapter_2_0.jar"/>
+	<classpathentry kind="lib" path="lib/fits/nzmetool/adapters/msworks_adapter_1_0.jar"/>
+	<classpathentry kind="lib" path="lib/fits/nzmetool/adapters/openoffice_adapter_1_0.jar"/>
+	<classpathentry kind="lib" path="lib/fits/nzmetool/adapters/wordperfect_adapter_1_0.jar"/>
+	<classpathentry kind="lib" path="lib/fits/nzmetool/adapters/wave_adapter_1_0.jar"/>
+	<classpathentry kind="lib" path="lib/fits/nzmetool/adapters/tiff_adapter_1_0.jar"/>
+	<classpathentry kind="lib" path="lib/fits/nzmetool/adapters/powerpoint_adapter_1_0.jar"/>
+	<classpathentry kind="lib" path="lib/fits/nzmetool/adapters/pdf_adapter_1_0.jar"/>
+	<classpathentry kind="lib" path="lib/fits/nzmetool/adapters/pdfbox_adapter_1_0.jar"/>
+	<classpathentry kind="lib" path="lib/fits/stax2-api-3.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/fits/woodstox-core-lgpl-4.1.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

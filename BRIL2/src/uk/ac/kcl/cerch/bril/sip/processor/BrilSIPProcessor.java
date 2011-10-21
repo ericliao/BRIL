@@ -1,17 +1,44 @@
 package uk.ac.kcl.cerch.bril.sip.processor;
 
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Templates;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
 import org.apache.log4j.Logger;
+import org.jdom.Document;
+import org.jdom.JDOMException;
+import org.jdom.output.XMLOutputter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
+
+import edu.harvard.hul.ois.fits.Fits;
+import edu.harvard.hul.ois.fits.FitsOutput;
+import edu.harvard.hul.ois.fits.exceptions.FitsConfigurationException;
+import edu.harvard.hul.ois.fits.exceptions.FitsException;
+import edu.harvard.hul.ois.ots.schemas.XmlContent.XmlContent;
+
 import uk.ac.kcl.cerch.bril.characteriser.COMScriptFileCharacterisation;
 import uk.ac.kcl.cerch.bril.characteriser.COMScriptFileCharacteriserImpl;
 import uk.ac.kcl.cerch.bril.characteriser.COOTScmFileCharacterisation;
@@ -83,6 +110,7 @@ public class BrilSIPProcessor {
 	private boolean checksumFlag;
     private int numberOfRelationship;
     private String fileformat;
+    private String FITS_HOME = "/home/eliao/fits/";
 
 	public BrilSIPProcessor() {
 		applicationContext = new FileSystemXmlApplicationContext(
@@ -840,37 +868,30 @@ public class BrilSIPProcessor {
 				"relationship", "bril", relsExtData);
 		}
 		
-		if(mime!=null){
+		if(mime!=null) {
 			System.out.println("mime: " + mime.trim());
 			System.out.println("briltype: " + briltype);
 			System.out.println("metadata: " + metadata);
 		
-			
-		/*	if(filePath!=null){
-				System.out.println("file byte[] not null");
-				//System.out.println("dublinCore.getFormat(): "+dublinCore.getFormat());
-			}else{
-				System.out.println("file byte[] is null");
-			}*/
-			
 			if(dublinCore.getFormat()!=null || !dublinCore.getFormat().equals("")){
 				briltype=dublinCore.getFormat();
 				System.out.println("briltype: " + briltype);
-			}else if(dublinCore.getFormat()==null || dublinCore.getFormat().equals("")){
+			} else if (dublinCore.getFormat()==null || dublinCore.getFormat().equals("")){
 				briltype="misc";
 				System.out.println("briltype: " + briltype);
 			}
+			
 			if (DatastreamMimeType.validMimetype(mime.trim()) == true) {
-			dsc.addDatastreamObject(DataStreamType.OriginalData, mime.trim(),
+				dsc.addDatastreamObject(DataStreamType.OriginalData, mime.trim(),
 					briltype, "bril", filePath);
-			} else 
+			} else 			
 			//DatastreamObjectContainer addDatastreamObject only accepts byte stream of  the original content
 			//here we put the byte objectContent of the original file as null
 			{
-			dsc.addDatastreamObject(DataStreamType.OriginalData, "application/octet-stream",
+				dsc.addDatastreamObject(DataStreamType.OriginalData, "application/octet-stream",
 					briltype, "bril", filePath);
 		    }
-		}else{
+		} else {
 			dsc.addDatastreamObject(DataStreamType.OriginalData, "application/octet-stream",
 					"misc", "bril", filePath);
 		}
@@ -879,7 +900,41 @@ public class BrilSIPProcessor {
 					DatastreamMimeType.TEXT_XML.getMimeType(), briltype,
 					"bril", metadata.getBytes());
 		}
+
+		// Use FITS to identify the technical metadata of the file
+		// Then converts it to PREMIS format and stores it as a PREMIS datastream
+		// TODO: add PREMIS event in a versionable datastream?
 		
+		Fits fits;
+		try {
+			fits = new Fits(FITS_HOME);
+			File file = new File(originalContent.getFilePath());
+			FitsOutput fitsOut;			
+			System.out.println("Running FITS toolkit...");
+			fitsOut = fits.examine(file);			
+			byte[] PREMIS = outputPREMISXml(fitsOut);
+			System.out.println(PREMIS.toString());
+			dsc.addDatastreamObject(DataStreamType.PremisMetadata,
+					DatastreamMimeType.TEXT_XML.getMimeType(), "premis",
+					"bril", PREMIS);
+			System.out.println("PREMIS datastream saved...");
+		} catch (FitsConfigurationException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		} catch (FitsException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransformerConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}								
+				
 		/*
 		 * Get the object identifiers with this title/original path and this experimentId
 		 * 
@@ -896,54 +951,95 @@ public class BrilSIPProcessor {
 		 	fedoraAdmin = new FedoraAdminstrationImpl();
 		 	purgeIfPresentInRepository(dublinCore.getId());
 		    fedoraAdmin.storeObject(dsc);
-		  
-		    flag=true;
-
-		/*	try {
-				foxmlByte = fu.DataStreamObjectToFoxml(dsc);
-				String foxmlString = new String(foxmlByte);
-				System.out.println("-----------------foxml document--------------");
-				System.out.println(foxmlString);
-			} catch (BrilTransformException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}*/
-		
-
-		//} catch (BrilTransformException e) {
-			// TODO Auto-generated catch block
+		 
 		} catch (BrilObjectRepositoryException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-
-		// int max = 10000;
-
-		/*
-		 * ObjectFields[] of= fedoraAdmin.findObjectPids("title", "has",
-		 * "diffraction image set", max); String[] pids = new String[of.length];
-		 * 
-		 * for (int i = 0; i < of.length; i++) { pids[i] = of[i].getPid(); }
-		 * System.out.println("pids: " + pids[0] + " " + of.length); for (int i
-		 * = 0; i < of.length; i++) { pids[i] = of[i].getPid(); }
-		 * 
-		 * for(int j=0;j<pids.length;j++){ try { if
-		 * (fedoraAdmin.getDatastream(pids[j], "RELS-EXT")!=null){
-		 * if(fedoraAdmin.hasRelationship("info:fedora/"+pids[j],
-		 * "info:fedora/fedora-system:def/relations-external#isPartOf",
-		 * "info:fedora/bril:1cd19152-6d9f-4380-8f16-d7bbc9775b59")==true){
-		 * System.out.println("image set object ispartof the experiment : "
-		 * +pids[j]);
-		 * 
-		 * }else{
-		 * System.out.println("No image set object ispartof the experiment : "
-		 * +pids[j]); } } } catch (BrilObjectRepositoryException e) { // TODO
-		 * Auto-generated catch block e.printStackTrace(); }
-		 */
-		// }
 	}
 
+	private byte[] outputPREMISXml(FitsOutput fitsOutput) throws XMLStreamException, IOException, TransformerConfigurationException {
+        		
+		Document doc = fitsOutput.getFitsXml();
+		//XMLOutputter outputter = new XMLOutputter();
+	    //outputter.output(doc, System.out);
+		
+		//XmlContent xml = (XmlContent) fitsOutput.getFitsXml();
+        
+        //create an xml output factory
+	    //XMLOutputFactory xmlOutputFactory = XMLOutputFactory.newInstance();
+	    //Transformer transformer = null;
+	    
+	    //initialize transformer for PREMIS xslt	        
+	    TransformerFactory tFactory = TransformerFactory.newInstance();		
+	    
+	    // Get a XSLT transformer
+	    StreamSource xsltSource = new StreamSource(new FileInputStream(FITS_HOME + "xml/fits_to_premis_object.xsl"));
+		Transformer transformer;		
+		transformer = tFactory.newTransformer(xsltSource);
+		    
+        if(doc != null && transformer != null) {
+        	
+	        	// Make the input sources for the XML and XSLT documents
+	    		org.jdom.output.DOMOutputter outputter = new org.jdom.output.DOMOutputter();
+	    		org.w3c.dom.Document domDocument;
+				try {
+					domDocument = outputter.output(doc);
+				
+		    		javax.xml.transform.Source xmlSource = new javax.xml.transform.dom.DOMSource(domDocument);	    		
+		    	
+		    		ByteArrayOutputStream xsltOutStream = new ByteArrayOutputStream();
+		    		StreamResult xmlResult = new StreamResult(xsltOutStream);	    		    	
+		    	
+		    		// Do the transform
+					transformer.transform(xmlSource, xmlResult);
+					
+		    		return xsltOutStream.toString().getBytes("UTF-8");
+	    		
+	    		} catch (JDOMException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();				
+	    		} catch (TransformerException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	    		
+	    		/*
+                //xml.setRoot(true);      
+                ByteArrayOutputStream xmlOutStream = new ByteArrayOutputStream();
+                OutputStream xsltOutStream = new ByteArrayOutputStream();
+                
+                try {
+                    //send standard xml to the output stream
+                    XMLStreamWriter sw = xmlOutputFactory.createXMLStreamWriter(xmlOutStream);
+                    //xml.output(sw);
+                    outputter.output(doc, sw);
+                    
+                    //convert output stream to byte array and read back in as inputstream
+                    Source source = new StreamSource(new ByteArrayInputStream(xmlOutStream.toByteArray()));
+                    Result rstream = new StreamResult(xsltOutStream);
+                    
+                    //apply the xslt
+                    transformer.transform(source,rstream);
+                    
+                    //send to the providedOutpuStream
+                    return xsltOutStream.toString().getBytes("UTF-8");                        
+                        
+                } catch (Exception e) {
+                    System.err.println("error converting output to PREMIS format");
+                }
+                finally {
+                     xmlOutStream.close();
+                     xsltOutStream.close();                    
+                }
+                */                                       
+        }
+        else {
+                System.err.println("Error: output cannot be converted to PREMIS format");
+        }
+		return null;
+	}
+	
 	private byte[] getRelationshipRDF(String archivalObjectId) {
 
 		ArchivalObject archivalObject = archivalObjectDao

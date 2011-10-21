@@ -241,6 +241,44 @@ public class FedoraUtils {
 					throw new BrilObjectRepositoryException(error, ex);
 				}
 			}
+			
+			// Get PREMIS metadata from DatastreamObjectContainer
+			if (datastreamObject.hasDatastream(DataStreamType.PremisMetadata)) {
+				DatastreamObject dso = datastreamObject
+						.getDatastreamObject(DataStreamType.PremisMetadata);
+
+				byte[] PREMISmetadata = dso.getDataBytes();
+				try {
+					System.out.println("format of metadata:  -----"
+							+ dso.getFormat());
+					//(String datastreamId, String xmlContent, String label, long timenow, boolean versionable)
+					foxml.addXmlContent("PREMIS", new String(PREMISmetadata),
+							String.format("PREMIS Object Metadata Record"),
+							System.currentTimeMillis(), true);
+				} catch (XPathExpressionException ex) {
+					String error = String
+							.format(
+									"With id %s; Failed to add PREMIS object metadata to foxml from DatastreamObject\" %s\"",
+									dso.getId(), new String(dso.getDataBytes()));
+					// log.error( error , ex);
+					throw new BrilObjectRepositoryException(error, ex);
+				} catch (SAXException ex) {
+					String error = String
+							.format(
+									"With id %s; Failed to add PREMIS object metadata to foxml from DatastreamObject\" %s\"",
+									dso.getId(), new String(dso.getDataBytes()));
+					// log.error( error , ex);
+					throw new BrilObjectRepositoryException(error, ex);
+				} catch (IOException ex) {
+					String error = String
+							.format(
+									"With id %s; Failed to add PREMIS object metadata to foxml from DatastreamObject\" %s\"",
+									dso.getId(), new String(dso.getDataBytes()));
+					// log.error( error , ex);
+					throw new BrilObjectRepositoryException(error, ex);
+				}
+			}
+			
 			if (datastreamObject.hasDatastream(DataStreamType.OriginalData)) {
 				DatastreamObject dso = datastreamObject
 						.getDatastreamObject(DataStreamType.OriginalData);

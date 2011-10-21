@@ -151,9 +151,6 @@ public class CoordinateFileRelationshipGeneratorImpl implements
 
 					String outputPrefix = getJobId(fileMetadata);
 					String defFileTaskName = getTaskName(fileMetadata);
-					System.out.println("phenixObjectId: " + phenixObjectId);
-					System.out.println("defFileTaskName: " + defFileTaskName);
-					System.out.println("outputPrefix: " + outputPrefix);
 					
 					if (phenixObjectId.contains("/")) {
 						phenixObjectId = phenixObjectId.substring(phenixObjectId.lastIndexOf("/") + 1);
@@ -171,9 +168,9 @@ public class CoordinateFileRelationshipGeneratorImpl implements
 						
 						boolean hasRel = false;
 						
-						for (Map.Entry<String, Long> pdb : sortedPDBObjectMap.entrySet()) {
+						for (Map.Entry<String, Long> pdb : sortedPDBObjectMap.entrySet()) {							
 							hasRel = generatorUtils.hasRelationship(pdb.getKey().toString(), 
-											BrilRelationshipType.wasGeneratedBy.getRelation(), PHENIXProcess.get(0));
+											"http://purl.org/net/opmv/ns#" + BrilRelationshipType.wasGeneratedBy.getRelation(), PHENIXProcess.get(0));
 							if (hasRel) {
 								System.out.println("Found a PDB file with a 'wasGeneratedBy' relationship to the process");
 								break;
@@ -184,18 +181,19 @@ public class CoordinateFileRelationshipGeneratorImpl implements
 							if (!defFileTaskName.contains("subsequent")) {												
 								
 								// only continue if DEF file does not contain subsequent (i.e. the automatically generated DEF)
-								if (pdbObjectFileName.contains(outputPrefix)) {
-									System.out.println("Get inputs filename in the PHENIX DEF file ............");
+								if (pdbObjectFileName.contains(outputPrefix.trim())) {									
 									Vector<String> inputNameList = generatorUtils.getFilenamesFromTaskXML(fileMetadata, 
 											TaskObjectElement.INPUT_FILENAME);
-									
-									System.out.println("Get input ids in the PHENIX DEF file ............");
+																		
 									Vector<String> inputIdList = generatorUtils.inputObjectIdsInPhenixDefFile(phenixObjectId, 
 											fileMetadata, experimentId);
 									
+									System.out.println("inputNameList: (" + inputNameList + ")");
+									System.out.println("inputIdList: (" + inputIdList + ")");
+									
 									for (int i = 0; i < inputNameList.size(); i++) {
 										String inputObjectName = inputNameList.get(i);
-										if (inputObjectName.contains(".pdb")) {
+										if (inputObjectName.contains(".pdb") || inputObjectName.contains(".mtz")) {
 											System.out.println("inputObjectName: (" + inputObjectName + ")");
 											/*
 											 * Add relationship inputs in the Phenix def
@@ -205,13 +203,13 @@ public class CoordinateFileRelationshipGeneratorImpl implements
 											objectRelationship.addRelationship(objectId,
 													BrilRelationshipType.wasDerivedFrom.getRelation(), inputIdList.get(i));
 											System.out.println("relationship: " + objectId + " --wasDerivedFrom--> " + inputIdList.get(i));
-											
-											// Current PDB object ---wasGeneratedBy ---> phenix Process
-											objectRelationship.addRelationship(objectId,
-													BrilRelationshipType.wasGeneratedBy.getRelation(), PHENIXProcess.get(0));
-											System.out.println("relationship: " + objectId + " --wasGeneratedBy--> " + PHENIXProcess.get(0));										
 										}
 									}
+									
+									// Current PDB object ---wasGeneratedBy ---> phenix Process
+									objectRelationship.addRelationship(objectId,
+											BrilRelationshipType.wasGeneratedBy.getRelation(), PHENIXProcess.get(0));
+									System.out.println("relationship: " + objectId + " --wasGeneratedBy--> " + PHENIXProcess.get(0));
 								}																		
 							}
 						}
@@ -364,6 +362,10 @@ public class CoordinateFileRelationshipGeneratorImpl implements
 						Vector<String> allFoundInputs = new Vector<String>(new LinkedHashSet<String>(inputsWithJobIdFromDatabaseDEF));
 						
 						// Check if phaser_MR process already exists
+						// TODO: this will fail if there are more than one phaser process
+						//		 find list of phaser processes					
+						//		 check if any has a 'wasGeneratedBy' relationship with a PDB file
+						
 						if (checkForPhaserProcess(experimentId) == true) {
 							
 							// Current PDB object ---wasGeneratedBy---> Phaser Process

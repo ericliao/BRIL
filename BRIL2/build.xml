@@ -82,6 +82,62 @@
 		<pathelement location="${jre6.jars.dir}/rt.jar" />
 		<pathelement location="${jre6.jars.dir}/jsee.jar" />	
 		
+		<pathelement location="${fits.jars.dir}/bcmail-jdk14-132.jar" />
+		<pathelement location="${fits.jars.dir}/commons-cli-1.1.jar" />		
+		<pathelement location="${fits.jars.dir}/fast-md5.jar" />
+		<pathelement location="${fits.jars.dir}/fits.jar" />				
+		<pathelement location="${fits.jars.dir}/jaxen-core.jar" />
+		<pathelement location="${fits.jars.dir}/jaxen-jdom.jar" />		
+    <pathelement location="${fits.jars.dir}/jdom.jar" />
+		<pathelement location="${fits.jars.dir}/ots-schemas.jar" />				
+		<pathelement location="${fits.jars.dir}/saxon9-dom.jar" />
+		<pathelement location="${fits.jars.dir}/saxon9.jar" />		
+    <pathelement location="${fits.jars.dir}/saxon9-jdom.jar" />
+		<pathelement location="${fits.jars.dir}/saxpath.jar" />				
+		<pathelement location="${fits.jars.dir}/serializer.jar" />
+		<pathelement location="${fits.jars.dir}/staxmate-2.0.0.jar" />		
+    <pathelement location="${fits.jars.dir}/woodstox-core-lgpl-4.0.7.jar" />
+		<pathelement location="${fits.jars.dir}/xmlunit-1.2.jar" />		
+		
+		<pathelement location="${droid.jars.dir}/AllLibraries.jar" />				
+		<pathelement location="${droid.jars.dir}/droid.jar" />						
+		<pathelement location="${droid.jars.dir}/jaxb-api.jar" />				
+		<pathelement location="${droid.jars.dir}/jaxb-impl.jar" />						
+		<pathelement location="${droid.jars.dir}/jh.jar" />								
+		<pathelement location="${droid.jars.dir}/jsr173_1.0_api.jar" />				
+		<pathelement location="${droid.jars.dir}/looks-1.2.2.jar" />						
+		<pathelement location="${droid.jars.dir}/mail.jar" />				
+		<pathelement location="${droid.jars.dir}/soap.jar" />						
+		<pathelement location="${droid.jars.dir}/xml-apis.jar" />								
+		
+		<pathelement location="${jhove.jars.dir}/JhoveApp.jar" />						
+		<pathelement location="${jhove.jars.dir}/jhove-handler.jar" />								
+		<pathelement location="${jhove.jars.dir}/jhove.jar" />						
+		<pathelement location="${jhove.jars.dir}/jhove-module.jar" />								
+		
+		<pathelement location="${nzmetool.jars.dir}/bcprov-jdk14-132.jar" />						
+		<pathelement location="${nzmetool.jars.dir}/bfj220.jar" />								
+		<pathelement location="${nzmetool.jars.dir}/metadata.jar" />						
+		<pathelement location="${nzmetool.jars.dir}/PDFBox-0.7.3.jar" />										
+		<pathelement location="${nzmetool.jars.dir}/poi-2.5.1-final-20040804.jar" />
+		
+		<pathelement location="${adapters.jars.dir}/bmp_adapter_1_0.jar" />						
+		<pathelement location="${adapters.jars.dir}/excel_adapter_1_0.jar" />								
+		<pathelement location="${adapters.jars.dir}/gif_adapter_1_0.jar" />						
+		<pathelement location="${adapters.jars.dir}/html_adapter_1_0.jar" />										
+		<pathelement location="${adapters.jars.dir}/jpg_adapter_1_1.jar" />								
+		<pathelement location="${adapters.jars.dir}/mp3_adapter_1_0.jar" />						
+		<pathelement location="${adapters.jars.dir}/msword_adapter_2_0.jar" />								
+		<pathelement location="${adapters.jars.dir}/msworks_adapter_1_0.jar" />						
+		<pathelement location="${adapters.jars.dir}/openoffice_adapter_1_0.jar" />						
+		<pathelement location="${adapters.jars.dir}/pdf_adapter_1_0.jar" />								
+		<pathelement location="${adapters.jars.dir}/pdfbox_adapter_1_0.jar" />						
+		<pathelement location="${adapters.jars.dir}/powerpoint_adapter_1_0.jar" />										
+		<pathelement location="${adapters.jars.dir}/tiff_adapter_1_0.jar" />								
+		<pathelement location="${adapters.jars.dir}/wave_adapter_1_0.jar" />						
+		<pathelement location="${adapters.jars.dir}/wordperfect_adapter_1_0.jar" />								
+		<pathelement location="${adapters.jars.dir}/xml_adapter_1_0.jar" />																
+		
 	</path>
 	<path id="bootclasspath">
 		<!--<pathelement location="src" />-->
@@ -398,7 +454,7 @@
 		<copy todir="${dist.home}/lib" filtering="off">       
 			<!-- remove the directory hierarchy: lib contains no subdirectories -->    
 			<flattenmapper />     
-			<fileset dir="${lib.home}" includes="**/*.jar" />   
+			<fileset dir="${lib.home}" includes="**/*.jar" />
 		</copy> 
 		<copy todir="${dist.home}/config" filtering="off">       
 					<!-- remove the directory hierarchy: lib contains no subdirectories -->    

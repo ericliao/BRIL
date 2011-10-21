@@ -1590,7 +1590,6 @@ public class GeneratorUtils {
 					.println("Get inputs filename in the PHENIX DEF file ............");
 			Vector<String> inputNameList = getFilenamesFromTaskXML(phenixDEFMetadata,
 							TaskObjectElement.INPUT_FILENAME);
-			//String taskName = getValueFromTaskXML(phenixDEFMetadata, TaskObjectElement.TASK_NAME);
 			
 			Vector<String> inputPathList= new Vector<String>();
 
@@ -1603,29 +1602,35 @@ public class GeneratorUtils {
 				System.out.println(inputFilename);
 				String suffix = inputFilename.substring(inputFilename
 						.lastIndexOf(".") + 1);
-				//String inputPosibPath=null;
+
 				//list of possiple inputFilename
 				//inputFilename= ../filename.mtz
 				//inputFilename= ../dir1/filename.mtz
 				//inputFilename= /home/stella/baa5d5/1/fileName.mtz
-				if(inputFilename.contains("../") || inputFilename.contains("..\\")){
+				// TODO: what about ../../dir1/dir2/dirX/filename.mtz?
+				/*
+				if (inputFilename.contains("C340S/2phenix/2phenix1_001.pdb")) {
+					inputPathList.add(inputFilename);
+					inputFilepath = inputFilename;
+				}*/
+				if(inputFilename.contains("../") || inputFilename.contains("..\\") && !inputFilename.contains("C340S/2phenix/2phenix1_001.pdb")){
 					//if it contains the index of "/" and last index of "/" is the same
 					System.out.println("contains ../");	
 					int f =inputFilename.indexOf("/");
 					int l = inputFilename.lastIndexOf("/");
 					if(f==l){
-						
+
 						System.out.println("has only one / .....");	
-				    //only one "/" is present
-				    //directory of the file will be the one directory outside the def file directory
-					// defPath = /home/stella/baa5d5/1
-					 //IF //inputFilename = ../filename.mtz
-					//then,
-					// inputPosibPath = /home/stella/baa5d5
+						//only one "/" is present
+						//directory of the file will be the one directory outside the def file directory
+						// defPath = /home/stella/baa5d5/1
+						//IF //inputFilename = ../filename.mtz
+						//then,
+						// inputPosibPath = /home/stella/baa5d5
 						String inputPosibPath = defPath.substring(0,defPath.lastIndexOf(defSlash));
 						//System.out.println("inputPosibPath: "+ inputPosibPath);	
 						//inputPosibPath= /home/stella/baa5d5/filename.mtz
-						
+
 						inputFilepath= inputPosibPath+defSlash+inputFilename.substring(l+1);
 						//inputPathList.add(inputPosibPath+inputFilename.substring(l));
 						System.out.println("inputPath1: "+ inputFilepath);	
@@ -1636,25 +1641,25 @@ public class GeneratorUtils {
 						 * take strign between the two "/" i.e dir1
 						 * mid= /dir1
 						 */
-					//	String mid = inputFilename.substring(f,l);
-						
-							//get /home/stella/baa5d5 from   /home/stella/baa5d5/1
+						//	String mid = inputFilename.substring(f,l);
+
+						//get /home/stella/baa5d5 from   /home/stella/baa5d5/1
 						String firstlevelDir= defPath.substring(0,defPath.lastIndexOf(defSlash));
-						
-					//	System.out.println("firstlevelDir: "+ firstlevelDir);	
+
+						//	System.out.println("firstlevelDir: "+ firstlevelDir);	
 						// /home/stella/baa5d5/dir1 
-					//	String inputPosibPath = firstlevelDir+mid;
+						//	String inputPosibPath = firstlevelDir+mid;
 						// also handles something like inputFilename= ../dir1/dir2/filename.mtz
 						//where mid = /dir1/dir2
 						//inputPosibPath=  /home/stella/baa5d5/dir1/dir2
-						 // inputFilename= ../dir1/filename.mtz
-					
+						// inputFilename= ../dir1/filename.mtz
+
 						String filename = inputFilename.substring(f);
 						System.out.println(filename);
 						if(filename.contains("/") && !"/".equals(defSlash)){
 							filename = filename.replace("/", defSlash);
 						}
-					/*	int isSingleQuote = l-1;
+						/*	int isSingleQuote = l-1;
 						//System.out.println(inputFilename.charAt(isSingleQuote));
 						char res =inputFilename.charAt(isSingleQuote);
 						char singleQuote ='\'';
@@ -1669,29 +1674,29 @@ public class GeneratorUtils {
 						//	System.out.println(filename);
 						}
 						}*/
-					  	
+
 						inputFilepath =firstlevelDir+filename;
 						//inputPathList.add(firstlevelDir+filename);
 						System.out.println("inputPath: "+ inputFilepath);	
-						}
-					}else if(inputFilename.contains("./")) //Same directory as this def file
-					{
-						String filename = inputFilename.substring(inputFilename.lastIndexOf("/"));
-						// defpath = /home/stella/baa5d5/1
-						//filename =/filename.mtz
-						inputPathList.add(defPath+filename);
-					}else
-						
-						if(inputFilename.contains("\\") || inputFilename.contains("/") )
-						
+					}
+				}else if(inputFilename.contains("./")) //Same directory as this def file
+				{
+					String filename = inputFilename.substring(inputFilename.lastIndexOf("/"));
+					// defpath = /home/stella/baa5d5/1
+					//filename =/filename.mtz
+					inputPathList.add(defPath+filename);
+				}else					
+					
+					if(inputFilename.contains("\\") || inputFilename.contains("/") )
+
 					{
 						//check if this is the same directory as the defPath
 						//inputFilename= /home/stella/baa5d5/1/fileName.mtz
 						System.out.println("Contains directory struct in def file inputnames----");
 						String firstlevelDir= inputFilename.substring(0,inputFilename.lastIndexOf("/"));
 						if(inputFilename.contains("\\")){
-						firstlevelDir=inputFilename.substring(0,inputFilename.lastIndexOf("\\"));
-						
+							firstlevelDir=inputFilename.substring(0,inputFilename.lastIndexOf("\\"));
+
 						}
 						System.out.println(defPath);
 						System.out.println(inputFilename);
@@ -1706,14 +1711,14 @@ public class GeneratorUtils {
 							System.out.println("Directory path of inputname '"+ inputFilename +"' (in DEF file) " +
 									"\n is NOT same as path of the DEF file--'"+defPath+"'");
 							System.out.println("Adding the input file (with def path) for the test case- must be remove for real scenario....");
-							
+
 							String newInputFilename=null;
-							
+
 							if(inputFilename.contains("/")){
 								inputFilename = inputFilename.substring(inputFilename.lastIndexOf("/")+1);
 								System.out.println(inputFilename + " 1 \n");
-								
-								
+
+
 							}
 							if(inputFilename.contains("\\")){
 								inputFilename = inputFilename.substring(inputFilename.lastIndexOf("\\")+1);
@@ -1722,7 +1727,7 @@ public class GeneratorUtils {
 							}
 							if(defPath.contains("/")){
 								newInputFilename =defPath+"/"+inputFilename;
-								}
+							}
 							if(defPath.contains("\\")){
 								newInputFilename =defPath+"\\"+inputFilename;
 							}
@@ -1730,7 +1735,7 @@ public class GeneratorUtils {
 							inputPathList.add(newInputFilename);
 							inputFilepath=newInputFilename;
 						}
-						
+
 					}
 			
 				System.out.println("FilePath:.... "+ inputFilepath );

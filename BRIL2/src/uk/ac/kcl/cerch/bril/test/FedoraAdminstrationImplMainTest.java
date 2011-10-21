@@ -73,7 +73,7 @@ public class FedoraAdminstrationImplMainTest {
 						   int count =0;
 						   if(childList.item(j).getNodeName().equals("id")){
 						//	   System.out.println(childList.item(j).getTextContent());
-							   id.add(childList.item(j).getTextContent());
+							   //id.add(childList.item(j).getTextContent());
 							 //  date1[count]=childList.item(j).getTextContent();
 							   count++;
 						   }							
