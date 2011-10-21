@@ -263,6 +263,12 @@ window.onload = function() { stripedTable(); }
       <hr/>
       <br/>
       {% endif %}
+      {% if obj.PREMISmeta.content %}
+      <h3>PREMIS Metadata</h3>
+      <pre>{{ obj.PREMISmeta.content }}</pre>      
+      <hr/>
+      <br/>
+      {% endif %}
       {% if obj.file.info.size > 0 %}
         <h3>Original Data</h3>      
         <p>({{ obj.file.info.size|filesizeformat }}, {{ obj.file.mimetype }})</p>      
