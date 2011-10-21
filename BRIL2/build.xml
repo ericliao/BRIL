@@ -95,8 +95,6 @@
     <pathelement location="${fits.jars.dir}/saxon9-jdom.jar" />
 		<pathelement location="${fits.jars.dir}/saxpath.jar" />				
 		<pathelement location="${fits.jars.dir}/serializer.jar" />
-		<pathelement location="${fits.jars.dir}/staxmate-2.0.0.jar" />		
-    <pathelement location="${fits.jars.dir}/woodstox-core-lgpl-4.0.7.jar" />
 		<pathelement location="${fits.jars.dir}/xmlunit-1.2.jar" />		
 		
 		<pathelement location="${droid.jars.dir}/AllLibraries.jar" />				
