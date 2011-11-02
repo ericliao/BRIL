@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 public class Config {
 	Logger log = Logger.getLogger(Config.class);
 
-	URL _configURL = getClass().getResource("/config.xml");
+	URL _configURL = getClass().getResource("/config-fedora.xml");
 	static XMLConfiguration _config;
 
 	/**

@@ -907,13 +907,16 @@ public class BrilSIPProcessor {
 		
 		Fits fits;
 		try {
-			fits = new Fits(FITS_HOME);
+			fits = new Fits();
 			File file = new File(originalContent.getFilePath());
 			FitsOutput fitsOut;			
 			System.out.println("Running FITS toolkit...");
 			fitsOut = fits.examine(file);			
 			byte[] PREMIS = outputPREMISXml(fitsOut);
 			System.out.println(PREMIS.toString());
+			
+			// TODO: insert PID into premis:objectIdentifierValue, insert URI into <premis:contentLocationValue>
+			
 			dsc.addDatastreamObject(DataStreamType.PremisMetadata,
 					DatastreamMimeType.TEXT_XML.getMimeType(), "premis",
 					"bril", PREMIS);
@@ -961,14 +964,6 @@ public class BrilSIPProcessor {
 	private byte[] outputPREMISXml(FitsOutput fitsOutput) throws XMLStreamException, IOException, TransformerConfigurationException {
         		
 		Document doc = fitsOutput.getFitsXml();
-		//XMLOutputter outputter = new XMLOutputter();
-	    //outputter.output(doc, System.out);
-		
-		//XmlContent xml = (XmlContent) fitsOutput.getFitsXml();
-        
-        //create an xml output factory
-	    //XMLOutputFactory xmlOutputFactory = XMLOutputFactory.newInstance();
-	    //Transformer transformer = null;
 	    
 	    //initialize transformer for PREMIS xslt	        
 	    TransformerFactory tFactory = TransformerFactory.newInstance();		
@@ -980,59 +975,29 @@ public class BrilSIPProcessor {
 		    
         if(doc != null && transformer != null) {
         	
-	        	// Make the input sources for the XML and XSLT documents
-	    		org.jdom.output.DOMOutputter outputter = new org.jdom.output.DOMOutputter();
-	    		org.w3c.dom.Document domDocument;
-				try {
-					domDocument = outputter.output(doc);
+        	// Make the input sources for the XML and XSLT documents
+    		org.jdom.output.DOMOutputter outputter = new org.jdom.output.DOMOutputter();
+    		org.w3c.dom.Document domDocument;
+			try {
+				domDocument = outputter.output(doc);
+			
+	    		javax.xml.transform.Source xmlSource = new javax.xml.transform.dom.DOMSource(domDocument);	    		
+	    	
+	    		ByteArrayOutputStream xsltOutStream = new ByteArrayOutputStream();
+	    		StreamResult xmlResult = new StreamResult(xsltOutStream);	    		    	
+	    	
+	    		// Do the transform
+				transformer.transform(xmlSource, xmlResult);
 				
-		    		javax.xml.transform.Source xmlSource = new javax.xml.transform.dom.DOMSource(domDocument);	    		
-		    	
-		    		ByteArrayOutputStream xsltOutStream = new ByteArrayOutputStream();
-		    		StreamResult xmlResult = new StreamResult(xsltOutStream);	    		    	
-		    	
-		    		// Do the transform
-					transformer.transform(xmlSource, xmlResult);
-					
-		    		return xsltOutStream.toString().getBytes("UTF-8");
-	    		
-	    		} catch (JDOMException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();				
-	    		} catch (TransformerException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-	    		
-	    		/*
-                //xml.setRoot(true);      
-                ByteArrayOutputStream xmlOutStream = new ByteArrayOutputStream();
-                OutputStream xsltOutStream = new ByteArrayOutputStream();
-                
-                try {
-                    //send standard xml to the output stream
-                    XMLStreamWriter sw = xmlOutputFactory.createXMLStreamWriter(xmlOutStream);
-                    //xml.output(sw);
-                    outputter.output(doc, sw);
-                    
-                    //convert output stream to byte array and read back in as inputstream
-                    Source source = new StreamSource(new ByteArrayInputStream(xmlOutStream.toByteArray()));
-                    Result rstream = new StreamResult(xsltOutStream);
-                    
-                    //apply the xslt
-                    transformer.transform(source,rstream);
-                    
-                    //send to the providedOutpuStream
-                    return xsltOutStream.toString().getBytes("UTF-8");                        
-                        
-                } catch (Exception e) {
-                    System.err.println("error converting output to PREMIS format");
-                }
-                finally {
-                     xmlOutStream.close();
-                     xsltOutStream.close();                    
-                }
-                */                                       
+	    		return xsltOutStream.toString().getBytes("UTF-8");
+    		
+    		} catch (JDOMException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();				
+    		} catch (TransformerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}                                  
         }
         else {
                 System.err.println("Error: output cannot be converted to PREMIS format");

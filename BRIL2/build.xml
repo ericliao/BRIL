@@ -42,7 +42,8 @@
 		<pathelement location="${lib.home}/log4j-1.2.16.jar" />		
 		<pathelement location="${lib.home}/soapi-characteriser.jar" />
 		<pathelement location="${lib.home}/spring.jar" />
-		<pathelement location="${lib.home}/xercesImpl-2.7.1.jar" />		
+		<pathelement location="${lib.home}/xercesImpl.jar" />
+		<pathelement location="${lib.home}/xml-apis.jar	" />
 		<pathelement location="${lib.home}/xmlpull_1_1_3_4c.jar" />
 		<pathelement location="${lib.home}/xpp3-1.1.3.3.jar" />							
 
@@ -80,22 +81,27 @@
 								
 		<pathelement location="${jre6.jars.dir}/resources.jar" />
 		<pathelement location="${jre6.jars.dir}/rt.jar" />
-		<pathelement location="${jre6.jars.dir}/jsee.jar" />	
-		
+		<pathelement location="${jre6.jars.dir}/jsee.jar" />
+			
 		<pathelement location="${fits.jars.dir}/bcmail-jdk14-132.jar" />
 		<pathelement location="${fits.jars.dir}/commons-cli-1.1.jar" />		
 		<pathelement location="${fits.jars.dir}/fast-md5.jar" />
 		<pathelement location="${fits.jars.dir}/fits.jar" />				
-		<pathelement location="${fits.jars.dir}/jaxen-core.jar" />
+		<pathelement location="${fits.jars.dir}/jaxen-core.jar" />		
 		<pathelement location="${fits.jars.dir}/jaxen-jdom.jar" />		
-    <pathelement location="${fits.jars.dir}/jdom.jar" />
-		<pathelement location="${fits.jars.dir}/ots-schemas.jar" />				
-		<pathelement location="${fits.jars.dir}/saxon9-dom.jar" />
-		<pathelement location="${fits.jars.dir}/saxon9.jar" />		
-    <pathelement location="${fits.jars.dir}/saxon9-jdom.jar" />
-		<pathelement location="${fits.jars.dir}/saxpath.jar" />				
+    	<pathelement location="${fits.jars.dir}/jdom.jar" />		
+				
+		<pathelement location="${fits.jars.dir}/ots-schemas.jar" />		
+		<pathelement location="${fits.jars.dir}/saxon9-dom.jar" />		
+		<pathelement location="${fits.jars.dir}/saxon9.jar" />
+    	<pathelement location="${fits.jars.dir}/saxon9-jdom.jar" />		
+		<pathelement location="${fits.jars.dir}/saxpath.jar" />		
 		<pathelement location="${fits.jars.dir}/serializer.jar" />
-		<pathelement location="${fits.jars.dir}/xmlunit-1.2.jar" />		
+		<!--
+		<pathelement location="${fits.jars.dir}/staxmate-2.0.0.jar" />
+		<pathelement location="${fits.jars.dir}/stax2-api-3.1.1.jar" />		
+    	<pathelement location="${fits.jars.dir}/woodstox-core-lgpl-4.1.2.jar" /> -->
+		<pathelement location="${fits.jars.dir}/xmlunit-1.2.jar" />
 		
 		<pathelement location="${droid.jars.dir}/AllLibraries.jar" />				
 		<pathelement location="${droid.jars.dir}/droid.jar" />						
@@ -112,7 +118,7 @@
 		<pathelement location="${jhove.jars.dir}/jhove-handler.jar" />								
 		<pathelement location="${jhove.jars.dir}/jhove.jar" />						
 		<pathelement location="${jhove.jars.dir}/jhove-module.jar" />								
-		
+				
 		<pathelement location="${nzmetool.jars.dir}/bcprov-jdk14-132.jar" />						
 		<pathelement location="${nzmetool.jars.dir}/bfj220.jar" />								
 		<pathelement location="${nzmetool.jars.dir}/metadata.jar" />						
@@ -143,6 +149,7 @@
 	
 	<path id="brilclasspath">
 		<path refid="library.jars.classpath" />
+		<!--<pathelement path="/home/eliao/fits/xml/nlnz" />-->
 		<!-- <fileset dir="${tomcat.webserver.home}/common/lib">
 				<include name="servlet*.jar" />
 		<include name="jsp-api.jar" /> 
@@ -194,6 +201,10 @@
 	        		<patternset refid="compiler.resources" />
 	        		<type type="file" />
 	        	</fileset>
+				<fileset dir="${nlnz.dir}">
+					<patternset refid="compiler.resources" />
+					<type type="file" />
+				</fileset>
 			</copy>
 		</target>
 	
@@ -226,7 +237,7 @@
     	 	<include name="uk/ac/kcl/cerch/bril/objectstore/**" />
     	 	<include name="${build.home}/**/bril.properties" />
     	 	<include name="${build.home}/**/bril.xml" />
-    	 	<include name="${build.home}/**/config.xml" />
+    	 	<include name="${build.home}/**/config-fedora.xml" />			
     	 </jar> 
     	 <jar destfile="${output.basedir}/jar/crystallography.jar" basedir="${output.classes}">	
     	          <include name="uk/ac/kcl/cerch/bril/ccp4/**" />
@@ -452,7 +463,7 @@
 		<copy todir="${dist.home}/lib" filtering="off">       
 			<!-- remove the directory hierarchy: lib contains no subdirectories -->    
 			<flattenmapper />     
-			<fileset dir="${lib.home}" includes="**/*.jar" />
+			<fileset dir="${lib.home}" includes="**/*.jar" />   
 		</copy> 
 		<copy todir="${dist.home}/config" filtering="off">       
 					<!-- remove the directory hierarchy: lib contains no subdirectories -->    

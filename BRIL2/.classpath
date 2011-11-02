@@ -57,7 +57,6 @@
 	<classpathentry kind="lib" path="lib/fits/saxon9-jdom.jar"/>
 	<classpathentry kind="lib" path="lib/fits/saxpath.jar"/>
 	<classpathentry kind="lib" path="lib/fits/serializer.jar"/>
-	<classpathentry kind="lib" path="lib/fits/staxmate-2.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/fits/xmlunit-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/fits/droid/AllLibraries.jar"/>
 	<classpathentry kind="lib" path="lib/fits/droid/droid.jar"/>
@@ -94,7 +93,6 @@
 	<classpathentry kind="lib" path="lib/fits/nzmetool/adapters/powerpoint_adapter_1_0.jar"/>
 	<classpathentry kind="lib" path="lib/fits/nzmetool/adapters/pdf_adapter_1_0.jar"/>
 	<classpathentry kind="lib" path="lib/fits/nzmetool/adapters/pdfbox_adapter_1_0.jar"/>
-	<classpathentry kind="lib" path="lib/fits/stax2-api-3.1.1.jar"/>
-	<classpathentry kind="lib" path="lib/fits/woodstox-core-lgpl-4.1.2.jar"/>
+	<classpathentry kind="lib" path="/home/eric/Downloads/fits-0.4.2/xml/nlnz"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
