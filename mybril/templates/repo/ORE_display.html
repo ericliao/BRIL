@@ -36,23 +36,21 @@ pre {
 <link href="{{ STATIC_URL }}css/smoothness/jquery-ui-1.8.15.custom.css" rel="stylesheet" type="text/css" />
 {% if obj.file.info.size > 0 %}
   <script type="application/javascript">
-  $(window).load(function () {
-    $( "#viewLink" )
-      .button()
-      .click(function() {
-        $('#viewer-dialog').dialog('close');
-        $("#viewer-dialog").dialog({ 
-          title: "Viewing: " + $("#title").text(), 
-          height: 600, 
-          width: 600,
-          open: function(event, ui) {
-            var url = "http://localhost:8000/repo/objects/" + $( "#viewLink" ).attr("value") + "/view/";
-            $('#viewer').load(url);
-          }                
+    $(window).load(function () {
+        $("#viewLink").button().click(function () {
+            $('#viewer-dialog').dialog('close');
+            $("#viewer-dialog").dialog({
+                title: "Viewing: " + $("#title").text(),
+                height: 600,
+                width: 600,
+                open: function (event, ui) {
+                    var url = "http://localhost:8000/repo/objects/" + $("#viewLink").attr("value") + "/view/";
+                    $('#viewer').load(url);
+                }
+            });
         });
+        $("#downloadLink").button();
     });
-    $( "#downloadLink" ).button();
-  });
 </script>
 {% endif %}
 <div id="viewer-dialog" style="width:600px;overflow:auto">

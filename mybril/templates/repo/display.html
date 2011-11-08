@@ -176,60 +176,62 @@ html>body tbody.scrollContent td + td + td {
 {% if obj.file.info.size > 0 %}
   <script type="application/javascript">
   $(window).load(function () {
-    $( "#viewLink" )
-      .button()
-      .click(function() {
-        $('#viewer-dialog').dialog('close');
-        $("#viewer-dialog").dialog({ 
-          title: "Viewing: " + $("#title").text(), 
-          height: 600, 
-          width: 600,
-          open: function(event, ui) {
-            var url = "http://localhost:8000/repo/objects/" + $( "#viewLink" ).attr("value") + "/view/";
-            $('#viewer').load(url);
-          }                
-        });
-    });
-    $( "#downloadLink" ).button();    
+      $("#viewLink").button().click(function () {
+          $('#viewer-dialog').dialog('close');
+          $("#viewer-dialog").dialog({
+              title: "Viewing: " + $("#title").text(),
+              height: 600,
+              width: 600,
+              open: function (event, ui) {
+                  var url = "http://localhost:8000/repo/objects/" + $("#viewLink").attr("value") + "/view/";
+                  $('#viewer').load(url);
+              }
+          });
+      });
+      $("#downloadLink").button();
   });
 </script>
 {% endif %}
 <script type="text/javascript">
-function removeClassName (elem, className) {
-	elem.className = elem.className.replace(className, "").trim();
+function removeClassName(elem, className) {
+    elem.className = elem.className.replace(className, "").trim();
 }
 
-function addCSSClass (elem, className) {
-	removeClassName (elem, className);
-	elem.className = (elem.className + " " + className).trim();
+function addCSSClass(elem, className) {
+    removeClassName(elem, className);
+    elem.className = (elem.className + " " + className).trim();
 }
 
-String.prototype.trim = function() {
-	return this.replace( /^\s+|\s+$/, "" );
+String.prototype.trim = function () {
+    return this.replace(/^\s+|\s+$/, "");
 }
 
 function stripedTable() {
-	if (document.getElementById && document.getElementsByTagName) {  
-		var allTables = document.getElementsByTagName('table');
-		if (!allTables) { return; }
+    if (document.getElementById && document.getElementsByTagName) {
+        var allTables = document.getElementsByTagName('table');
+        if (!allTables) {
+            return;
+        }
 
-		for (var i = 0; i < allTables.length; i++) {
-			if (allTables[i].className.match(/[\w\s ]*scrollTable[\w\s ]*/)) {
-				var trs = allTables[i].getElementsByTagName("tr");
-				for (var j = 0; j < trs.length; j++) {
-					removeClassName(trs[j], 'alternateRow');
-					addCSSClass(trs[j], 'normalRow');
-				}
-				for (var k = 0; k < trs.length; k += 2) {
-					removeClassName(trs[k], 'normalRow');
-					addCSSClass(trs[k], 'alternateRow');
-				}
-			}
-		}
-	}
+        for (var i = 0; i < allTables.length; i++) {
+            if (allTables[i].className.match(/[\w\s ]*scrollTable[\w\s ]*/)) {
+                var trs = allTables[i].getElementsByTagName("tr");
+                for (var j = 0; j < trs.length; j++) {
+                    removeClassName(trs[j], 'alternateRow');
+                    addCSSClass(trs[j], 'normalRow');
+                }
+                for (var k = 0; k < trs.length; k += 2) {
+                    removeClassName(trs[k], 'normalRow');
+                    addCSSClass(trs[k], 'alternateRow');
+                }
+            }
+        }
+    }
 }
 
-window.onload = function() { stripedTable(); }
+window.onload = function () {
+    stripedTable();
+}
 </script>
 
 <div id="viewer-dialog" style="width:600px;overflow:auto">

@@ -126,52 +126,49 @@
 var graph = new Graph();
 
 function filter(key, opt) {
-  if (opt != null) {
-	  var filter_key;
-	  switch (key)
-	  {
-		  case "all_process":
-			  filter_key = "square";
-			  break;
-		  case "all_objects":
-			  filter_key = "circle";
-			  break;
-		  case "all_controllers":
-			  filter_key = "hexagon";
-			  break;			
-		  default:
-			  filter_key = key;
-			  break;
-	  }
-	  if (jQuery.data(opt, key) == null) {
-	    var filtered_nodes = key + "_nodes";
-	    jQuery.data(opt, filtered_nodes, graph.filterNodes(filter_key));
-		  jQuery.data(opt, key, true);		  
-	  }
-	  else {
-		  var filtered_nodes = key + "_nodes";
-		  graph.merge(jQuery.data(opt, filtered_nodes));
-		  jQuery.data(opt, key, null);		
-	  }		
-	}
+    if (opt != null) {
+        var filter_key;
+        switch (key) {
+        case "all_process":
+            filter_key = "square";
+            break;
+        case "all_objects":
+            filter_key = "circle";
+            break;
+        case "all_controllers":
+            filter_key = "hexagon";
+            break;
+        default:
+            filter_key = key;
+            break;
+        }
+        if (jQuery.data(opt, key) == null) {
+            var filtered_nodes = key + "_nodes";
+            jQuery.data(opt, filtered_nodes, graph.filterNodes(filter_key));
+            jQuery.data(opt, key, true);
+        } else {
+            var filtered_nodes = key + "_nodes";
+            graph.merge(jQuery.data(opt, filtered_nodes));
+            jQuery.data(opt, key, null);
+        }
+    }
 }
 
 function filter_relationships(key, opt) {
-  if (opt != null) {
-	  if (jQuery.data(opt, key) == null) {	
-	    var filtered_relations = key + "_edges";	
-		  jQuery.data(opt, filtered_relations, graph.filterEdges(key));
-		  jQuery.data(opt, key, true);
-	  }
-	  else {
-		  var filtered_relations = key + "_edges";	
-		  graph.mergeEdges(jQuery.data(opt, filtered_relations));
-		  jQuery.data(opt, key, null);
-	  }
-	}		
+    if (opt != null) {
+        if (jQuery.data(opt, key) == null) {
+            var filtered_relations = key + "_edges";
+            jQuery.data(opt, filtered_relations, graph.filterEdges(key));
+            jQuery.data(opt, key, true);
+        } else {
+            var filtered_relations = key + "_edges";
+            graph.mergeEdges(jQuery.data(opt, filtered_relations));
+            jQuery.data(opt, key, null);
+        }
+    }
 }
 
-$(document).ajaxSend(function(event, xhr, settings) {
+$(document).ajaxSend(function (event, xhr, settings) {
     function getCookie(name) {
         var cookieValue = null;
         if (document.cookie && document.cookie != '') {
@@ -187,6 +184,7 @@ $(document).ajaxSend(function(event, xhr, settings) {
         }
         return cookieValue;
     }
+
     function sameOrigin(url) {
         // url could be relative or scheme relative or absolute
         var host = document.location.host; // host + port
@@ -194,11 +192,11 @@ $(document).ajaxSend(function(event, xhr, settings) {
         var sr_origin = '//' + host;
         var origin = protocol + sr_origin;
         // Allow absolute or scheme relative URLs to same origin
-        return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
-            (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
-            // or any other URL that isn't scheme relative or absolute i.e relative.
-            !(/^(\/\/|http:|https:).*/.test(url));
+        return (url == origin || url.slice(0, origin.length + 1) == origin + '/') || (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+        // or any other URL that isn't scheme relative or absolute i.e relative.
+        !(/^(\/\/|http:|https:).*/.test(url));
     }
+
     function safeMethod(method) {
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
     }
@@ -212,212 +210,243 @@ $(document).ajaxSend(function(event, xhr, settings) {
 {% endif %}
 
 <script>
-	$(function() {
-	
-	  var $tab_title_input = $("#tab_title"),
-		$tab_content_input = $("#tab_content");
-    var tab_counter = 3;
-		
-		$("#unique_tab_id").html("Relationship Explorer");
-		
-		var $tabs = $( "#tabs" ).tabs();		 
-		
-		function loadTab(expId, expTitle) {
-			var new_canvas = "<canvas id='explorer'/" + "></canvas>";
-			$( "#tabs-3" ).html("");
-			
-			$( "#tabs-3" ).append( "<div class='container'><p class='left'><font size='4'><b>Experiment: " + expTitle + "</b></font>&nbsp;&nbsp;&nbsp;&nbsp;" + 
-			                       "<button id='back_exp'>Back to Experiments</button><button id='reload'>Reload Relationships</button><button id='savePNG'>Save as PNG</button></p>" +
-			                       "<p class='right'><button id='legend'>Legend</button><button id='help'>Help</button></p></div>" );
+	$(function () {
 
-      var div_width = window.innerWidth - 100;
-			var div_height = window.innerHeight - 250;						                       
-			var pos_left = div_width/2 - 50;
-			var pos_top = div_height/2;
-			
-			$( "#tabs-3" ).append( "<div id='loader2' class='loader2-invisible'><img style='position: absolute; left: "+pos_left+"px; top: "+pos_top+"px;'" + 
-			                       "src='{{ STATIC_URL }}jquery/ajax-loader.gif' alt='Loading'></div>" );                       			
-			$( "#tabs-3" ).append("<div id='map' style='height:" + div_height + "px; width:" + div_width + "px'></div>");
-			$( "#tabs-3" ).append( new_canvas );
-			$tabs.tabs('select', '#tabs-3');
-			
-			var canvas_path = "#tabs #tabs-3 #explorer";
-			
-			// Add OpenLayer for navigation			
-			var EPSG4326 = new OpenLayers.Projection("EPSG:4326");
-      var EPSG900913 = new OpenLayers.Projection("EPSG:900913");
-      var b = 20037508.34;       
-      var map = new OpenLayers.Map('map', {
-          controls: [
-              new OpenLayers.Control.Navigation(),
-              new OpenLayers.Control.PanZoomBar(),
-          ],
-       		maxExtent: new OpenLayers.Bounds(-1*b, -1*b, b, b),
-		      maxResolution: 156543.0399,				      
-		      units: 'm',
-		      projection: EPSG900913,
-		      displayProjection: EPSG4326,
-		      numZoomLevels: 5,
-      });                            		
-			
-			var graphLayer = new NodeGraph.Layer("NodeGraph", {'graph':graph, 'canvas':$(canvas_path), 'render_map':map});
-      var nobase = new OpenLayers.Layer("No Basemap",{isBaseLayer: true, 'displayInLayerSwitcher': true});
-      map.addLayers([graphLayer, nobase]);			
-      var initialZoom = 0;
-      map.zoomTo(initialZoom);          
-			
-			// Load relationship data from Fedora
-      var url = "http://localhost:8000/repo/experiments/" + expId + "/relationships/";
-      $('#loader2').removeClass('loader2-invisible');
-      $('#loader2').addClass('loader2-visible');      
-      $.getJSON(url, function(data) {
-          $('#loader2').addClass('loader2-invisible');
-          $('#loader2').removeClass('loader2-visible');
-          graph.loadData(data);	          
-      });
+	    var $tab_title_input = $("#tab_title"),
+	        $tab_content_input = $("#tab_content");
+	    var tab_counter = 3;
 
-			$("#unique_tab_id").html("Relationship Explorer: " + expTitle);
-				
-			/**************************************************
-      * Menu for filtering display
-      **************************************************/		 
-      
-      // use a django template to fill this in automatically?      
-      $.contextMenu({
-          // define which elements trigger this menu
-          selector: "#explorer",
-          // define the elements of the menu
-          items: {	    	    	
-            	all_process: {name: "Filter Processes", type:'checkbox', callback: filter},
-            	sep1: "---------",
-                all_objects: {name: "Filter Objects",  type:'checkbox', callback: filter},
-                sep2: "---------",
-                all_controllers: {name: "Filter Controllers", type:'checkbox', callback: filter},
-	          sep3: "---------",
-	          relationships_menu: {
-		          name: "Filter Relationships",				
-		          items: {
-			          all_relationships: {name: "All",  type:'checkbox', callback: filter_relationships},
-			          isMemberOf: {name: "isMemberOf",  type:'checkbox', callback: filter_relationships},
-			          used: {name: "used",  type:'checkbox', callback: filter_relationships},
-			          wasGeneratedBy: {name: "wasGeneratedBy",  type:'checkbox', callback: filter_relationships},
-			          wasDerivedFrom: {name: "wasDerivedFrom",  type:'checkbox', callback: filter_relationships},
-			          wasControlledBy: {name: "wasControlledBy",  type:'checkbox', callback: filter_relationships},
-			          wasTriggeredBy: {name: "wasTriggeredBy",  type:'checkbox', callback: filter_relationships}
-		          }
-	          },	        	       
-          },
-          events: {
-	        show: function(opt) {					
-		        $.each(opt.inputs, function(key, item) {					
-			        item.selected = jQuery.data(opt, key) ? true : null;										
-		        });				
-	        }
-        }
-      });        
-      
-      $( "#savePNG" )
-			.button()
-			.click(function() {
-			    var save_canvas = document.getElementById("explorer");
-          var img    = save_canvas.toDataURL("image/png");        
-          var url = "http://localhost:8000/repo/experiments/" + expId + "/savePNG/"
-          var download_url = "http://localhost:8000/repo/experiments/" + expId + "/getPNG/"          
-          $.post(url, {data: img}, function () {
-              window.location.href =  download_url});        
-      });
-      
-      $( "#reload" )
-			.button()
-			.click(function() {
+	    $("#unique_tab_id").html("Relationship Explorer");
+
+	    var $tabs = $("#tabs").tabs();
+
+	    function loadTab(expId, expTitle) {
+	        var new_canvas = "<canvas id='explorer'/" + "></canvas>";
+	        $("#tabs-3").html("");
+
+	        $("#tabs-3").append("<div class='container'><p class='left'><font size='4'><b>Experiment: " + expTitle + "</b></font>&nbsp;&nbsp;&nbsp;&nbsp;" 
+	                              + "<button id='back_exp'>Back to Experiments</button><button id='reload'>Reload Relationships</button>" 
+	                              + "<button id='savePNG'>Save as PNG</button></p>"
+	                             + "<p class='right'><button id='legend'>Legend</button><button id='help'>Help</button></p></div>");
+
+	        var div_width = window.innerWidth - 100;
+	        var div_height = window.innerHeight - 250;
+	        var pos_left = div_width / 2 - 50;
+	        var pos_top = div_height / 2;
+
+	        $("#tabs-3").append("<div id='loader2' class='loader2-invisible'><img style='position: absolute; left: " 
+	                            + pos_left + "px; top: " + pos_top + "px;'" + "src='{{ STATIC_URL }}jquery/ajax-loader.gif' alt='Loading'></div>");
+	        $("#tabs-3").append("<div id='map' style='height:" + div_height + "px; width:" + div_width + "px'></div>");
+	        $("#tabs-3").append(new_canvas);
+	        $tabs.tabs('select', '#tabs-3');
+
+	        var canvas_path = "#tabs #tabs-3 #explorer";
+
+	        // Add OpenLayer for navigation			
+	        var EPSG4326 = new OpenLayers.Projection("EPSG:4326");
+	        var EPSG900913 = new OpenLayers.Projection("EPSG:900913");
+	        var b = 20037508.34;
+	        var map = new OpenLayers.Map('map', {
+	            controls: [
+	            new OpenLayers.Control.Navigation(), new OpenLayers.Control.PanZoomBar(), ],
+	            maxExtent: new OpenLayers.Bounds(-1 * b, -1 * b, b, b),
+	            maxResolution: 156543.0399,
+	            units: 'm',
+	            projection: EPSG900913,
+	            displayProjection: EPSG4326,
+	            numZoomLevels: 5,
+	        });
+
+	        var graphLayer = new NodeGraph.Layer("NodeGraph", {
+	            'graph': graph,
+	            'canvas': $(canvas_path),
+	            'render_map': map
+	        });
+	        var nobase = new OpenLayers.Layer("No Basemap", {
+	            isBaseLayer: true,
+	            'displayInLayerSwitcher': true
+	        });
+	        map.addLayers([graphLayer, nobase]);
+	        var initialZoom = 0;
+	        map.zoomTo(initialZoom);
+
+	        // Load relationship data from Fedora
 	        var url = "http://localhost:8000/repo/experiments/" + expId + "/relationships/";
 	        $('#loader2').removeClass('loader2-invisible');
-          $('#loader2').addClass('loader2-visible');
-	        $.getJSON(url, function(data) {
-	          $('#loader2').addClass('loader2-invisible');
-            $('#loader2').removeClass('loader2-visible');
-	          graph.clearGraph();
-	          graph.loadData(data);	          
-	        });	        
-			});
-      
-      $( "#back_exp" )
-			.button()
-			.click(function() {
-          $("#unique_tab_id").html("Relationship Explorer");
-          $( "#tabs-3" ).html("<h2 id='note'>Please select an experiment to view it's relationships.</h2>");
-          $("#dialog").dialog('close');
-          $tabs.tabs('select', '#tabs-2');
-			});
-			
-			$( "#help" )
-			.button()
-			.click(function() {
-          $("#help-dialog").dialog('close');
-          $("#help-dialog").dialog({
-            title: "Help", 
-            height: 500, 
-            width: 300,
-            position: [window.innerWidth - 350, 175]
-        })
-			});
-			
-			$( "#legend" )
-			.button()
-			.click(function() {
-			    $("#legend-dialog").dialog('close');
-          $("#legend-dialog").dialog({
-            title: "Legend", 
-            height: 400, 
-            width: 325,
-            position: [window.innerWidth - 690, 175]
-        })
-			});      
-		}    
- 
-		$( "#add_tab_1" )
-			.button()
-			.click(function() {
-				loadTab($( "#add_tab_1" ).attr("value"), "IgyFc34");				
-			});
-		
-	  $( "#add_tab_2" )
-			.button()
-			.click(function() {
-				loadTab($( "#add_tab_2" ).attr("value"), "baa5d5");
-			});		
-		
-		$( "#genAggregation_1" )
-			.button()
-			.click(function() {
-				var url = "http://localhost:8000/repo/experiments/" + $( "#add_tab_1" ).attr("value") + "/ORE/";
-	      $.get(url, function() {
-	          $( "#ORE-dialog" ).dialog({
-			        modal: true,
-			        buttons: {
-				        Ok: function() {
-					        $( this ).dialog( "close" );
-				        }
-			        }
-		        });
+	        $('#loader2').addClass('loader2-visible');
+	        $.getJSON(url, function (data) {
+	            $('#loader2').addClass('loader2-invisible');
+	            $('#loader2').removeClass('loader2-visible');
+	            graph.loadData(data);
 	        });
-			});
 
-		$( "#genAggregation_2" )
-			.button()
-			.click(function() {
-				var url = "http://localhost:8000/repo/experiments/" + $( "#add_tab_2" ).attr("value") + "/ORE/";
-	      $.get(url, function() {
-	          $( "#ORE-dialog" ).dialog({
-			        modal: true,
-			        buttons: {
-				        Ok: function() {
-					        $( this ).dialog( "close" );
-				        }
-			        }
-		        });
+	        $("#unique_tab_id").html("Relationship Explorer: " + expTitle);
+
+	        /**************************************************
+	         * Menu for filtering display
+	         **************************************************/
+
+	        // use a django template to fill this in automatically?      
+	        $.contextMenu({
+	            // define which elements trigger this menu
+	            selector: "#explorer",
+	            // define the elements of the menu
+	            items: {
+	                all_process: {
+	                    name: "Filter Processes",
+	                    type: 'checkbox',
+	                    callback: filter
+	                },
+	                sep1: "---------",
+	                all_objects: {
+	                    name: "Filter Objects",
+	                    type: 'checkbox',
+	                    callback: filter
+	                },
+	                sep2: "---------",
+	                all_controllers: {
+	                    name: "Filter Controllers",
+	                    type: 'checkbox',
+	                    callback: filter
+	                },
+	                sep3: "---------",
+	                relationships_menu: {
+	                    name: "Filter Relationships",
+	                    items: {
+	                        all_relationships: {
+	                            name: "All",
+	                            type: 'checkbox',
+	                            callback: filter_relationships
+	                        },
+	                        isMemberOf: {
+	                            name: "isMemberOf",
+	                            type: 'checkbox',
+	                            callback: filter_relationships
+	                        },
+	                        used: {
+	                            name: "used",
+	                            type: 'checkbox',
+	                            callback: filter_relationships
+	                        },
+	                        wasGeneratedBy: {
+	                            name: "wasGeneratedBy",
+	                            type: 'checkbox',
+	                            callback: filter_relationships
+	                        },
+	                        wasDerivedFrom: {
+	                            name: "wasDerivedFrom",
+	                            type: 'checkbox',
+	                            callback: filter_relationships
+	                        },
+	                        wasControlledBy: {
+	                            name: "wasControlledBy",
+	                            type: 'checkbox',
+	                            callback: filter_relationships
+	                        },
+	                        wasTriggeredBy: {
+	                            name: "wasTriggeredBy",
+	                            type: 'checkbox',
+	                            callback: filter_relationships
+	                        }
+	                    }
+	                },
+	            },
+	            events: {
+	                show: function (opt) {
+	                    $.each(opt.inputs, function (key, item) {
+	                        item.selected = jQuery.data(opt, key) ? true : null;
+	                    });
+	                }
+	            }
 	        });
-			});							
+
+	        $("#savePNG").button().click(function () {
+	            var save_canvas = document.getElementById("explorer");
+	            var img = save_canvas.toDataURL("image/png");
+	            var url = "http://localhost:8000/repo/experiments/" + expId + "/savePNG/"
+	            var download_url = "http://localhost:8000/repo/experiments/" + expId + "/getPNG/"
+	            $.post(url, {
+	                data: img
+	            }, function () {
+	                window.location.href = download_url
+	            });
+	        });
+
+	        $("#reload").button().click(function () {
+	            var url = "http://localhost:8000/repo/experiments/" + expId + "/relationships/";
+	            $('#loader2').removeClass('loader2-invisible');
+	            $('#loader2').addClass('loader2-visible');
+	            $.getJSON(url, function (data) {
+	                $('#loader2').addClass('loader2-invisible');
+	                $('#loader2').removeClass('loader2-visible');
+	                graph.clearGraph();
+	                graph.loadData(data);
+	            });
+	        });
+
+	        $("#back_exp").button().click(function () {
+	            $("#unique_tab_id").html("Relationship Explorer");
+	            $("#tabs-3").html("<h2 id='note'>Please select an experiment to view it's relationships.</h2>");
+	            $("#dialog").dialog('close');
+	            $tabs.tabs('select', '#tabs-2');
+	        });
+
+	        $("#help").button().click(function () {
+	            $("#help-dialog").dialog('close');
+	            $("#help-dialog").dialog({
+	                title: "Help",
+	                height: 500,
+	                width: 300,
+	                position: [window.innerWidth - 350, 175]
+	            })
+	        });
+
+	        $("#legend").button().click(function () {
+	            $("#legend-dialog").dialog('close');
+	            $("#legend-dialog").dialog({
+	                title: "Legend",
+	                height: 400,
+	                width: 325,
+	                position: [window.innerWidth - 690, 175]
+	            })
+	        });
+	    }
+
+	    $("#add_tab_1").button().click(function () {
+	        loadTab($("#add_tab_1").attr("value"), "IgyFc34");
+	    });
+
+	    $("#add_tab_2").button().click(function () {
+	        loadTab($("#add_tab_2").attr("value"), "baa5d5");
+	    });
+
+	    $("#genAggregation_1").button().click(function () {
+	        var url = "http://localhost:8000/repo/experiments/" + $("#add_tab_1").attr("value") + "/ORE/";
+	        $.get(url, function () {
+	            $("#ORE-dialog").dialog({
+	                modal: true,
+	                buttons: {
+	                    Ok: function () {
+	                        $(this).dialog("close");
+	                    }
+	                }
+	            });
+	        });
+	    });
+
+	    $("#genAggregation_2").button().click(function () {
+	        var url = "http://localhost:8000/repo/experiments/" + $("#add_tab_2").attr("value") + "/ORE/";
+	        $.get(url, function () {
+	            $("#ORE-dialog").dialog({
+	                modal: true,
+	                buttons: {
+	                    Ok: function () {
+	                        $(this).dialog("close");
+	                    }
+	                }
+	            });
+	        });
+	    });
 	});
 </script>
 
