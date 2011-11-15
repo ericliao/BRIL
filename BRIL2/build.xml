@@ -454,9 +454,19 @@
 		<!-- contains all library dependencies -->
 		<mkdir dir="${dist.home}/lib" />
 		<mkdir dir="${dist.home}/config" />
+		<mkdir dir="${dist.home}/tools" />
+		<mkdir dir="${dist.home}/xml" />
 		<copy todir="${dist.home}"  >
 			<fileset dir="${build.home}" includes="${jar.name}" />
 		</copy>
+		
+		<copy todir="${dist.home}/tools">			
+			<fileset dir="${fits.home}/tools" />
+		</copy>
+		<copy todir="${dist.home}/xml">			
+			<fileset dir="${fits.home}/xml" />
+		</copy>
+		
 		<copy todir="${dist.home}/lib" filtering="off">
 			<flattenmapper />
 			<fileset dir="${build.home}/jar" includes="**/*.jar" />
