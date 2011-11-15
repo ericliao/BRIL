@@ -1,152 +1,152 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="bril-makejars" default="usage">
-<property file="build.properties" />
+	<property file="build.properties" />
 
-<!-- Compiler options -->
-	    <property name="compiler.debug" value="on" />
-	    <property name="compiler.generate.no.warnings" value="off" />
-	    <property name="compiler.args" value="" />
-		<property name="compiler.max.memory" value="512m" />
-	    <property name="compiler.args.core" value="${compiler.args}" />
-		<property name="output.classes" value="${output.basedir}/classes/" />
-	    <property name="output.javadoc" value="war/javadoc/" />
-	   
-	    <patternset id="ignored.files">
-			<exclude name="**/CVS/**" />
-			<exclude name="**/SCCS/**" />
-			<exclude name="**/RCS/**" />
-			<exclude name="**/rcs/**" />
-			<exclude name="**/.DS_Store/**" />
-			<exclude name="**/.svn/**" />
-		</patternset>
-		<patternset id="compiler.resources">
-			<include name="**/*.properties" />
-			<include name="**/*.xml" />
-			<include name="**/?*.gif" />
-			<include name="**/?*.png" />
-			<include name="**/?*.jpeg" />
-			<include name="**/?*.jpg" />
-			<include name="**/?*.html" />
-			<include name="**/?*.dtd" />
-			<include name="**/?*.tld" />
-			<include name="**/?*.zip" />
-			<!--<include name="**/?*.wsdd" />-->
-		</patternset>
+	<!-- Compiler options -->
+	<property name="compiler.debug" value="on" />
+	<property name="compiler.generate.no.warnings" value="off" />
+	<property name="compiler.args" value="" />
+	<property name="compiler.max.memory" value="512m" />
+	<property name="compiler.args.core" value="${compiler.args}" />
+	<property name="output.classes" value="${output.basedir}/classes/" />
+	<property name="output.javadoc" value="war/javadoc/" />
 
-	<path id="library.jars.classpath">      		
-		<pathelement location="${lib.home}/dom4j-1.6.1.jar" />	
+	<patternset id="ignored.files">
+		<exclude name="**/CVS/**" />
+		<exclude name="**/SCCS/**" />
+		<exclude name="**/RCS/**" />
+		<exclude name="**/rcs/**" />
+		<exclude name="**/.DS_Store/**" />
+		<exclude name="**/.svn/**" />
+	</patternset>
+	<patternset id="compiler.resources">
+		<include name="**/*.properties" />
+		<include name="**/*.xml" />
+		<include name="**/?*.gif" />
+		<include name="**/?*.png" />
+		<include name="**/?*.jpeg" />
+		<include name="**/?*.jpg" />
+		<include name="**/?*.html" />
+		<include name="**/?*.dtd" />
+		<include name="**/?*.tld" />
+		<include name="**/?*.zip" />
+		<!--<include name="**/?*.wsdd" />-->
+	</patternset>
+
+	<path id="library.jars.classpath">
+		<pathelement location="${lib.home}/dom4j-1.6.1.jar" />
 		<pathelement location="${lib.home}/hibernate3.jar" />
 		<pathelement location="${lib.home}/jetty-util-7.0.0.pre5.jar" />
 		<pathelement location="${lib.home}/jrdf-0.5.6.jar" />
-		<pathelement location="${lib.home}/junit-4.8.1.jar" />		
-		<pathelement location="${lib.home}/log4j-1.2.16.jar" />		
+		<pathelement location="${lib.home}/junit-4.8.1.jar" />
+		<pathelement location="${lib.home}/log4j-1.2.16.jar" />
 		<pathelement location="${lib.home}/soapi-characteriser.jar" />
 		<pathelement location="${lib.home}/spring.jar" />
 		<pathelement location="${lib.home}/xercesImpl.jar" />
 		<pathelement location="${lib.home}/xml-apis.jar	" />
 		<pathelement location="${lib.home}/xmlpull_1_1_3_4c.jar" />
-		<pathelement location="${lib.home}/xpp3-1.1.3.3.jar" />							
+		<pathelement location="${lib.home}/xpp3-1.1.3.3.jar" />
 
 		<pathelement location="${axis.jars.dir}/activation.jar" />
 		<pathelement location="${axis.jars.dir}/axis.jar" />
 		<pathelement location="${axis.jars.dir}/axis-ant.jar" />
 		<pathelement location="${axis.jars.dir}/commons-discovery-0.2.jar" />
 		<pathelement location="${axis.jars.dir}/jaxrpc.jar" />
-		<pathelement location="${axis.jars.dir}/saaj.jar" />		
-		<pathelement location="${axis.jars.dir}/wsdl4j-1.5.1.jar" />		
-		
+		<pathelement location="${axis.jars.dir}/saaj.jar" />
+		<pathelement location="${axis.jars.dir}/wsdl4j-1.5.1.jar" />
+
 		<pathelement location="${activemq.jars.dir}/activemq-core-5.3.0.jar" />
 		<pathelement location="${activemq.jars.dir}/geronimo-j2ee-connector_1.5_spec-2.0.0.jar" />
 		<pathelement location="${activemq.jars.dir}/geronimo-j2ee-management_1.0_spec-1.0.jar" />
-		<pathelement location="${activemq.jars.dir}/geronimo-jms_1.1_spec-1.1.1.jar" />			
-		<pathelement location="${activemq.jars.dir}/geronimo-jta_1.0.1B_spec-1.0.1.jar" />				
-		<pathelement location="${activemq.jars.dir}/mysql-connector-java-5.0.8-bin.jar" />	
-		
+		<pathelement location="${activemq.jars.dir}/geronimo-jms_1.1_spec-1.1.1.jar" />
+		<pathelement location="${activemq.jars.dir}/geronimo-jta_1.0.1B_spec-1.0.1.jar" />
+		<pathelement location="${activemq.jars.dir}/mysql-connector-java-5.0.8-bin.jar" />
+
 		<pathelement location="${commons.jars.dir}/commons-codec-1.5.jar" />
 		<pathelement location="${commons.jars.dir}/commons-collections-3.2.1.jar" />
-		<pathelement location="${commons.jars.dir}/commons-configuration-1.6.jar" />		
-		<pathelement location="${commons.jars.dir}/commons-httpclient-3.1.jar" />	
+		<pathelement location="${commons.jars.dir}/commons-configuration-1.6.jar" />
+		<pathelement location="${commons.jars.dir}/commons-httpclient-3.1.jar" />
 		<pathelement location="${commons.jars.dir}/commons-io-2.0.1.jar" />
-		<pathelement location="${commons.jars.dir}/commons-io-2.0.1-sources.jar" />		
+		<pathelement location="${commons.jars.dir}/commons-io-2.0.1-sources.jar" />
 		<pathelement location="${commons.jars.dir}/commons-lang-2.6.jar" />
-		<pathelement location="${commons.jars.dir}/commons-logging-4.0.6.jar" />				
-		
-		<pathelement location="${sword.jars.dir}/trippi-1.1.2-core.jar" />		
+		<pathelement location="${commons.jars.dir}/commons-logging-4.0.6.jar" />
+
+		<pathelement location="${sword.jars.dir}/trippi-1.1.2-core.jar" />
 		<pathelement location="${sword.jars.dir}/trippi-1.1.2-mptstore.jar" />
-		
+
 		<pathelement location="${fedora.jars.dir}/fedora-api-v.02.jar" />
-		<pathelement location="${fedora.jars.dir}/fcrepo-client-admin-3.4.2.jar" />		
+		<pathelement location="${fedora.jars.dir}/fcrepo-client-admin-3.4.2.jar" />
 		<pathelement location="${fedora.jars.dir}/fcrepo-common-3.4.2.jar" />
-		<pathelement location="${fedora.jars.dir}/fcrepo-server-3.4.2.jar" />				
-								
+		<pathelement location="${fedora.jars.dir}/fcrepo-server-3.4.2.jar" />
+
 		<pathelement location="${jre6.jars.dir}/resources.jar" />
 		<pathelement location="${jre6.jars.dir}/rt.jar" />
 		<pathelement location="${jre6.jars.dir}/jsee.jar" />
-			
+
 		<pathelement location="${fits.jars.dir}/bcmail-jdk14-132.jar" />
-		<pathelement location="${fits.jars.dir}/commons-cli-1.1.jar" />		
+		<pathelement location="${fits.jars.dir}/commons-cli-1.1.jar" />
 		<pathelement location="${fits.jars.dir}/fast-md5.jar" />
-		<pathelement location="${fits.jars.dir}/fits.jar" />				
-		<pathelement location="${fits.jars.dir}/jaxen-core.jar" />		
-		<pathelement location="${fits.jars.dir}/jaxen-jdom.jar" />		
-    	<pathelement location="${fits.jars.dir}/jdom.jar" />		
-				
-		<pathelement location="${fits.jars.dir}/ots-schemas.jar" />		
-		<pathelement location="${fits.jars.dir}/saxon9-dom.jar" />		
+		<pathelement location="${fits.jars.dir}/fits.jar" />
+		<pathelement location="${fits.jars.dir}/jaxen-core.jar" />
+		<pathelement location="${fits.jars.dir}/jaxen-jdom.jar" />
+		<pathelement location="${fits.jars.dir}/jdom.jar" />
+
+		<pathelement location="${fits.jars.dir}/ots-schemas.jar" />
+		<pathelement location="${fits.jars.dir}/saxon9-dom.jar" />
 		<pathelement location="${fits.jars.dir}/saxon9.jar" />
-    	<pathelement location="${fits.jars.dir}/saxon9-jdom.jar" />		
-		<pathelement location="${fits.jars.dir}/saxpath.jar" />		
+		<pathelement location="${fits.jars.dir}/saxon9-jdom.jar" />
+		<pathelement location="${fits.jars.dir}/saxpath.jar" />
 		<pathelement location="${fits.jars.dir}/serializer.jar" />
 		<!--
 		<pathelement location="${fits.jars.dir}/staxmate-2.0.0.jar" />
 		<pathelement location="${fits.jars.dir}/stax2-api-3.1.1.jar" />		
     	<pathelement location="${fits.jars.dir}/woodstox-core-lgpl-4.1.2.jar" /> -->
 		<pathelement location="${fits.jars.dir}/xmlunit-1.2.jar" />
-		
-		<pathelement location="${droid.jars.dir}/AllLibraries.jar" />				
-		<pathelement location="${droid.jars.dir}/droid.jar" />						
-		<pathelement location="${droid.jars.dir}/jaxb-api.jar" />				
-		<pathelement location="${droid.jars.dir}/jaxb-impl.jar" />						
-		<pathelement location="${droid.jars.dir}/jh.jar" />								
-		<pathelement location="${droid.jars.dir}/jsr173_1.0_api.jar" />				
-		<pathelement location="${droid.jars.dir}/looks-1.2.2.jar" />						
-		<pathelement location="${droid.jars.dir}/mail.jar" />				
-		<pathelement location="${droid.jars.dir}/soap.jar" />						
-		<pathelement location="${droid.jars.dir}/xml-apis.jar" />								
-		
-		<pathelement location="${jhove.jars.dir}/JhoveApp.jar" />						
-		<pathelement location="${jhove.jars.dir}/jhove-handler.jar" />								
-		<pathelement location="${jhove.jars.dir}/jhove.jar" />						
-		<pathelement location="${jhove.jars.dir}/jhove-module.jar" />								
-				
-		<pathelement location="${nzmetool.jars.dir}/bcprov-jdk14-132.jar" />						
-		<pathelement location="${nzmetool.jars.dir}/bfj220.jar" />								
-		<pathelement location="${nzmetool.jars.dir}/metadata.jar" />						
-		<pathelement location="${nzmetool.jars.dir}/PDFBox-0.7.3.jar" />										
+
+		<pathelement location="${droid.jars.dir}/AllLibraries.jar" />
+		<pathelement location="${droid.jars.dir}/droid.jar" />
+		<pathelement location="${droid.jars.dir}/jaxb-api.jar" />
+		<pathelement location="${droid.jars.dir}/jaxb-impl.jar" />
+		<pathelement location="${droid.jars.dir}/jh.jar" />
+		<pathelement location="${droid.jars.dir}/jsr173_1.0_api.jar" />
+		<pathelement location="${droid.jars.dir}/looks-1.2.2.jar" />
+		<pathelement location="${droid.jars.dir}/mail.jar" />
+		<pathelement location="${droid.jars.dir}/soap.jar" />
+		<pathelement location="${droid.jars.dir}/xml-apis.jar" />
+
+		<pathelement location="${jhove.jars.dir}/JhoveApp.jar" />
+		<pathelement location="${jhove.jars.dir}/jhove-handler.jar" />
+		<pathelement location="${jhove.jars.dir}/jhove.jar" />
+		<pathelement location="${jhove.jars.dir}/jhove-module.jar" />
+
+		<pathelement location="${nzmetool.jars.dir}/bcprov-jdk14-132.jar" />
+		<pathelement location="${nzmetool.jars.dir}/bfj220.jar" />
+		<pathelement location="${nzmetool.jars.dir}/metadata.jar" />
+		<pathelement location="${nzmetool.jars.dir}/PDFBox-0.7.3.jar" />
 		<pathelement location="${nzmetool.jars.dir}/poi-2.5.1-final-20040804.jar" />
-		
-		<pathelement location="${adapters.jars.dir}/bmp_adapter_1_0.jar" />						
-		<pathelement location="${adapters.jars.dir}/excel_adapter_1_0.jar" />								
-		<pathelement location="${adapters.jars.dir}/gif_adapter_1_0.jar" />						
-		<pathelement location="${adapters.jars.dir}/html_adapter_1_0.jar" />										
-		<pathelement location="${adapters.jars.dir}/jpg_adapter_1_1.jar" />								
-		<pathelement location="${adapters.jars.dir}/mp3_adapter_1_0.jar" />						
-		<pathelement location="${adapters.jars.dir}/msword_adapter_2_0.jar" />								
-		<pathelement location="${adapters.jars.dir}/msworks_adapter_1_0.jar" />						
-		<pathelement location="${adapters.jars.dir}/openoffice_adapter_1_0.jar" />						
-		<pathelement location="${adapters.jars.dir}/pdf_adapter_1_0.jar" />								
-		<pathelement location="${adapters.jars.dir}/pdfbox_adapter_1_0.jar" />						
-		<pathelement location="${adapters.jars.dir}/powerpoint_adapter_1_0.jar" />										
-		<pathelement location="${adapters.jars.dir}/tiff_adapter_1_0.jar" />								
-		<pathelement location="${adapters.jars.dir}/wave_adapter_1_0.jar" />						
-		<pathelement location="${adapters.jars.dir}/wordperfect_adapter_1_0.jar" />								
-		<pathelement location="${adapters.jars.dir}/xml_adapter_1_0.jar" />																
-		
+
+		<pathelement location="${adapters.jars.dir}/bmp_adapter_1_0.jar" />
+		<pathelement location="${adapters.jars.dir}/excel_adapter_1_0.jar" />
+		<pathelement location="${adapters.jars.dir}/gif_adapter_1_0.jar" />
+		<pathelement location="${adapters.jars.dir}/html_adapter_1_0.jar" />
+		<pathelement location="${adapters.jars.dir}/jpg_adapter_1_1.jar" />
+		<pathelement location="${adapters.jars.dir}/mp3_adapter_1_0.jar" />
+		<pathelement location="${adapters.jars.dir}/msword_adapter_2_0.jar" />
+		<pathelement location="${adapters.jars.dir}/msworks_adapter_1_0.jar" />
+		<pathelement location="${adapters.jars.dir}/openoffice_adapter_1_0.jar" />
+		<pathelement location="${adapters.jars.dir}/pdf_adapter_1_0.jar" />
+		<pathelement location="${adapters.jars.dir}/pdfbox_adapter_1_0.jar" />
+		<pathelement location="${adapters.jars.dir}/powerpoint_adapter_1_0.jar" />
+		<pathelement location="${adapters.jars.dir}/tiff_adapter_1_0.jar" />
+		<pathelement location="${adapters.jars.dir}/wave_adapter_1_0.jar" />
+		<pathelement location="${adapters.jars.dir}/wordperfect_adapter_1_0.jar" />
+		<pathelement location="${adapters.jars.dir}/xml_adapter_1_0.jar" />
+
 	</path>
 	<path id="bootclasspath">
 		<!--<pathelement location="src" />-->
 	</path>
-	
+
 	<path id="brilclasspath">
 		<path refid="library.jars.classpath" />
 		<!--<pathelement path="/home/eliao/fits/xml/nlnz" />-->
@@ -156,321 +156,322 @@
 		</fileset> -->
 	</path>
 
-    <target name="usage" description="Display usage information.">
-        <echo message="" />
-        <echo message="${ant.project.name} build file" />
-        <echo message="-----------------------------------" />
-        <echo message="" />
-        <echo message="  Execute 'ant -projecthelp' for help on this build file (ie: see the available targets)." />
-        <echo message="  Execute 'ant -help' for Ant help." />
-        <echo message="" />
-    </target>
-	
-	<target name="clean" description="Cleanup.">
-	        <!--<delete dir="${output.basedir}" />-->
-	        <delete includeemptydirs="true">
-	            <fileset dir="${build.home}" includes="**/*" excludes="**/CVS/**"/>
-	        	<fileset dir="${dist.home}" includes="**/*" excludes="**/CVS/**"/>
-	        </delete>
+	<target name="usage" description="Display usage information.">
+		<echo message="" />
+		<echo message="${ant.project.name} build file" />
+		<echo message="-----------------------------------" />
+		<echo message="" />
+		<echo message="  Execute 'ant -projecthelp' for help on this build file (ie: see the available targets)." />
+		<echo message="  Execute 'ant -help' for Ant help." />
+		<echo message="" />
 	</target>
-	
+
+	<target name="clean" description="Cleanup.">
+		<!--<delete dir="${output.basedir}" />-->
+		<delete includeemptydirs="true">
+			<fileset dir="${build.home}" includes="**/*" excludes="**/CVS/**"/>
+			<fileset dir="${dist.home}" includes="**/*" excludes="**/CVS/**"/>
+		</delete>
+	</target>
+
 	<target name="compile" depends="" description="Compile all code.">
-			<!-- Compile -->
-			<echo>Building</echo>
-			<mkdir dir="${output.basedir}" />
-			<mkdir dir="${output.classes}" />
-			<javac destdir="${output.classes}" 
+		<!-- Compile -->
+		<echo>Building</echo>
+		<mkdir dir="${output.basedir}" />
+		<mkdir dir="${output.classes}" />
+		<javac destdir="${output.classes}" 
 				debug="${compiler.debug}" 
 				nowarn="${compiler.generate.no.warnings}" 
 				memoryMaximumSize="${compiler.max.memory}" 
 				fork="false"
 				executable="/usr/lib/jvm/java-6-sun/bin/javac"
 				compiler="javac1.6" >
-				
-			<!-- <compilerarg line="${compiler.args}" /> -->
-			  <classpath refid="brilclasspath" />
-			    <src path="src" />
-		    </javac>
-	        <!-- Copy some necessary file (eg .properties files) -->
-	        <copy todir="${output.classes}">
-				<fileset dir="src">
-					<patternset refid="compiler.resources" />
-					<type type="file" />
-				</fileset>
-	        	<fileset dir="config">
-	        		<patternset refid="compiler.resources" />
-	        		<type type="file" />
-	        	</fileset>
-				<fileset dir="${nlnz.dir}">
-					<patternset refid="compiler.resources" />
-					<type type="file" />
-				</fileset>
-			</copy>
-		</target>
-	
-	 <fileset id="config" dir="${build.home}/classes">
-	        <include name="**/*.properties"/>
-	        <include name="**/*.xml"/>
-	    </fileset>
 
-    <!-- Generates the jar files. -->
-    <target name="all-jars" depends="compile" description="Create the jar files of Bril components.">    	
-    	
-    
-    	
-    	<!-- put the (compiles classes) jars in subdirectories, so we have
+			<!-- <compilerarg line="${compiler.args}" /> -->
+			<classpath refid="brilclasspath" />
+			<src path="src" />
+		</javac>
+		<!-- Copy some necessary file (eg .properties files) -->
+		<copy todir="${output.classes}">
+			<fileset dir="src">
+				<patternset refid="compiler.resources" />
+				<type type="file" />
+			</fileset>
+			<fileset dir="config">
+				<patternset refid="compiler.resources" />
+				<type type="file" />
+			</fileset>
+			<fileset dir="${nlnz.dir}">
+				<patternset refid="compiler.resources" />
+				<type type="file" />
+			</fileset>
+		</copy>
+	</target>
+
+	<fileset id="config" dir="${build.home}/classes">
+		<include name="**/*.properties"/>
+		<include name="**/*.xml"/>
+	</fileset>
+
+	<!-- Generates the jar files. -->
+	<target name="all-jars" depends="compile" description="Create the jar files of Bril components.">
+
+
+
+		<!-- put the (compiles classes) jars in subdirectories, so we have
     	        jar/*.jar
     	        ... -->
-    	
-    	<mkdir dir="${output.basedir}/jar/" />
-        <echo message="Create Bril jars and put in ${build.home}/jar/ directory" />  	
- 	
-    	 <jar destfile="${output.basedir}/jar/bril-SIPProcessor.jar" basedir="${output.classes}">	
-    	 	<include name="uk/ac/kcl/cerch/bril/sip/**" />
-    	 </jar>  
-    	 <jar destfile="${output.basedir}/jar/bril-components.jar" basedir="${output.classes}">	
-    	    
-    	  	<include name="uk/ac/kcl/cerch/bril/common/**" />   	    	          	 
-    	 	<include name="uk/ac/kcl/cerch/bril/characteriser/**" />
-    	 	<include name="uk/ac/kcl/cerch/bril/fileformat/**" />
-    	 	<include name="uk/ac/kcl/cerch/bril/relationship/**" />
-    	 	<include name="uk/ac/kcl/cerch/bril/objectstore/**" />
-    	 	<include name="${build.home}/**/bril.properties" />
-    	 	<include name="${build.home}/**/bril.xml" />
-    	 	<include name="${build.home}/**/config-fedora.xml" />			
-    	 </jar> 
-    	 <jar destfile="${output.basedir}/jar/crystallography.jar" basedir="${output.classes}">	
-    	          <include name="uk/ac/kcl/cerch/bril/ccp4/**" />
-    	        	
-    	 </jar> 
-    	<jar destfile="${output.basedir}/jar/soapi-objectstore.jar" basedir="${output.classes}">	
-    	   	          <include name="uk/ac/kcl/cerch/soapi/**" />
-    	              <include name="uk/ac/kcl/cerch/soapi/**" />
-   		              <include name="uk/ac/kcl/cerch/soapi/**" />              
-   		              <include name="uk/ac/kcl/cerch/soapi/**" />   		
-   		              <exclude name="uk/ac/kcl/cerch/soapi/test/**" />  		           
-    	</jar> 
-        <jar destfile="${output.basedir}/jar/fedora-utils.jar" basedir="${output.classes}">	
-    	    	          <include name="fedora/utilities/**" />
-    	</jar> 
-   	
-    	
-    </target>
-	
+
+		<mkdir dir="${output.basedir}/jar/" />
+		<echo message="Create Bril jars and put in ${build.home}/jar/ directory" />
+
+		<jar destfile="${output.basedir}/jar/bril-SIPProcessor.jar" basedir="${output.classes}">
+			<include name="uk/ac/kcl/cerch/bril/sip/**" />
+		</jar>
+		<jar destfile="${output.basedir}/jar/bril-components.jar" basedir="${output.classes}">
+
+			<include name="uk/ac/kcl/cerch/bril/common/**" />
+			<include name="uk/ac/kcl/cerch/bril/characteriser/**" />
+			<include name="uk/ac/kcl/cerch/bril/fileformat/**" />
+			<include name="uk/ac/kcl/cerch/bril/relationship/**" />
+			<include name="uk/ac/kcl/cerch/bril/objectstore/**" />
+			<include name="${build.home}/**/bril.properties" />
+			<include name="${build.home}/**/bril.xml" />
+			<include name="${build.home}/**/config-fedora.xml" />
+		</jar>
+		<jar destfile="${output.basedir}/jar/crystallography.jar" basedir="${output.classes}">
+			<include name="uk/ac/kcl/cerch/bril/ccp4/**" />
+
+		</jar>
+		<jar destfile="${output.basedir}/jar/soapi-objectstore.jar" basedir="${output.classes}">
+			<include name="uk/ac/kcl/cerch/soapi/**" />
+			<include name="uk/ac/kcl/cerch/soapi/**" />
+			<include name="uk/ac/kcl/cerch/soapi/**" />
+			<include name="uk/ac/kcl/cerch/soapi/**" />
+			<exclude name="uk/ac/kcl/cerch/soapi/test/**" />
+		</jar>
+		<jar destfile="${output.basedir}/jar/fedora-utils.jar" basedir="${output.classes}">
+			<include name="fedora/utilities/**" />
+		</jar>
+
+
+	</target>
+
 	<target name="jar" depends="all-jars" description="Create jar of the Auto-deposit queue reader">
-		 <echo message="Create executable ${jar.name}:- Auto-deposit Queue Reader" />  	
-		 	
-	        <property name="version.num" value="1.0"/>
-	        <buildnumber file="build.num"/>
-	        <tstamp>
-	    	 <format property="TODAY" pattern ="yyyy-MM-dd HH:mm:ss" />
-	    	</tstamp>
+		<echo message="Create executable ${jar.name}:- Auto-deposit Queue Reader" />
+
+		<property name="version.num" value="1.0"/>
+		<buildnumber file="build.num"/>
+		<tstamp>
+			<format property="TODAY" pattern ="yyyy-MM-dd HH:mm:ss" />
+		</tstamp>
 		<!-- create a property containing all .jar files, prefix lib/, and seperated with
-	         a space -->  
-	    	<pathconvert property="libs.project" pathsep=" ">     
-	    		<mapper>       
-	    			<chainedmapper>           
-	    				<!-- remove absolute path -->       
-	    				<flattenmapper />           
-	    				<!-- add lib/ prefix -->        
-	    				<globmapper from="*" to="lib/*" />    
-	    			</chainedmapper>     
-	    		</mapper>       
-	    		<path>         
-	    	
-	    	<!-- lib.home contains all jar files, in several subdirectories -->      
-	    			
-	    		<fileset dir="${lib.home}">         
-	    				<include name="**/*.jar" />       
-	    		</fileset>     
-	    		<fileset dir="${build.home}/jar" includes="**/*.jar" />   
-	    	<!--	<fileset dir="${build.home}/classes" includes="*.properties" />   	
+	         a space -->
+		<pathconvert property="libs.project" pathsep=" ">
+			<mapper>
+				<chainedmapper>
+					<!-- remove absolute path -->
+					<flattenmapper />
+					<!-- add lib/ prefix -->
+					<globmapper from="*" to="lib/*" />
+				</chainedmapper>
+			</mapper>
+			<path>
+
+				<!-- lib.home contains all jar files, in several subdirectories -->
+
+				<fileset dir="${lib.home}">
+					<include name="**/*.jar" />
+				</fileset>
+				<fileset dir="${build.home}/jar" includes="**/*.jar" />
+				<!--	<fileset dir="${build.home}/classes" includes="*.properties" />   	
 	    		<fileset dir="${build.home}/classes" includes="*.xml" /> -->
-	    		</path>   
-	    	</pathconvert> 
+			</path>
+		</pathconvert>
 		<jar jarfile="${output.basedir}/${jar.name}" basedir="${output.classes}">
-		    	<include name="uk/ac/kcl/cerch/bril/service/**" />
-			    <fileset refid="config"/>
-		    		 <!-- define MANIFEST.MF -->    
-		    		<manifest>   
-		    			  <attribute name ="Main-Class" value ="uk.ac.kcl.cerch.bril.service.queue.ADQueueReaderImpl"/>   		        	
-		    			  <attribute name ="Built-By" value ="${user.name}"/>
-		    			   <section name="common"> 				    
-		    					 <attribute name ="Implementation-Version" value ="${version.num}-b${build.number}"/>
-		    					 <attribute name="Build-Date" value="${TODAY}"/>   		
-		    			  </section>        
-		    			<!-- finally, use the magically generated libs path -->      
-		    			<attribute name="Class-Path" value="${libs.project}" />    
-		    		</manifest> 
-		 </jar>
+			<include name="uk/ac/kcl/cerch/bril/service/**" />
+			<fileset refid="config"/>
+			<!-- define MANIFEST.MF -->
+			<manifest>
+				<attribute name ="Main-Class" value ="uk.ac.kcl.cerch.bril.service.queue.ADQueueReaderImpl"/>
+				<attribute name ="Built-By" value ="${user.name}"/>
+				<section name="common">
+					<attribute name ="Implementation-Version" value ="${version.num}-b${build.number}"/>
+					<attribute name="Build-Date" value="${TODAY}"/>
+				</section>
+				<!-- finally, use the magically generated libs path -->
+				<attribute name="Class-Path" value="${libs.project}" />
+			</manifest>
+		</jar>
 		<jar jarfile="${output.basedir}/MTZFileCharacterisationTest.jar" basedir="${output.classes}">
-			    	<include name="uk/ac/kcl/cerch/bril/test/**" />
-				    <fileset refid="config"/>
-			    		 <!-- define MANIFEST.MF -->    
-			    		<manifest>   
-			    			  <attribute name ="Main-Class" value ="uk.ac.kcl.cerch.bril.test.MTZCharacteriseFileMain"/>   		        	
-			    			  <attribute name ="Built-By" value ="${user.name}"/>
-			    			   <section name="common"> 				    
-			    					 <attribute name ="Implementation-Version" value ="${version.num}-b${build.number}"/>
-			    					 <attribute name="Build-Date" value="${TODAY}"/>   		
-			    			  </section>        
-			    			<!-- finally, use the magically generated libs path -->      
-			    			<attribute name="Class-Path" value="${libs.project}" />    
-			    		</manifest> 
-			 </jar>
+			<include name="uk/ac/kcl/cerch/bril/test/**" />
+			<fileset refid="config"/>
+			<!-- define MANIFEST.MF -->
+			<manifest>
+				<attribute name ="Main-Class" value ="uk.ac.kcl.cerch.bril.test.MTZCharacteriseFileMain"/>
+				<attribute name ="Built-By" value ="${user.name}"/>
+				<section name="common">
+					<attribute name ="Implementation-Version" value ="${version.num}-b${build.number}"/>
+					<attribute name="Build-Date" value="${TODAY}"/>
+				</section>
+				<!-- finally, use the magically generated libs path -->
+				<attribute name="Class-Path" value="${libs.project}" />
+			</manifest>
+		</jar>
 		<jar jarfile="${output.basedir}/ITQLQueryTest.jar" basedir="${output.classes}">
-					    	<include name="uk/ac/kcl/cerch/bril/test/**" />
-			                <include name="uk/ac/kcl/cerch/bril/service/**" />
-						    <fileset refid="config"/>
-					    		 <!-- define MANIFEST.MF -->    
-					    		<manifest>   
-					    			  <attribute name ="Main-Class" value ="uk.ac.kcl.cerch.bril.test.ITQLQueryTest"/>   		        	
-					    			  <attribute name ="Built-By" value ="${user.name}"/>
-					    			   <section name="common"> 				    
-					    					 <attribute name ="Implementation-Version" value ="${version.num}-b${build.number}"/>
-					    					 <attribute name="Build-Date" value="${TODAY}"/>   		
-					    			  </section>        
-					    			<!-- finally, use the magically generated libs path -->      
-					    			<attribute name="Class-Path" value="${libs.project}" />    
-					    		</manifest> 
-					 </jar>
-		    <jar jarfile="${output.basedir}/PurgeFedoraObjectTest.jar" basedir="${output.classes}">
-					    	<include name="uk/ac/kcl/cerch/bril/test/**" />
-			                <include name="uk/ac/kcl/cerch/bril/service/**" />
-						    <fileset refid="config"/>
-					    		 <!-- define MANIFEST.MF -->    
-					    		<manifest>   
-					    			  <attribute name ="Main-Class" value ="uk.ac.kcl.cerch.bril.test.PurgeFedoraObjectTest"/>   		        	
-					    			  <attribute name ="Built-By" value ="${user.name}"/>
-					    			   <section name="common"> 				    
-					    					 <attribute name ="Implementation-Version" value ="${version.num}-b${build.number}"/>
-					    					 <attribute name="Build-Date" value="${TODAY}"/>   		
-					    			  </section>        
-					    			<!-- finally, use the magically generated libs path -->      
-					    			<attribute name="Class-Path" value="${libs.project}" />    
-					    		</manifest> 
-					 </jar>
+			<include name="uk/ac/kcl/cerch/bril/test/**" />
+			<include name="uk/ac/kcl/cerch/bril/service/**" />
+			<fileset refid="config"/>
+			<!-- define MANIFEST.MF -->
+			<manifest>
+				<attribute name ="Main-Class" value ="uk.ac.kcl.cerch.bril.test.ITQLQueryTest"/>
+				<attribute name ="Built-By" value ="${user.name}"/>
+				<section name="common">
+					<attribute name ="Implementation-Version" value ="${version.num}-b${build.number}"/>
+					<attribute name="Build-Date" value="${TODAY}"/>
+				</section>
+				<!-- finally, use the magically generated libs path -->
+				<attribute name="Class-Path" value="${libs.project}" />
+			</manifest>
+		</jar>
+		<jar jarfile="${output.basedir}/PurgeFedoraObjectTest.jar" basedir="${output.classes}">
+			<include name="uk/ac/kcl/cerch/bril/test/**" />
+			<include name="uk/ac/kcl/cerch/bril/service/**" />
+			<fileset refid="config"/>
+			<!-- define MANIFEST.MF -->
+			<manifest>
+				<attribute name ="Main-Class" value ="uk.ac.kcl.cerch.bril.test.PurgeFedoraObjectTest"/>
+				<attribute name ="Built-By" value ="${user.name}"/>
+				<section name="common">
+					<attribute name ="Implementation-Version" value ="${version.num}-b${build.number}"/>
+					<attribute name="Build-Date" value="${TODAY}"/>
+				</section>
+				<!-- finally, use the magically generated libs path -->
+				<attribute name="Class-Path" value="${libs.project}" />
+			</manifest>
+		</jar>
 		<jar jarfile="${output.basedir}/DiffractionImageMetadataExtractTest.jar" basedir="${output.classes}">
-							    	<include name="uk/ac/kcl/cerch/bril/test/**" />
-					                <include name="uk/ac/kcl/cerch/bril/service/**" />
-								    <fileset refid="config"/>
-							    		 <!-- define MANIFEST.MF -->    
-							    		<manifest>   
-							    			  <attribute name ="Main-Class" value ="uk.ac.kcl.cerch.bril.test.DiffractionImageMetadataExtractTest"/>   		        	
-							    			  <attribute name ="Built-By" value ="${user.name}"/>
-							    			   <section name="common"> 				    
-							    					 <attribute name ="Implementation-Version" value ="${version.num}-b${build.number}"/>
-							    					 <attribute name="Build-Date" value="${TODAY}"/>   		
-							    			  </section>        
-							    			<!-- finally, use the magically generated libs path -->      
-							    			<attribute name="Class-Path" value="${libs.project}" />    
-							    		</manifest> 
+			<include name="uk/ac/kcl/cerch/bril/test/**" />
+			<include name="uk/ac/kcl/cerch/bril/service/**" />
+			<fileset refid="config"/>
+			<!-- define MANIFEST.MF -->
+			<manifest>
+				<attribute name ="Main-Class" value ="uk.ac.kcl.cerch.bril.test.DiffractionImageMetadataExtractTest"/>
+				<attribute name ="Built-By" value ="${user.name}"/>
+				<section name="common">
+					<attribute name ="Implementation-Version" value ="${version.num}-b${build.number}"/>
+					<attribute name="Build-Date" value="${TODAY}"/>
+				</section>
+				<!-- finally, use the magically generated libs path -->
+				<attribute name="Class-Path" value="${libs.project}" />
+			</manifest>
 		</jar>
 		<jar jarfile="${output.basedir}/DiffractionImageSetTest.jar" basedir="${output.classes}">
-									    	<include name="uk/ac/kcl/cerch/bril/test/**" />
-							                <include name="uk/ac/kcl/cerch/bril/service/**" />
-										    <fileset refid="config"/>
-									    		 <!-- define MANIFEST.MF -->    
-									    		<manifest>   
-									    			  <attribute name ="Main-Class" value ="uk.ac.kcl.cerch.bril.test.DiffractionImageSetTest"/>   		        	
-									    			  <attribute name ="Built-By" value ="${user.name}"/>
-									    			   <section name="common"> 				    
-									    					 <attribute name ="Implementation-Version" value ="${version.num}-b${build.number}"/>
-									    					 <attribute name="Build-Date" value="${TODAY}"/>   		
-									    			  </section>        
-									    			<!-- finally, use the magically generated libs path -->      
-									    			<attribute name="Class-Path" value="${libs.project}" />    
-									    		</manifest> 
+			<include name="uk/ac/kcl/cerch/bril/test/**" />
+			<include name="uk/ac/kcl/cerch/bril/service/**" />
+			<fileset refid="config"/>
+			<!-- define MANIFEST.MF -->
+			<manifest>
+				<attribute name ="Main-Class" value ="uk.ac.kcl.cerch.bril.test.DiffractionImageSetTest"/>
+				<attribute name ="Built-By" value ="${user.name}"/>
+				<section name="common">
+					<attribute name ="Implementation-Version" value ="${version.num}-b${build.number}"/>
+					<attribute name="Build-Date" value="${TODAY}"/>
+				</section>
+				<!-- finally, use the magically generated libs path -->
+				<attribute name="Class-Path" value="${libs.project}" />
+			</manifest>
 		</jar>
 		<jar jarfile="${output.basedir}/DEFTaskProcMainTest.jar" basedir="${output.classes}">
-									    	<include name="uk/ac/kcl/cerch/bril/test/**" />
-							               
-										    <fileset refid="config"/>
-									    		 <!-- define MANIFEST.MF -->    
-									    		<manifest>   
-									    			  <attribute name ="Main-Class" value ="uk.ac.kcl.cerch.bril.test.DEFTaskProcMainTest"/>   		        	
-									    			  <attribute name ="Built-By" value ="${user.name}"/>
-									    			   <section name="common"> 				    
-									    					 <attribute name ="Implementation-Version" value ="${version.num}-b${build.number}"/>
-									    					 <attribute name="Build-Date" value="${TODAY}"/>   		
-									    			  </section>        
-									    			<!-- finally, use the magically generated libs path -->      
-									    			<attribute name="Class-Path" value="${libs.project}" />    
-									    		</manifest> 
+			<include name="uk/ac/kcl/cerch/bril/test/**" />
+
+			<fileset refid="config"/>
+			<!-- define MANIFEST.MF -->
+			<manifest>
+				<attribute name ="Main-Class" value ="uk.ac.kcl.cerch.bril.test.DEFTaskProcMainTest"/>
+				<attribute name ="Built-By" value ="${user.name}"/>
+				<section name="common">
+					<attribute name ="Implementation-Version" value ="${version.num}-b${build.number}"/>
+					<attribute name="Build-Date" value="${TODAY}"/>
+				</section>
+				<!-- finally, use the magically generated libs path -->
+				<attribute name="Class-Path" value="${libs.project}" />
+			</manifest>
 		</jar>
 		<jar jarfile="${output.basedir}/FedoraAdminstrationImplMainTest.jar" basedir="${output.classes}">
-										    	<include name="uk/ac/kcl/cerch/bril/test/**" />
-								               
-											    <fileset refid="config"/>
-										    		 <!-- define MANIFEST.MF -->    
-										    		<manifest>   
-										    			  <attribute name ="Main-Class" value ="uk.ac.kcl.cerch.bril.test.FedoraAdminstrationImplMainTest"/>   		        	
-										    			  <attribute name ="Built-By" value ="${user.name}"/>
-										    			   <section name="common"> 				    
-										    					 <attribute name ="Implementation-Version" value ="${version.num}-b${build.number}"/>
-										    					 <attribute name="Build-Date" value="${TODAY}"/>   		
-										    			  </section>        
-										    			<!-- finally, use the magically generated libs path -->      
-										    			<attribute name="Class-Path" value="${libs.project}" />    
-										    		</manifest> 
-			</jar>
-		<jar jarfile="${output.basedir}/COOTScmFileCharacterisationMainTest.jar" basedir="${output.classes}">
-												    	<include name="uk/ac/kcl/cerch/bril/test/**" />
-										               
-													    <fileset refid="config"/>
-												    		 <!-- define MANIFEST.MF -->    
-												    		<manifest>   
-												    			  <attribute name ="Main-Class" value ="uk.ac.kcl.cerch.bril.test.COOTScmFileCharacterisationMainTest"/>   		        	
-												    			  <attribute name ="Built-By" value ="${user.name}"/>
-												    			   <section name="common"> 				    
-												    					 <attribute name ="Implementation-Version" value ="${version.num}-b${build.number}"/>
-												    					 <attribute name="Build-Date" value="${TODAY}"/>   		
-												    			  </section>        
-												    			<!-- finally, use the magically generated libs path -->      
-												    			<attribute name="Class-Path" value="${libs.project}" />    
-												    		</manifest> 
-					</jar>
-		<jar jarfile="${output.basedir}/DEFPhenixProcessorTest.jar" basedir="${output.classes}">
-													    	<include name="uk/ac/kcl/cerch/bril/test/**" />
-											               
-														    <fileset refid="config"/>
-													    		 <!-- define MANIFEST.MF -->    
-													    		<manifest>   
-													    			  <attribute name ="Main-Class" value ="uk.ac.kcl.cerch.bril.test.DEFPhenixProcessorTest"/>   		        	
-													    			  <attribute name ="Built-By" value ="${user.name}"/>
-													    			   <section name="common"> 				    
-													    					 <attribute name ="Implementation-Version" value ="${version.num}-b${build.number}"/>
-													    					 <attribute name="Build-Date" value="${TODAY}"/>   		
-													    			  </section>        
-													    			<!-- finally, use the magically generated libs path -->      
-													    			<attribute name="Class-Path" value="${libs.project}" />    
-													    		</manifest> 
-						</jar>
-	</target >
-	
-	<target name="dist" depends="jar" description="Create binary distribution"> 
-		 <echo message="Create distribution directory and copy BRIL application jars in ${dist.home} and supported lib in ${dist.home}/lib" />  					
-		<delete dir="${dist.home}" />     <!-- contains all library dependencies -->  
-		<mkdir dir="${dist.home}/lib" />  
-		<mkdir dir="${dist.home}/config" />   
-		<copy todir="${dist.home}"  > 
-		<fileset dir="${build.home}" includes="${jar.name}" />  
-		</copy> 
-        <copy todir="${dist.home}/lib" filtering="off">       
-				<flattenmapper />     
-				<fileset dir="${build.home}/jar" includes="**/*.jar" />  
-		</copy> 
-		<copy todir="${dist.home}/lib" filtering="off">       
-			<!-- remove the directory hierarchy: lib contains no subdirectories -->    
-			<flattenmapper />     
-			<fileset dir="${lib.home}" includes="**/*.jar" />   
-		</copy> 
-		<copy todir="${dist.home}/config" filtering="off">       
-					<!-- remove the directory hierarchy: lib contains no subdirectories -->    
-					<flattenmapper />     
-					<fileset dir="${build.home}" includes="**/*.xml" />   
-		</copy> 
+			<include name="uk/ac/kcl/cerch/bril/test/**" />
 
-	</target> 
+			<fileset refid="config"/>
+			<!-- define MANIFEST.MF -->
+			<manifest>
+				<attribute name ="Main-Class" value ="uk.ac.kcl.cerch.bril.test.FedoraAdminstrationImplMainTest"/>
+				<attribute name ="Built-By" value ="${user.name}"/>
+				<section name="common">
+					<attribute name ="Implementation-Version" value ="${version.num}-b${build.number}"/>
+					<attribute name="Build-Date" value="${TODAY}"/>
+				</section>
+				<!-- finally, use the magically generated libs path -->
+				<attribute name="Class-Path" value="${libs.project}" />
+			</manifest>
+		</jar>
+		<jar jarfile="${output.basedir}/COOTScmFileCharacterisationMainTest.jar" basedir="${output.classes}">
+			<include name="uk/ac/kcl/cerch/bril/test/**" />
+
+			<fileset refid="config"/>
+			<!-- define MANIFEST.MF -->
+			<manifest>
+				<attribute name ="Main-Class" value ="uk.ac.kcl.cerch.bril.test.COOTScmFileCharacterisationMainTest"/>
+				<attribute name ="Built-By" value ="${user.name}"/>
+				<section name="common">
+					<attribute name ="Implementation-Version" value ="${version.num}-b${build.number}"/>
+					<attribute name="Build-Date" value="${TODAY}"/>
+				</section>
+				<!-- finally, use the magically generated libs path -->
+				<attribute name="Class-Path" value="${libs.project}" />
+			</manifest>
+		</jar>
+		<jar jarfile="${output.basedir}/DEFPhenixProcessorTest.jar" basedir="${output.classes}">
+			<include name="uk/ac/kcl/cerch/bril/test/**" />
+
+			<fileset refid="config"/>
+			<!-- define MANIFEST.MF -->
+			<manifest>
+				<attribute name ="Main-Class" value ="uk.ac.kcl.cerch.bril.test.DEFPhenixProcessorTest"/>
+				<attribute name ="Built-By" value ="${user.name}"/>
+				<section name="common">
+					<attribute name ="Implementation-Version" value ="${version.num}-b${build.number}"/>
+					<attribute name="Build-Date" value="${TODAY}"/>
+				</section>
+				<!-- finally, use the magically generated libs path -->
+				<attribute name="Class-Path" value="${libs.project}" />
+			</manifest>
+		</jar>
+	</target >
+
+	<target name="dist" depends="jar" description="Create binary distribution">
+		<echo message="Create distribution directory and copy BRIL application jars in ${dist.home} and supported lib in ${dist.home}/lib" />
+		<delete dir="${dist.home}" />
+		<!-- contains all library dependencies -->
+		<mkdir dir="${dist.home}/lib" />
+		<mkdir dir="${dist.home}/config" />
+		<copy todir="${dist.home}"  >
+			<fileset dir="${build.home}" includes="${jar.name}" />
+		</copy>
+		<copy todir="${dist.home}/lib" filtering="off">
+			<flattenmapper />
+			<fileset dir="${build.home}/jar" includes="**/*.jar" />
+		</copy>
+		<copy todir="${dist.home}/lib" filtering="off">
+			<!-- remove the directory hierarchy: lib contains no subdirectories -->
+			<flattenmapper />
+			<fileset dir="${lib.home}" includes="**/*.jar" />
+		</copy>
+		<copy todir="${dist.home}/config" filtering="off">
+			<!-- remove the directory hierarchy: lib contains no subdirectories -->
+			<flattenmapper />
+			<fileset dir="${build.home}" includes="**/*.xml" />
+		</copy>
+
+	</target>
 
 </project>

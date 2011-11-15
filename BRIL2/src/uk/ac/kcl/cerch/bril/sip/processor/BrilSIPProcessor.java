@@ -868,15 +868,15 @@ public class BrilSIPProcessor {
 				"relationship", "bril", relsExtData);
 		}
 		
-		if(mime!=null) {
+		if (mime!=null) {
 			System.out.println("mime: " + mime.trim());
 			System.out.println("briltype: " + briltype);
 			System.out.println("metadata: " + metadata);
 		
-			if(dublinCore.getFormat()!=null || !dublinCore.getFormat().equals("")){
+			if (dublinCore.getFormat()!=null || !dublinCore.getFormat().equals("")) {
 				briltype=dublinCore.getFormat();
 				System.out.println("briltype: " + briltype);
-			} else if (dublinCore.getFormat()==null || dublinCore.getFormat().equals("")){
+			} else if (dublinCore.getFormat()==null || dublinCore.getFormat().equals("")) {
 				briltype="misc";
 				System.out.println("briltype: " + briltype);
 			}
@@ -903,7 +903,6 @@ public class BrilSIPProcessor {
 
 		// Use FITS to identify the technical metadata of the file
 		// Then converts it to PREMIS format and stores it as a PREMIS datastream
-		// TODO: add PREMIS event in a versionable datastream?
 		
 		Fits fits;
 		try {
@@ -912,10 +911,8 @@ public class BrilSIPProcessor {
 			FitsOutput fitsOut;			
 			System.out.println("Running FITS toolkit...");
 			fitsOut = fits.examine(file);			
-			byte[] PREMIS = outputPREMISXml(fitsOut);
-			System.out.println(PREMIS.toString());
-			
-			// TODO: insert PID into premis:objectIdentifierValue, insert URI into <premis:contentLocationValue>
+			byte[] PREMIS = outputPREMISXml(fitsOut, dublinCore.getId(), originalContent.getFilePath());
+			System.out.println(PREMIS.toString());				
 			
 			dsc.addDatastreamObject(DataStreamType.PremisMetadata,
 					DatastreamMimeType.TEXT_XML.getMimeType(), "premis",
@@ -961,7 +958,7 @@ public class BrilSIPProcessor {
 		}
 	}
 
-	private byte[] outputPREMISXml(FitsOutput fitsOutput) throws XMLStreamException, IOException, TransformerConfigurationException {
+	private byte[] outputPREMISXml(FitsOutput fitsOutput, String PID, String location) throws XMLStreamException, IOException, TransformerConfigurationException {
         		
 		Document doc = fitsOutput.getFitsXml();
 	    
@@ -973,7 +970,7 @@ public class BrilSIPProcessor {
 		Transformer transformer;		
 		transformer = tFactory.newTransformer(xsltSource);
 		    
-        if(doc != null && transformer != null) {
+        if (doc != null && transformer != null) {
         	
         	// Make the input sources for the XML and XSLT documents
     		org.jdom.output.DOMOutputter outputter = new org.jdom.output.DOMOutputter();
@@ -988,6 +985,9 @@ public class BrilSIPProcessor {
 	    	
 	    		// Do the transform
 				transformer.transform(xmlSource, xmlResult);
+				
+				// TODO: insert PID into premis:objectIdentifierValue, insert location into <premis:contentLocationValue>
+				
 				
 	    		return xsltOutStream.toString().getBytes("UTF-8");
     		

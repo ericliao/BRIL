@@ -1087,7 +1087,7 @@ public class MTZReflectionFileRelationshipGeneratorImpl implements
 				Element element = (Element) list.item(i);
 				String localNodeName = element.getLocalName();
 				//System.out.println("taskobject element: "+ taskObjectElement.localName());
-				if (localNodeName.equals("reflection_type")) {
+				if (localNodeName.equals("ReflectionType")) {
 					
 					//	System.out.println("filenames ---" + element.getTextContent());
 					reflectionType = element.getTextContent();

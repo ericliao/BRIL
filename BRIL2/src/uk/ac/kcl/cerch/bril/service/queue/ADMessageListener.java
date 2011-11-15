@@ -467,47 +467,6 @@ public class ADMessageListener implements MessageListener {
 
 	}
 
-	private void processBlobMessage1(BlobMessage blobMessage){
-		try{
-			String tmpPath=null;
-			if(blobMessage.getObjectProperty("msgParamXML")!=null)
-			{
-				msgMetadataXML = blobMessage.getObjectProperty("msgParamXML").toString();
-				System.out.println(msgMetadataXML);
-
-				msgMetadata= new MessageMetadata(msgMetadataXML);
-
-				try {
-					inputStream = blobMessage.getInputStream();
-					tmpPath = putFileInDirectory(msgMetadata.getIdPath(),msgMetadata.getExperimentId());
-					String path = msgMetadata.getIdPath().replaceAll("\\\\", "/");
-					System.out.println("------------ START: Search for path in the respository ---------- ");
-
-					String objectIdentifier = searchInRepositoryAndPurge(msgMetadata.getExperimentId(),path);				
-					System.out.println("------------ END: Search for path in the respository ---------- ");	
-
-					if(objectIdentifier!=null){
-						System.out.println("EXISTING identifier (first msg): "+ objectIdentifier);
-						boolean res = runMessageProcessor(objectIdentifier, tmpPath);
-
-					}else{
-						objectIdentifier= "bril:" + IDGenerator.generateUUID();
-						System.out.println("NEW identifier (first msg): "+ objectIdentifier);
-						boolean res = runMessageProcessor(objectIdentifier,tmpPath);
-
-					}
-
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		} catch (JMSException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} 
-
-	}
 	public String searchInRepositoryAndPurge(String experimentId, String path){
 		String id=null;
 		Vector<String> res= getObjectIdentifiers(experimentId,path);
