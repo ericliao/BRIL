@@ -175,10 +175,12 @@ def display_experiment(request, expId):
     
     if len(aggregations) == 0: 
         agg = ""
+        rdfa = ""
     else:
-        agg = "<a href='http://localhost:8000/repo/aggregations/" + agg_o.dc.content.identifier + "/rdfxml'>RDF/XML</a>"
+        agg = "<a href='http://localhost:8000/repo/aggregations/" + agg_o.dc.content.identifier + "/rdfxml'>RDF/XML</a>"    
+        rdfa = agg_o.rdfa.content
     
-    return render_to_response('repo/display.html', {'obj': exp_obj, 'agg': agg, 'rdfa': agg_o.rdfa.content, 'processes': related_process_links, 'objects': related_object_links})
+    return render_to_response('repo/display.html', {'obj': exp_obj, 'agg': agg, 'rdfa': rdfa, 'processes': related_process_links, 'objects': related_object_links})
 
 def save_PNG(request, expId):
     if request.is_ajax():

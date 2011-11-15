@@ -6,7 +6,9 @@
     xmlns:foaf="http://xmlns.com/foaf/0.1/"
     xmlns:dc="http://purl.org/dc/elements/1.1/"
     version="XHTML+RDFa 1.0" xml:lang="en">
-    
+
+{% load static %}
+{% get_static_prefix as STATIC_URL %}    
 <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% load adminmedia %}{% admin_media_prefix %}css/base.css{% endblock %}" />
 <style type="text/css">
 pre {
@@ -165,10 +167,23 @@ html>body tbody.scrollContent td + td + td {
 	width: 300px
 }
 
+#dialog-content a:link,
+#dialog-content a:visited,
+#dialog-content a:hover,
+#dialog-content a:active { font-size:12px; padding-left:13px; background-position: left center; background-repeat: no-repeat; }
+
+#dialog-content a.open:link,
+#dialog-content a.open:visited,
+#dialog-content a.open:hover,
+#dialog-content a.premis-open:active { background-image: url(/static/css/smoothness/spindown-open.gif); }
+
+#dialog-content a.closed:link,
+#dialog-content a.closed:visited,
+#dialog-content a.closed:hover,
+#dialog-content a.closed:active { background-image: url(/static/css/smoothness/spindown-closed.gif); }
+
 </style>
 
-{% load static %}
-{% get_static_prefix as STATIC_URL %}
 <script src="{{ STATIC_URL }}jquery/jquery-1.6.2.min.js"></script>
 <script src="{{ STATIC_URL }}jquery/jquery-ui-1.8.15.custom.min.js"></script>
 <script src="{{ STATIC_URL }}jquery/jquery.fixedheadertable.min.js"></script>
@@ -230,8 +245,23 @@ function stripedTable() {
 }
 
 window.onload = function () {
-    stripedTable();
+    stripedTable();    
+    
+    $( "#premis" ).click(function() {
+    	$( "#premis-data" ).toggle( "blind", {}, 500);
+      $( "#premis" ).toggleClass("closed").toggleClass("open").next().toggle();
+			return false;
+		});
+		
+		$( "#bril" ).click(function() {
+    	$( "#bril-data" ).toggle( "blind", {}, 500);
+      $( "#bril" ).toggleClass("closed").toggleClass("open").next().toggle();
+			return false;
+		});
 }
+
+
+
 </script>
 
 <div id="viewer-dialog" style="width:600px;overflow:auto">
@@ -260,14 +290,20 @@ window.onload = function () {
       </table>
       <br/>
       {% if obj.brilmeta.content %}
-      <h3>BRIL Metadata</h3>
-      <pre>{{ obj.brilmeta.content }}</pre>      
+      <h3><a href="#" id="bril" class="closed">Crystallography Metadata</a></h3>
+      <div id="bril-data" style="display: none;">		    
+		    <pre>{{ obj.brilmeta.content }}</pre>        		    
+  	  </div>            
+  	  <br/>
       <hr/>
       <br/>
       {% endif %}
       {% if obj.PREMISmeta.content %}
-      <h3>PREMIS Metadata</h3>
-      <pre>{{ obj.PREMISmeta.content }}</pre>      
+      <h3><a href="#" id="premis" class="closed">PREMIS Metadata</a></h3>
+      <div id="premis-data" style="display: none;">		    
+		    <pre>{{ obj.PREMISmeta.content }}</pre>        
+  	  </div>            
+  	  <br/>
       <hr/>
       <br/>
       {% endif %}
@@ -278,6 +314,8 @@ window.onload = function () {
           <button id="viewLink" value="{{ obj.pid }}">View File</button>
         {% endif %}
         <a href="{% url download obj.pid %}" id="downloadLink">Download File</a>
+        </br>
+        </br>
         <hr/>
         </br>
       {% endif %}
